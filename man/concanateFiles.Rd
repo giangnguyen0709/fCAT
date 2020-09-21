@@ -6,7 +6,7 @@
 output in a temporary folder in the core set. The function will concanate all
 the output files in the folder in a single files}
 \usage{
-concanateFiles(directory, out, name)
+concanateFiles(directory, out, name, genomeName)
 }
 \arguments{
 \item{directory}{path to the folder, that contains the output files}
@@ -14,6 +14,8 @@ concanateFiles(directory, out, name)
 \item{out}{the output folder, that will contain the concanated files}
 
 \item{name}{the concanated files will be saved under this name}
+
+\item{genomeName}{the genomeID of the genome, that need to be extracted}
 }
 \value{
 none

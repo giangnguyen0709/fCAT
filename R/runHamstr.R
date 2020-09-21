@@ -5,9 +5,10 @@
 #' @param directory path to the folder, that contains the output files
 #' @param out the output folder, that will contain the concanated files
 #' @param name the concanated files will be saved under this name
+#' @param genomeName the genomeID of the genome, that need to be extracted
 #' @return none
 #' @export
-concanateFiles <- function(directory, out, name) {
+concanateFiles <- function(directory, out, name, genomeName) {
   if (!endsWith(directory, "/")) {
     directory <- paste(directory, "/", sep="");
   }
@@ -59,6 +60,10 @@ concanateFiles <- function(directory, out, name) {
       }
     }
   }
+  pp <- extractPP(pp, genomeName);
+  domain0 <- extractDomains(domain0, genomeName);
+  domain1 <- extractDomains(domain1, genomeName);
+  exFasta <- extractFasta(exFasta, genomeName);
   jobname <- paste(out, name, sep="")
   write.table(pp, 
               paste(jobname, ".phyloprofile", sep=""),
@@ -100,6 +105,10 @@ runHamstr <- function(coreSet, extend=FALSE, scoreMode, priorityList=NULL, cpu){
   
   splited <- strsplit(coreSet, "/", fixed=TRUE)[[1]];
   setName <- splited[length(splited)];
+  
+  genomeName <- list.dirs(paste(coreSet, "genome_dir", sep=""), 
+                          recursive=FALSE,
+                          full.names=FALSE)[[1]];
   
   hmmPath <- paste(coreSet, "core_orthologs", sep="");
   blastPath <- paste(coreSet, "blast_dir", sep="");
@@ -207,10 +216,11 @@ runHamstr <- function(coreSet, extend=FALSE, scoreMode, priorityList=NULL, cpu){
                               extend=extend,
                               priorityList);
   pp <- do.call("rbind", ppSet);
+  pp <- extractPP(pp, genomeName);
   if (extend == TRUE) {
     outFolder <- paste(coreSet, "phyloprofile", "/", 
                        as.character(scoreMode), sep="")
-    concanateFiles(outFolder, outFolder, setName);
+    concanateFiles(outFolder, outFolder, setName, genomeName);
   }
   unlink(outPath, recursive=TRUE);
   return(pp);

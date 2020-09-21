@@ -1,21 +1,3 @@
-#' The function extract a phylogenetic profile of a genome from a phylogentic 
-#' profile
-#' 
-#' @param pp the data frame of the phylogenetic profile
-#' @param genome the ID of the extracted genome
-#' 
-#' @return the phylogenetic profile of the interested genome
-#' @export
-extractPP <- function(pp, genome) {
-  genomeID <- unlist(lapply(pp$orthoID, 
-                            function(orthoID) {
-                              return(strsplit(orthoID, "|", fixed=TRUE)[[1]][2]);
-                            }));
-  singlePP <- cbind(pp, genomeID);
-  singlePP <- subset(singlePP, genomeID == genome);
-  return(singlePP[1:(ncol(singlePP)-1)]);
-}
-
 #' The function to assess the status of a founded ortholog
 #' 
 #' @param fasF the forward fas score of the ortholog
@@ -267,7 +249,7 @@ reportSingle <- function(pp, coreSet, scoreMode, priorityList) {
 #' 
 #' @param genomeID the genome ID of the interested genome
 #' @param report the report in data frame
-#' @scoreMode the mode to determine the method to assess the ortholog
+#' @param scoreMode the mode to determine the method to assess the ortholog
 #' 
 #' @return A frequencies table in data frame
 #' @export

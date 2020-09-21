@@ -10,6 +10,8 @@ translateReport(genomeID, report, scoreMode)
 \item{genomeID}{the genome ID of the interested genome}
 
 \item{report}{the report in data frame}
+
+\item{scoreMode}{the mode to determine the method to assess the ortholog}
 }
 \value{
 A frequencies table in data frame

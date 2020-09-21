@@ -40,7 +40,6 @@ getSpec <- function(fasta, priorityList){
 #' 
 #' @return The list of taxa with a priority order based on the taxanomic 
 #' distance
-#' @example autofindPriority("HUMAN@9606@3", c("HOMSA@9606@2", TAXA1@123@2))
 #' @export
 autofindPriority <- function(query, refSet) {
   position <- function(i, j, n) {
