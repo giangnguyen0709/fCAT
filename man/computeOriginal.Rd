@@ -5,10 +5,12 @@
 \title{The function compute the initial original phylogenetic profile of all the
 taxa in the score set}
 \usage{
-computeOriginal(coreSet, scoreMode, cpu = 4)
+computeOriginal(root, coreSet, scoreMode, cpu = 4)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{scoreMode}{the mode determines the way to assess the founded ortholog}
 

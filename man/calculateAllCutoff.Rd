@@ -4,10 +4,12 @@
 \alias{calculateAllCutoff}
 \title{The function calculate cut off values for all core genes in the set}
 \usage{
-calculateAllCutoff(coreSet)
+calculateAllCutoff(root, coreSet)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 }
 \value{
 none

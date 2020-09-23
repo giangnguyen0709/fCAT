@@ -5,12 +5,14 @@
 \title{Create the report of the completeness of a genome based on its phylogenetic
 profile}
 \usage{
-reportSingle(pp, coreSet, scoreMode, priorityList)
+reportSingle(pp, root, coreSet, scoreMode, priorityList)
 }
 \arguments{
 \item{pp}{the phylogenetic profile of the genome in data frame}
 
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{scoreMode}{the mode to determined the method to assess the ortholog}
 

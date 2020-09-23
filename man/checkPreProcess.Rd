@@ -4,9 +4,11 @@
 \alias{checkPreProcess}
 \title{Check if the core set was processed}
 \usage{
-checkPreProcess(coreSet)
+checkPreProcess(root, coreSet)
 }
 \arguments{
+\item{root}{the path to the root folder}
+
 \item{coreSet}{the path to the core set}
 }
 \value{

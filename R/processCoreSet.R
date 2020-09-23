@@ -1,22 +1,24 @@
 #' The function creates FAS annotation for a core gene in the core set
 #' 
-#' @param coreSet The path to the core set
+#' @param root the path to the root folder
+#' @param coreSet The core set name
 #' @param coreGene The name of the core gene in the set
 #' @return none
 #' @export
-createAnnotation <- function(coreSet, coreGene) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+createAnnotation <- function(root, coreSet, coreGene) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
   
-  annoFolder <- paste(coreSet, "core_orthologs", "/", coreGene, "/", "fas_dir", "/", 
-                      "annotation_dir", sep="");
+  annoFolder <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/", 
+                      "fas_dir", "/", "annotation_dir", sep="");
   if (!dir.exists(annoFolder)) {
     dir.create(annoFolder, recursive=TRUE);
   }
   
   command <- paste("annoFAS", 
-                   "-i", paste(coreSet, "core_orthologs", "/", coreGene, "/", coreGene, ".fa", sep=""), 
+                   "-i", paste(root, "core_orthologs", "/", coreSet, "/", 
+                               coreGene, "/", coreGene, ".fa", sep=""), 
                    "-o", annoFolder,
                    "-n", paste(coreGene, sep=""));
   system(command);
@@ -28,41 +30,42 @@ createAnnotation <- function(coreSet, coreGene) {
 
 #' The function creates all FAS annotation for all core genes in the set
 #' 
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' 
 #' @return none
 #' @export
-createAllAnnotation <- function(coreSet) {
-  startTime <- Sys.time();
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+createAllAnnotation <- function(root, coreSet) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
-  lapply(list.dirs(paste(coreSet, "core_orthologs", sep=""), recursive=FALSE, full.names=FALSE), 
-         function(coreGene, coreSet){
+  lapply(list.dirs(paste(root, "core_orthologs", "/", coreSet, sep=""), 
+                   recursive=FALSE, full.names=FALSE), 
+         function(coreGene, root, coreSet){
            print(paste("Annotating for", coreGene, sep=" "));
-           createAnnotation(coreSet, coreGene);
+           createAnnotation(root, coreSet, coreGene);
          }, 
+         root=root,
          coreSet=coreSet);
-  endTime <- Sys.time();
-  print(endTime - startTime);
 }
 
 #' The function calculate all values, that are necessary for the assessment 
 #' process for a specific core gene in the set. The function will saved the 
 #' values as the file text in the folder of the core gene
 #' 
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param coreGene the ID of the core gene in the set
 #' 
 #' @return none
 #' @export
-calculateCutoff <- function(coreSet, coreGene) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+calculateCutoff <- function(root, coreSet, coreGene) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
-  fastaFile <- paste(coreSet, "core_orthologs", "/", 
+  fastaFile <- paste(root, "core_orthologs", "/", coreSet, "/", 
                      coreGene, "/", coreGene, ".fa", sep="")
-  annoDir <- paste(coreSet, "core_orthologs", "/", coreGene, "/", 
+  annoDir <- paste(root, "core_orthologs", "/",  coreSet, "/", coreGene, "/", 
                    "fas_dir", "/", "annotation_dir", sep="")
   
   fasta <- readLines(fastaFile);
@@ -93,9 +96,9 @@ calculateCutoff <- function(coreSet, coreGene) {
   }
 
   scoreSet <- lapply(querySet, 
-                     function(queryID, fastaFile, annoDir, coreSet) {
+                     function(queryID, fastaFile, annoDir, root, coreSet) {
                        refSpec <- strsplit(queryID, "|", fixed=TRUE)[[1]][2];
-                       refProteome <- paste(coreSet, "weight_dir", "/", 
+                       refProteome <- paste(root, "weight_dir", "/", 
                                             refSpec, ".json", sep="");
                        R.utils::createLink(paste(annoDir, "/", refSpec, ".json",
                                                  sep=""), refProteome,
@@ -129,6 +132,7 @@ calculateCutoff <- function(coreSet, coreGene) {
                      },
                      fastaFile,
                      annoDir,
+                     root=root,
                      coreSet);
   for (level1 in scoreSet) {
     for (score in level1) {
@@ -156,8 +160,8 @@ calculateCutoff <- function(coreSet, coreGene) {
   lcl <- 1 / (features$interval$limits[[2]]);
   ucl <- 1 / (features$interval$limits[[1]]);
   
-  scoreFolder <- paste(coreSet, "core_orthologs", "/", coreGene, "/", "fas_dir",
-                       "/", "score_dir", sep="");
+  scoreFolder <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+                       "fas_dir", "/", "score_dir", sep="");
   if (!dir.exists(scoreFolder)) {
     dir.create(scoreFolder, recursive=TRUE);
   }
@@ -178,40 +182,39 @@ calculateCutoff <- function(coreSet, coreGene) {
 
 #' The function calculate cut off values for all core genes in the set
 #' 
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' 
 #' @return none
 #' @export
-calculateAllCutoff <- function(coreSet) {
-  startTime <- Sys.time();
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+calculateAllCutoff <- function(root, coreSet) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
   
-  coreOrtho <- paste(coreSet, "core_orthologs", sep="");
+  coreOrtho <- paste(root, "core_orthologs", coreSet, "/", sep="");
   lapply(list.dirs(coreOrtho, full.names=FALSE, recursive=FALSE), 
-         function(coreGene, coreSet, mode){
+         function(coreGene, root, coreSet, mode){
            print(paste("Starting calculate cutoff for", coreGene, sep=" "));
-           calculateCutoff(coreSet, coreGene);
-         }, coreSet=coreSet);
-  
-  endTime <- Sys.time();
-  print("Done after: ");
-  print(endTime - startTime);
+           calculateCutoff(root, coreSet, coreGene);
+         },
+         root=root,
+         coreSet=coreSet);
 }
 
 #' The function compute the FAS annotations and calculate the cut off values for
 #' all core genes in the set
 #' 
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' 
 #' @return none
 #' @export
-processCoreSet <- function(coreSet) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+processCoreSet <- function(root, coreSet) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
   
-  createAllAnnotation(coreSet)
-  calculateAllCutoff(coreSet)
+  createAllAnnotation(root, coreSet)
+  calculateAllCutoff(root, coreSet)
 }

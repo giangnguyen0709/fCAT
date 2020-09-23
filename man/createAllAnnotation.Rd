@@ -4,10 +4,12 @@
 \alias{createAllAnnotation}
 \title{The function creates all FAS annotation for all core genes in the set}
 \usage{
-createAllAnnotation(coreSet)
+createAllAnnotation(root, coreSet)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 }
 \value{
 none

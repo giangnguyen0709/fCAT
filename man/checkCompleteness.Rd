@@ -7,6 +7,7 @@
 checkCompleteness(
   genome,
   fasAnno = NULL,
+  root,
   coreSet,
   extend = FALSE,
   redo = FALSE,
@@ -21,7 +22,9 @@ checkCompleteness(
 \item{fasAnno}{the path to the json file of the annotation of the genome. If
 equal NULL the function will create one}
 
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{extend}{the logical option to decide if the information of the
 interested will be appended to the original files and reused for the next

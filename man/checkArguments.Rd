@@ -7,6 +7,7 @@
 checkArguments(
   genome,
   fasAnno = NULL,
+  root,
   coreSet,
   extend = FALSE,
   redo = FALSE,
@@ -20,7 +21,9 @@ checkArguments(
 
 \item{fasAnno}{The path to the fas annotation file. Can be NULL}
 
-\item{coreSet}{The path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{The core set name}
 
 \item{extend}{A logical value}
 

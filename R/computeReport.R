@@ -2,17 +2,17 @@
 #' genome in the original phylogenetic profile
 #' 
 #' @param report the data frame that contains the report
-#' @param coreSet the path to the coreSet
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param scoreMode the mode determines the way to assess the founded ortholog
 #' 
 #' @return none
 #' @export
-printReport <- function(report, coreSet, scoreMode) {
-  splited <- strsplit(coreSet, "/", fixed=TRUE)[[1]];
-  setName <- splited[length(splited)];
+printReport <- function(report, root, coreSet, scoreMode) {
+  setName <- coreSet;
   
-  reportFile <- paste(coreSet, "phyloprofile", "/", as.character(scoreMode), "/", 
-                      setName, ".report", sep="");
+  reportFile <- paste(root, "phyloprofile", "/", coreSet, "/", 
+                      as.character(scoreMode), "/", setName, ".report", sep="");
   
   if (!file.exists(reportFile)) {
     write.table(report, 
@@ -36,28 +36,29 @@ printReport <- function(report, coreSet, scoreMode) {
 #' 
 #' @param genomeID the genomeID of the interested genome
 #' @param priorityList the priority list
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param scoreMode the mode determines the method to assess the founded 
 #' ortholog
 #' 
 #' @return none
 #' @export
-printPriority <- function(genomeID, priorityList, coreSet, scoreMode) {
+printPriority <- function(genomeID, priorityList, root, coreSet, scoreMode) {
   table <- data.frame(genomeID=c(genomeID),
                       priority_list=c(paste(priorityList, collapse=",")));
-  priorityFile <- paste(coreSet, "phyloprofile", "/", 
+  priorityFile <- paste(root, "phyloprofile", "/", coreSet, "/",
                         as.character(scoreMode), "/", "priority.list", sep="");
   
   if (!file.exists(priorityFile)) {
     write.table(table,
-                paste(coreSet, "phyloprofile", "/", 
+                paste(root, "phyloprofile", "/", coreSet, "/",
                       as.character(scoreMode), "/", "priority.list", sep=""),
                 row.names=FALSE,
                 quote=FALSE,
                 sep="\t");
   } else {
     write.table(table,
-                paste(coreSet, "phyloprofile", "/", 
+                paste(root, "phyloprofile", "/", coreSet, "/",
                       as.character(scoreMode), "/", "priority.list", sep=""),
                 row.names=FALSE,
                 col.names=FALSE,
@@ -84,13 +85,13 @@ printPriority <- function(genomeID, priorityList, coreSet, scoreMode) {
 #' 
 #' @return none
 #' @export
-computeReport <- function(genome, fasAnno, coreSet, extend=FALSE, 
+computeReport <- function(genome, fasAnno, root, coreSet, extend=FALSE, 
                           scoreMode, priorityList=NULL, 
                           cpu, computeOri=FALSE) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
-  modeFolder <- paste(coreSet, "phyloprofile", "/", 
+  modeFolder <- paste(root, "phyloprofile", "/", coreSet, "/",
                       as.character(scoreMode), sep="");
   if (!dir.exists(modeFolder)) {
     dir.create(modeFolder, recursive=TRUE);
@@ -101,33 +102,33 @@ computeReport <- function(genome, fasAnno, coreSet, extend=FALSE,
   genomeName <- strsplit(splited, ".", fixed=TRUE)[[1]][1];
   
   
-  placeSeed(genome, fasAnno, coreSet, computeOri);
+  placeSeed(genome, fasAnno, root, computeOri);
   
   if (is.null(priorityList)) {
-    query <- list.dirs(paste(coreSet, "genome_dir", sep=""), 
+    query <- list.dirs(paste(root, "check_dir", sep=""), 
                        recursive=FALSE, 
                        full.names=FALSE)[1];
-    refSet <- list.dirs(paste(coreSet, "blast_dir", sep=""),
+    refSet <- list.dirs(paste(root, "blast_dir", sep=""),
                         recursive=FALSE,
                         full.names=FALSE);
     priorityList <- autofindPriority(query, refSet);
   }
   
   if (extend == TRUE) {
-    printPriority(genomeName, priorityList, coreSet, scoreMode);
+    printPriority(genomeName, priorityList, root, coreSet, scoreMode);
   }
   
-  pp <- runHamstr(coreSet, extend, scoreMode, priorityList, cpu);
+  pp <- runHamstr(root, coreSet, extend, scoreMode, priorityList, cpu);
   
-  report <- reportSingle(pp, coreSet, scoreMode, priorityList);
+  report <- reportSingle(pp, root, coreSet, scoreMode, priorityList);
   if (extend == TRUE) {
     translated <- translateReport(genomeName, report, scoreMode);
-    printReport(translated, coreSet, scoreMode);
+    printReport(translated, root, coreSet, scoreMode);
   }
   
-  unlink(paste(coreSet, "genome_dir", "/", genomeName, sep=""), recursive=TRUE);
+  unlink(paste(root, "check_dir", "/", genomeName, sep=""), recursive=TRUE);
   if (computeOri == FALSE) {
-    file.remove(paste(coreSet, "weight_dir", "/", genomeName, ".json", sep=""));
+    file.remove(paste(root, "weight_dir", "/", genomeName, ".json", sep=""));
   }
   return(report);
 }

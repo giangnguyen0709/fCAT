@@ -5,12 +5,14 @@
 \title{Create the report of the completeness of the interested genome with the other
 genome in the original phylogenetic profile}
 \usage{
-printReport(report, coreSet, scoreMode)
+printReport(report, root, coreSet, scoreMode)
 }
 \arguments{
 \item{report}{the data frame that contains the report}
 
-\item{coreSet}{the path to the coreSet}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{scoreMode}{the mode determines the way to assess the founded ortholog}
 }

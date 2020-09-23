@@ -6,10 +6,12 @@
 process for a specific core gene in the set. The function will saved the
 values as the file text in the folder of the core gene}
 \usage{
-calculateCutoff(coreSet, coreGene)
+calculateCutoff(root, coreSet, coreGene)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{coreGene}{the ID of the core gene in the set}
 }

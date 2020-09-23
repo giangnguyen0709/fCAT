@@ -5,10 +5,12 @@
 \title{Determine if a core gene was ignored by the tool because of the unknown
 references species}
 \usage{
-filterIgnore(coreSet, coreGene, priorityList)
+filterIgnore(root, coreSet, coreGene, priorityList)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{coreGene}{the ID of the core gene}
 

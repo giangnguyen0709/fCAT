@@ -4,10 +4,10 @@
 \alias{handleError}
 \title{Remove the data of a failed check}
 \usage{
-handleError(coreSet)
+handleError(root)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
 }
 \value{
 none

@@ -5,7 +5,7 @@
 \title{The function move the fasta file and the annotation file of the interested
 genome in to the equivalent folder in the core set to perfome the assessment}
 \usage{
-placeSeed(genome, fasAnno = NULL, coreSet, process = FALSE)
+placeSeed(genome, fasAnno = NULL, root, process = FALSE)
 }
 \arguments{
 \item{genome}{the path to the fasta file of the genome}
@@ -13,7 +13,7 @@ placeSeed(genome, fasAnno = NULL, coreSet, process = FALSE)
 \item{fasAnno}{the path to the fas annotation file of the genome. If equal
 NULL, the function will compute the annotation}
 
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
 
 \item{process}{A logical option to determine if the function was used as a
 subfunction in the processCoreSet function}

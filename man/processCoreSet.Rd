@@ -5,10 +5,12 @@
 \title{The function compute the FAS annotations and calculate the cut off values for
 all core genes in the set}
 \usage{
-processCoreSet(coreSet)
+processCoreSet(root, coreSet)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 }
 \value{
 none

@@ -7,6 +7,7 @@
 computeReport(
   genome,
   fasAnno,
+  root,
   coreSet,
   extend = FALSE,
   scoreMode,

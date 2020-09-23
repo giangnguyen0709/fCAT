@@ -5,14 +5,16 @@
 \title{Add the priority list of the interested genome to the priority file. If the
 file doesnt exist it will be created}
 \usage{
-printPriority(genomeID, priorityList, coreSet, scoreMode)
+printPriority(genomeID, priorityList, root, coreSet, scoreMode)
 }
 \arguments{
 \item{genomeID}{the genomeID of the interested genome}
 
 \item{priorityList}{the priority list}
 
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{scoreMode}{the mode determines the method to assess the founded
 ortholog}

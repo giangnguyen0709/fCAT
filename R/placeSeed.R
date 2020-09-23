@@ -4,23 +4,26 @@
 #' @param genome the path to the fasta file of the genome
 #' @param fasAnno the path to the fas annotation file of the genome. If equal 
 #' NULL, the function will compute the annotation
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
 #' @param process A logical option to determine if the function was used as a 
 #' subfunction in the processCoreSet function
 #' 
 #' @return none
 #' @export
-placeSeed <- function(genome, fasAnno=NULL, coreSet, process=FALSE) {
-  if (!endsWith(coreSet,"/")) {
-    coreSet <- paste(coreSet, "/", sep = "");
+placeSeed <- function(genome, fasAnno=NULL, root, process=FALSE) {
+  if (!endsWith(root,"/")) {
+    root <- paste(root, "/", sep = "");
   }
   
   splited <- strsplit(genome, "/", fixed=TRUE)[[1]];
   splited <- strsplit(splited[length(splited)], ".", fixed=TRUE)[[1]];
   genomeName <- splited[1];
   
-  genomePath <- paste(coreSet, "genome_dir", sep = "");
-  weightPath <- paste(coreSet, "weight_dir", sep = "");
+  genomePath <- paste(root, "check_dir", sep = "");
+  if (!dir.exists(genomePath)) {
+    dir.create(genomePath);
+  }
+  weightPath <- paste(root, "weight_dir", sep = "");
   
   if (process == FALSE) {
     if (!is.null(fasAnno)) {
@@ -35,5 +38,6 @@ placeSeed <- function(genome, fasAnno=NULL, coreSet, process=FALSE) {
   }
   
   dir.create(paste(genomePath, "/", genomeName, sep=""));
-  file.copy(genome, paste(genomePath, "/", genomeName, "/", genomeName, ".fa", sep=""));
+  file.copy(genome, paste(genomePath, "/", genomeName, "/", 
+                          genomeName, ".fa", sep=""));
 }

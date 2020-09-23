@@ -2,7 +2,8 @@
 #' 
 #' @param fasF the forward fas score of the ortholog
 #' @param fasB the backward fas score of the ortholog
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param coreGene the ID of the core gene
 #' @param scoreMode the mode to determines the method to assess the ortholog
 #' @param f the frequent of the core genes in the pp
@@ -10,12 +11,12 @@
 #' 
 #' @return the status of the ortholog of the core gene
 #' @export
-assessStatus <- function(fasF, fasB, coreSet, coreGene, 
+assessStatus <- function(fasF, fasB, root, coreSet, coreGene, 
                          scoreMode, f, priorityList) {
   if (scoreMode == 1) {
     fas <- (fasF + fasB) / 2;
-    cutoff <- read.table(paste(coreSet, "core_orthologs", "/", coreGene, "/",
-                               "fas_dir", "/", "score_dir", "/", 
+    cutoff <- read.table(paste(root, "core_orthologs", "/", coreSet, "/", 
+                               coreGene, "/", "fas_dir", "/", "score_dir", "/", 
                                "1.cutoff", sep=""),
                          header=TRUE,
                          sep="\t");
@@ -24,11 +25,11 @@ assessStatus <- function(fasF, fasB, coreSet, coreGene,
   
   if (scoreMode == 2) {
     fas <- (fasF + fasB) / 2;
-    refSpec <- getSpec(paste(coreSet, "core_orthologs", "/", coreGene, "/", 
-                             coreGene, ".fa", sep=""),
+    refSpec <- getSpec(paste(root, "core_orthologs", "/", coreSet, "/", 
+                             coreGene, "/", coreGene, ".fa", sep=""),
                        priorityList);
-    cutoff <- read.table(paste(coreSet, "core_orthologs", "/", coreGene, "/",
-                               "fas_dir", "/", "score_dir", "/", 
+    cutoff <- read.table(paste(root, "core_orthologs", "/", coreSet, "/", 
+                               coreGene, "/", "fas_dir", "/", "score_dir", "/", 
                                "2.cutoff", sep=""),
                          header=TRUE,
                          sep="\t");
@@ -38,11 +39,11 @@ assessStatus <- function(fasF, fasB, coreSet, coreGene,
   
   if (scoreMode == 3) {
     fas <- (fasF + fasB) / 2;
-    refSpec <- getSpec(paste(coreSet, "core_orthologs", "/", coreGene, "/", 
-                             coreGene, ".fa", sep=""),
+    refSpec <- getSpec(paste(root, "core_orthologs", "/", coreSet, "/", 
+                             coreGene, "/", coreGene, ".fa", sep=""),
                        priorityList);
-    meanTable <- read.table(paste(coreSet, "core_orthologs", "/", coreGene, "/",
-                                  "fas_dir", "/", "score_dir", "/",
+    meanTable <- read.table(paste(coreSet, "core_orthologs", "/", coreSet, "/", 
+                                  coreGene, "/", "fas_dir", "/", "score_dir", "/",
                                   "1.cutoff", sep=""),
                             header=TRUE,
                             sep="\t");
@@ -72,19 +73,20 @@ assessStatus <- function(fasF, fasB, coreSet, coreGene,
 
 #' The function to calculate the cutoff value for the busco mode
 #' 
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param coreGene the ID of the core gene
 #' 
 #' @return a list that contains the mean length and the standard deviation of 
 #' the length of the core gene
 #' @export
-calculateBuscoCutoff <- function(coreSet, coreGene) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+calculateBuscoCutoff <- function(root, coreSet, coreGene) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
   
-  seedFasta <- readLines(paste(coreSet, "core_orthologs", "/", coreGene, "/",
-                               coreGene, ".fa", sep=""));
+  seedFasta <- readLines(paste(root, "core_orthologs", "/", coreSet, "/", 
+                               coreGene, "/", coreGene, ".fa", sep=""));
   i <- 1:length(seedFasta);
   seedFasta <- seedFasta[i[i %% 2 == 0]];
   lengthSet <- lapply(seedFasta, 
@@ -102,14 +104,15 @@ calculateBuscoCutoff <- function(coreSet, coreGene) {
 #' The function to assess the founded ortholog with the algorithm of busco
 #' 
 #' @param orthoLength the length of the ortholg sequence
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param coreGene the ID of the core gene
 #' @param f the frequent of the core gene in the pp
 #' 
 #' @return the status of the core gene
 #' @export
-assessBusco <- function(orthoLength, coreSet, coreGene, f) {
-  cutoff <- calculateBuscoCutoff(coreSet, coreGene);
+assessBusco <- function(orthoLength, root, coreSet, coreGene, f) {
+  cutoff <- calculateBuscoCutoff(root, coreSet, coreGene);
   if (cutoff[[2]] != 0) {
     score <- (orthoLength - cutoff[[1]]) / cutoff[[2]];
     if (score > 2 || score < (-2)) {
@@ -135,17 +138,18 @@ assessBusco <- function(orthoLength, coreSet, coreGene, f) {
 #' Determine if a core gene was ignored by the tool because of the unknown 
 #' references species
 #' 
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param coreGene the ID of the core gene
 #' @param priorityList the priority list to determine the references species
 #' 
 #' @return TRUE or FALSE
 #' @export
-filterIgnore <- function(coreSet, coreGene, priorityList) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+filterIgnore <- function(root, coreSet, coreGene, priorityList) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
-  fasta <- paste(coreSet, "core_orthologs", "/", coreGene, "/", 
+  fasta <- paste(root, "core_orthologs", "/", coreSet,"/", coreGene, "/", 
                  coreGene, ".fa", sep="");
   check <- getSpec(fasta, priorityList);
   if (is.null(check)) {
@@ -159,46 +163,49 @@ filterIgnore <- function(coreSet, coreGene, priorityList) {
 #' profile
 #' 
 #' @param pp the phylogenetic profile of the genome in data frame
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param scoreMode the mode to determined the method to assess the ortholog
 #' @param priorityList the list to determinde the references species
 #' 
 #' @return the report in data frame
 #' @export
-reportSingle <- function(pp, coreSet, scoreMode, priorityList) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
   
-  coreGeneList <- list.dirs(paste(coreSet, "core_orthologs", sep=""),
+  coreGeneList <- list.dirs(paste(root, "core_orthologs", "/", coreSet, sep=""),
                             recursive=FALSE,
                             full.names=FALSE);
   frequency <- table(pp$geneID);
   
   if (scoreMode != "busco") {
     status <- unlist(lapply(1:nrow(pp), 
-                            function(i, frequency, pp, scoreMode, 
+                            function(i, frequency, pp, scoreMode, root, 
                                      coreSet, priorityList) {
                               fasF <- pp[i, 4];
                               fasB <- pp[i, 5];
                               coreGene <- pp[i, 1];
                               f <- frequency[coreGene];
-                              s <- assessStatus(fasF, fasB, coreSet, coreGene, 
-                                                scoreMode, f, priorityList);
+                              s <- assessStatus(fasF, fasB, root, coreSet, 
+                                                coreGene, scoreMode, f, 
+                                                priorityList);
                               return(s);
                             },
                             frequency=frequency,
                             pp=pp,
                             scoreMode=scoreMode,
+                            root=root,
                             coreSet=coreSet,
                             priorityList=priorityList));
   } else {
     status <- lapply(1:nrow(pp), 
-                     function(i, frequency, pp, coreSet) {
+                     function(i, frequency, pp, root, coreSet) {
                        orthoLength <- pp[i, 4];
                        coreGene <- pp[i, 1];
                        f <- frequency[coreGene];
-                       info <- assessBusco(orthoLength, coreSet, 
+                       info <- assessBusco(orthoLength, root, coreSet, 
                                            coreGene, f);
                        r <- data.frame(status=c(info[[1]]),
                                        mean_length=c(info[[2]]),
@@ -207,14 +214,15 @@ reportSingle <- function(pp, coreSet, scoreMode, priorityList) {
                      },
                      frequency=frequency,
                      pp=pp,
+                     root=root,
                      coreSet=coreSet);
     status <- do.call("rbind", status);
   }
   missingGene <- setdiff(coreGeneList, unique(pp$geneID));
   if (length(missingGene) != 0) {
     missingStatus <- unlist(lapply(missingGene, 
-                                   function(gene, coreSet, priorityList) {
-                                     check <- filterIgnore(coreSet, gene, 
+                                   function(gene, root, coreSet, priorityList) {
+                                     check <- filterIgnore(root, coreSet, gene, 
                                                            priorityList);
                                      if (check == TRUE) {
                                        return("ignored");
@@ -222,6 +230,7 @@ reportSingle <- function(pp, coreSet, scoreMode, priorityList) {
                                        return("missing")
                                      }
                                    },
+                                   root=root,
                                    coreSet=coreSet,
                                    priorityList=priorityList));
     if (scoreMode != "busco") {

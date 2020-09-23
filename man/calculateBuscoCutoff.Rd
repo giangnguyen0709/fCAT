@@ -4,10 +4,12 @@
 \alias{calculateBuscoCutoff}
 \title{The function to calculate the cutoff value for the busco mode}
 \usage{
-calculateBuscoCutoff(coreSet, coreGene)
+calculateBuscoCutoff(root, coreSet, coreGene)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{coreGene}{the ID of the core gene}
 }

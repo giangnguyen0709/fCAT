@@ -4,12 +4,14 @@
 \alias{assessBusco}
 \title{The function to assess the founded ortholog with the algorithm of busco}
 \usage{
-assessBusco(orthoLength, coreSet, coreGene, f)
+assessBusco(orthoLength, root, coreSet, coreGene, f)
 }
 \arguments{
 \item{orthoLength}{the length of the ortholg sequence}
 
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{coreGene}{the ID of the core gene}
 

@@ -1,12 +1,12 @@
 #' Remove the data of a failed check
 #' 
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
 #' 
 #' @return none
 #' @export
-handleError <- function(coreSet) {
-  genomeDir <- paste(coreSet, "genome_dir", sep="");
-  weightDir <- paste(coreSet, "weight_dir", sep="");
+handleError <- function(root) {
+  genomeDir <- paste(root, "check_dir", sep="");
+  weightDir <- paste(root, "weight_dir", sep="");
   
   if (length(list.dirs(genomeDir, full.names=FALSE, recursive=FALSE)) != 0) {
     for (directory in list.dirs(genomeDir, full.names=FALSE, recursive=FALSE)) {
@@ -20,13 +20,14 @@ handleError <- function(coreSet) {
 
 #' Check if the core set was processed
 #' 
+#' @param root the path to the root folder
 #' @param coreSet the path to the core set
 #' 
 #' @return TRUE or FALSE
 #' @export
-checkPreProcess <- function(coreSet) {
+checkPreProcess <- function(root, coreSet) {
   check <- 0;
-  for (coreGene in list.dirs(paste(coreSet, "core_orthologs", sep=""),
+  for (coreGene in list.dirs(paste(root, "core_orthologs", "/", coreSet, sep=""),
                              recursive=FALSE, full.names=TRUE)) {
     fasDir <- paste(coreGene, "/", "fas_dir", sep="");
     if (!dir.exists(fasDir)) {
@@ -44,16 +45,16 @@ checkPreProcess <- function(coreSet) {
 #' Check if the interested genome exists already in the original pp
 #' 
 #' @param genomeName the ID of the genome
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param scoreMode the mode determines the method to assess the ortholog
 #' 
 #' @return TRUE or FALSE
 #' @export
-checkExist <- function(genomeName, coreSet, scoreMode) {
-  splited <- strsplit(coreSet, "/", fixed=TRUE)[[1]];
-  setName <- splited[length(splited)];
-  reportFile <- paste(coreSet, "phyloprofile", "/", as.character(scoreMode),
-                      "/", setName, ".report", sep="");
+checkExist <- function(genomeName, root, coreSet, scoreMode) {
+  setName <- coreSet;
+  reportFile <- paste(root, "phyloprofile", "/", coreSet, "/", 
+                      as.character(scoreMode), "/", setName, ".report", sep="");
   if (!file.exists(reportFile)) {
     return(FALSE);
   }
@@ -71,7 +72,8 @@ checkExist <- function(genomeName, coreSet, scoreMode) {
 #' 
 #' @param genome The path to the genome fasta file
 #' @param fasAnno The path to the fas annotation file. Can be NULL
-#' @param coreSet The path to the core set
+#' @param root the path to the root folder
+#' @param coreSet The core set name
 #' @param extend A logical value
 #' @param redo A logical value
 #' @param scoreMode The mode determines the method to assess the orthologs
@@ -81,10 +83,10 @@ checkExist <- function(genomeName, coreSet, scoreMode) {
 #' 
 #' @return A list that contains a logical value and the message to the error
 #' @export
-checkArguments <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
+checkArguments <- function(genome, fasAnno=NULL, root, coreSet, extend=FALSE,
                           redo=FALSE, scoreMode, priorityList=NULL, cpu=4) {
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
   check <- TRUE;
   status <- NULL;
@@ -102,9 +104,15 @@ checkArguments <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
     }
   }
   
-  if (!dir.exists(coreSet)) {
+  if (!dir.exists(root)) {
     check <- FALSE;
-    status <- "The core set doesn't exist";
+    status <- "The root folder doesn't exist";
+    return(list(check, status));
+  }
+  
+  if (!dir.exists(paste(root, "core_orthologs", "/", coreSet, sep=""))) {
+    check <- FALSE;
+    status <- "The core set does not exist";
     return(list(check, status));
   }
   
@@ -121,7 +129,7 @@ checkArguments <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
       status <- "priority list must be a list";
       return(list(check, status));
     }
-    coreTaxa <- list.dirs(paste(coreSet, "blast_dir", sep=""), 
+    coreTaxa <- list.dirs(paste(root, "blast_dir", sep=""), 
                       recursive=FALSE,
                       full.names=FALSE);
     for (taxa in priorityList) {
@@ -141,7 +149,8 @@ checkArguments <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
 #' @param genome The path to the fasta file of the genome
 #' @param fasAnno the path to the json file of the annotation of the genome. If 
 #' equal NULL the function will create one
-#' @param coreSet the path to the core set
+#' @param root the path to the root folder
+#' @param coreSet the core set name
 #' @param extend the logical option to decide if the information of the 
 #' interested will be appended to the original files and reused for the next 
 #' check
@@ -156,39 +165,38 @@ checkArguments <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
 #' interested genome and a table that contains the report of the interested 
 #' genome within the other taxa in the original pp
 #' @export
-checkCompleteness <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
+checkCompleteness <- function(genome, fasAnno=NULL, root, coreSet, extend=FALSE,
                               redo=FALSE, scoreMode, priorityList=NULL, cpu=4) {
   start <- Sys.time();
-  check <- checkArguments(genome, fasAnno, coreSet, extend, redo, scoreMode, 
+  check <- checkArguments(genome, fasAnno, root, coreSet, extend, redo, scoreMode, 
                           priorityList, cpu);
   if (check[[1]] == FALSE) {
     return(check[[2]]);
   }
   
-  if (!endsWith(coreSet, "/")) {
-    coreSet <- paste(coreSet, "/", sep="");
+  if (!endsWith(root, "/")) {
+    root <- paste(root, "/", sep="");
   }
-  if (!checkPreProcess(coreSet)) {
-    processCoreSet(coreSet);
+  if (!checkPreProcess(root, coreSet)) {
+    processCoreSet(root, coreSet);
   }
   
-  handleError(coreSet);
+  handleError(root);
   
-  splited <- strsplit(coreSet, "/", fixed=TRUE)[[1]];
-  setName <- splited[length(splited)];
+  setName <- coreSet;
   
   splited <- strsplit(genome, "/", fixed=TRUE)[[1]];
   splited <- splited[length(splited)];
   genomeName <- strsplit(splited, ".", fixed=TRUE)[[1]][1];
   
-  if (!checkExist(genomeName, coreSet, scoreMode)) {
+  if (!checkExist(genomeName, root, coreSet, scoreMode)) {
     compute <- TRUE;
   } else {
     if (redo == FALSE) {
       compute <- FALSE;
     } else {
       if (extend == TRUE) {
-        correctFiles(paste(coreSet, "phyloprofile", "/", 
+        correctFiles(paste(root, "phyloprofile", "/", coreSet, "/", 
                            as.character(scoreMode), sep=""), 
                      genomeName);
       }
@@ -200,8 +208,9 @@ checkCompleteness <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
     singleReport <- computeReport(genome, fasAnno, coreSet, extend, 
                                   scoreMode, priorityList, cpu);
     translated <- translateReport(genomeName, singleReport, scoreMode);
-    reportFile <- paste(coreSet, "phyloprofile", "/", as.character(scoreMode), 
-                       "/", setName, ".report", sep="");
+    reportFile <- paste(root, "phyloprofile", "/", coreSet, "/", 
+                        as.character(scoreMode), "/", setName, ".report", 
+                        sep="");
     if (file.exists(reportFile)) {
       allReport <- read.table(reportFile,
                               header=TRUE, 
@@ -212,14 +221,14 @@ checkCompleteness <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
       allReport <- translated;
     }
   } else {
-    phyloprofile <- read.table(paste(coreSet, "phyloprofile", "/", 
+    phyloprofile <- read.table(paste(root, "phyloprofile", "/", coreSet, "/", 
                                      as.character(scoreMode), "/", 
                                      setName, ".phyloprofile", sep=""),
                                header=TRUE,
                                sep="\t");
     phyloprofile <- extractPP(phyloprofile, genomeName);
     if (scoreMode == 2 || scoreMode == 3) {
-      priorityTable <- read.table(paste(coreSet, "phyloprofile", "/", 
+      priorityTable <- read.table(paste(root, "phyloprofile", "/", coreSet, "/", 
                                         as.character(scoreMode), "/", 
                                         "priority", ".list", sep=""),
                                   header=TRUE,
@@ -227,9 +236,11 @@ checkCompleteness <- function(genome, fasAnno=NULL, coreSet, extend=FALSE,
       priorityTable <- subset(priorityTable, genomeID == genomeName);
       priorityList <- strsplit(priorityTable[1,2], ",", fixed=TRUE)[[1]];
     }
-    singleReport <- reportSingle(phyloprofile, coreSet, scoreMode, priorityList);
-    reportFile <- paste(coreSet, "phyloprofile", "/", as.character(scoreMode), 
-                       "/", setName, ".report", sep="");
+    singleReport <- reportSingle(phyloprofile, root, coreSet, scoreMode, 
+                                 priorityList);
+    reportFile <- paste(root, "phyloprofile", "/", coreSet, "/", 
+                        as.character(scoreMode), "/", setName, ".report", 
+                        sep="");
     allReport <- read.table(reportFile,
                             header=TRUE, 
                             sep="\t");

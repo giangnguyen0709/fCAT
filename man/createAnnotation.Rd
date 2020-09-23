@@ -4,10 +4,12 @@
 \alias{createAnnotation}
 \title{The function creates FAS annotation for a core gene in the core set}
 \usage{
-createAnnotation(coreSet, coreGene)
+createAnnotation(root, coreSet, coreGene)
 }
 \arguments{
-\item{coreSet}{The path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{The core set name}
 
 \item{coreGene}{The name of the core gene in the set}
 }

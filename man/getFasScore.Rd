@@ -5,7 +5,7 @@
 \title{The function calculate the FAS score in the scoreMode 1 and update the scores
 into phylogenetic profile of a specific core gene}
 \usage{
-getFasScore(coreSet, coreGene, extend = FALSE, refSpec)
+getFasScore(root, coreSet, coreGene, extend = FALSE, refSpec)
 }
 \arguments{
 \item{coreSet}{the path to the core set}

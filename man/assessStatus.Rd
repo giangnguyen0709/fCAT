@@ -4,14 +4,16 @@
 \alias{assessStatus}
 \title{The function to assess the status of a founded ortholog}
 \usage{
-assessStatus(fasF, fasB, coreSet, coreGene, scoreMode, f, priorityList)
+assessStatus(fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList)
 }
 \arguments{
 \item{fasF}{the forward fas score of the ortholog}
 
 \item{fasB}{the backward fas score of the ortholog}
 
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{coreGene}{the ID of the core gene}
 

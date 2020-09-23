@@ -7,10 +7,12 @@ ortholog to perfome the assessment. After HaMStR founded an ortholog the
 function will be called to update the length of the ortholog in phylogenetic
 profile}
 \usage{
-updateLength(coreSet, coreGene)
+updateLength(root, coreSet, coreGene)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{coreGene}{the ID of the core gene}
 }

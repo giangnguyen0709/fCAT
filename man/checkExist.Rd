@@ -4,12 +4,14 @@
 \alias{checkExist}
 \title{Check if the interested genome exists already in the original pp}
 \usage{
-checkExist(genomeName, coreSet, scoreMode)
+checkExist(genomeName, root, coreSet, scoreMode)
 }
 \arguments{
 \item{genomeName}{the ID of the genome}
 
-\item{coreSet}{the path to the core set}
+\item{root}{the path to the root folder}
+
+\item{coreSet}{the core set name}
 
 \item{scoreMode}{the mode determines the method to assess the ortholog}
 }

@@ -5,10 +5,12 @@
 \title{This function takes a path to a core set and run HaMStR to search ortholog on
 the genome in the folder genome_dir of core set}
 \usage{
-runHamstr(coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu)
+runHamstr(root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu)
 }
 \arguments{
-\item{coreSet}{the path to the core set}
+\item{root}{Path to the root folder}
+
+\item{coreSet}{The core set name}
 
 \item{extend}{if extend=TRUE the phylogenetic profile of the genome will be
 appended to the original phylogenetic profile}
