@@ -112,18 +112,20 @@ extendOriginal <- function(root, coreSet, scoreMode, fileList) {
               row.names=FALSE,
               sep="\t",
               quote=FALSE);
-  write.table(domain0, 
-              paste(oriPath, "_reverse.domains", sep=""),
-              row.names=FALSE,
-              col.names=FALSE,
-              sep="\t",
-              quote=FALSE);
-  write.table(domain1, 
-              paste(oriPath, "_forward.domains", sep=""),
-              row.names=FALSE,
-              col.names=FALSE,
-              sep="\t",
-              quote=FALSE);
+  if (scoreMode != "busco") {
+    write.table(domain0, 
+                paste(oriPath, "_reverse.domains", sep=""),
+                row.names=FALSE,
+                col.names=FALSE,
+                sep="\t",
+                quote=FALSE);
+    write.table(domain1, 
+                paste(oriPath, "_forward.domains", sep=""),
+                row.names=FALSE,
+                col.names=FALSE,
+                sep="\t",
+                quote=FALSE);
+  }
   writeLines(exFasta, paste(oriPath, ".extended.fa", sep=""));
 }
 
