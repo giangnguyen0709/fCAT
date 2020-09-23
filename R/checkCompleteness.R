@@ -205,7 +205,7 @@ checkCompleteness <- function(genome, fasAnno=NULL, root, coreSet, extend=FALSE,
   }
   
   if (compute == TRUE) {
-    singleReport <- computeReport(genome, fasAnno, coreSet, extend, 
+    singleReport <- computeReport(genome, fasAnno, root, coreSet, extend, 
                                   scoreMode, priorityList, cpu);
     translated <- translateReport(genomeName, singleReport, scoreMode);
     reportFile <- paste(root, "phyloprofile", "/", coreSet, "/", 
