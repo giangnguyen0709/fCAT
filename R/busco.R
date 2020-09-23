@@ -16,18 +16,26 @@ updateLength <- function(root, coreSet, coreGene) {
   exFasta <- readLines(paste(root, "phyloprofile", "/", coreSet, "/", "busco", 
                              "/", "hamstrout", "/", coreGene, "/",
                              coreGene, ".extended.fa", sep=""));
-  i <- 1:(length(exFasta));
-  i <- i[i %% 2 == 0]
-  orthoLength <- unlist(lapply(i, 
-                               function(i, exFasta) {
-                                 return(nchar(exFasta[i]))
-                               },
-                               exFasta=exFasta));
+  
   pp <- read.table(paste(root, "phyloprofile", "/", coreSet, "/", "busco", "/", 
                          "hamstrout", "/", coreGene, "/",
                          coreGene, ".phyloprofile", sep=""),
                    header=TRUE,
                    sep="\t");
+  i <- (1:nrow(pp));
+  
+  orthoLength <- unlist(lapply(i, 
+                               function(i, exFasta, pp) {
+                                 orthoID <- pp$orthoID[i];
+                                 for (j in 1:length(exFasta)) {
+                                   if (exFasta[j] == paste(">", 
+                                                           orthoID, sep="")) {
+                                     return(nchar(exFasta[j + 1]));
+                                   }
+                                 }
+                               },
+                               exFasta=exFasta,
+                               pp=pp));
   pp <- cbind(pp, length=orthoLength);
   write.table(pp,
               paste(root, "phyloprofile", "/", coreSet, "/", "busco", "/", 
