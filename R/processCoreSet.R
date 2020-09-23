@@ -192,7 +192,7 @@ calculateAllCutoff <- function(root, coreSet) {
     root <- paste(root, "/", sep="");
   }
   
-  coreOrtho <- paste(root, "core_orthologs", coreSet, "/", sep="");
+  coreOrtho <- paste(root, "core_orthologs", "/", coreSet, "/", sep="");
   lapply(list.dirs(coreOrtho, full.names=FALSE, recursive=FALSE), 
          function(coreGene, root, coreSet, mode){
            print(paste("Starting calculate cutoff for", coreGene, sep=" "));
