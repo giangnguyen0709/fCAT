@@ -6,16 +6,18 @@
 #' @param root the path to the root folder
 #' @param coreSet the core set name
 #' @param coreGene the ID of the core gene
+#' @param genomeName the genome ID of the interested genome
 #' 
 #' @return none
 #' @export
-updateLength <- function(root, coreSet, coreGene) {
+updateLength <- function(root, coreSet, coreGene, genomeName) {
   if (!endsWith(root, "/")) {
     root <- paste(root, "/", sep="");
   }
   exFasta <- readLines(paste(root, "phyloprofile", "/", coreSet, "/", "busco", 
                              "/", "hamstrout", "/", coreGene, "/",
                              coreGene, ".extended.fa", sep=""));
+  exFasta <- extractFasta(exFasta, genomeName)
   i <- 1:(length(exFasta));
   i <- i[i %% 2 == 0]
   orthoLength <- unlist(lapply(i, 
