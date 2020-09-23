@@ -42,7 +42,7 @@ assessStatus <- function(fasF, fasB, root, coreSet, coreGene,
     refSpec <- getSpec(paste(root, "core_orthologs", "/", coreSet, "/", 
                              coreGene, "/", coreGene, ".fa", sep=""),
                        priorityList);
-    meanTable <- read.table(paste(coreSet, "core_orthologs", "/", coreSet, "/", 
+    meanTable <- read.table(paste(root, "core_orthologs", "/", coreSet, "/", 
                                   coreGene, "/", "fas_dir", "/", "score_dir", "/",
                                   "1.cutoff", sep=""),
                             header=TRUE,
