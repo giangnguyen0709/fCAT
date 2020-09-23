@@ -200,7 +200,7 @@ runHamstr <- function(root, coreSet, extend=FALSE,
                         return(pp);
                       }
                       if (scoreMode == "busco") {
-                        updateLength(root, coreSet, coreGene, genomeName);
+                        updateLength(root, coreSet, coreGene);
                         pp <- read.table(paste(root, "phyloprofile",
                                                "/", coreSet,
                                                "/", as.character(scoreMode), 
@@ -222,8 +222,7 @@ runHamstr <- function(root, coreSet, extend=FALSE,
                   coreSet=coreSet,
                   scoreMode=scoreMode,
                   extend=extend,
-                  priorityList,
-                  genomeName=genomeName);
+                  priorityList);
   pp <- do.call("rbind", ppSet);
   pp <- extractPP(pp, genomeName);
   if (extend == TRUE) {
