@@ -179,7 +179,6 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
                             recursive=FALSE,
                             full.names=FALSE);
   frequency <- table(pp$geneID);
-  
   if (scoreMode != "busco") {
     status <- unlist(lapply(1:nrow(pp), 
                             function(i, frequency, pp, scoreMode, root, 
@@ -187,7 +186,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
                               fasF <- pp[i, 4];
                               fasB <- pp[i, 5];
                               coreGene <- pp[i, 1];
-                              f <- frequency[coreGene];
+                              f <- frequency[as.character(coreGene)];
                               s <- assessStatus(fasF, fasB, root, coreSet, 
                                                 coreGene, scoreMode, f, 
                                                 priorityList);
@@ -204,7 +203,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
                      function(i, frequency, pp, root, coreSet) {
                        orthoLength <- pp[i, 4];
                        coreGene <- pp[i, 1];
-                       f <- frequency[coreGene];
+                       f <- frequency[as.character(coreGene)];
                        info <- assessBusco(orthoLength, root, coreSet, 
                                            coreGene, f);
                        r <- data.frame(status=c(info[[1]]),
