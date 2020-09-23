@@ -3,17 +3,12 @@
 #' the output files in the folder in a single files
 #' 
 #' @param directory path to the folder, that contains the output files
-#' @param out the output folder, that will contain the concanated files
-#' @param name the concanated files will be saved under this name
 #' @param genomeName the genomeID of the genome, that need to be extracted
 #' @return none
 #' @export
-concanateFiles <- function(directory, out, name, genomeName) {
+concanateFiles <- function(directory, genomeName) {
   if (!endsWith(directory, "/")) {
     directory <- paste(directory, "/", sep="");
-  }
-  if (!endsWith(out, "/")) {
-    out <- paste(out, "/", sep="")
   }
   
   exFasta <- NULL;
@@ -64,25 +59,72 @@ concanateFiles <- function(directory, out, name, genomeName) {
   domain0 <- extractDomains(domain0, genomeName);
   domain1 <- extractDomains(domain1, genomeName);
   exFasta <- extractFasta(exFasta, genomeName);
-  jobname <- paste(out, name, sep="")
+  return(list(pp, exFasta, domain0, domain1));
+}
+
+#' Function to append the phylogenetic profile of the interested genome into the
+#' original pp
+#' 
+#' @param root the path to the root folder
+#' @param coreSet the core set name
+#' @param scoreMode the mode to assess the founded ortholog
+#' @param fileList a list that contains the information of the phylogenetic 
+#' profile of the interested genome
+#' @export
+extendOriginal <- function(root, coreSet, scoreMode, fileList) {
+  oriPath <- paste(root, "phyloprofile", "/", coreSet, "/", scoreMode, "/",
+                   coreSet, sep="");
+  if (file.exists(paste(oriPath, ".phyloprofile", sep=""))) {
+    pp <- read.table(paste(oriPath, ".phyloprofile", sep=""),
+                     header=TRUE,
+                     sep="\t");
+    pp <- rbind(pp, fileList[[1]]);
+  } else {
+    pp <- fileList[[1]];
+  }
+  
+  if (file.exists(paste(oriPath, ".extended.fa", sep=""))) {
+    exFasta <- readLines(paste(oriPath, ".extended.fa", sep=""));
+    exFasta <- c(exFasta, fileList[[2]])
+  } else {
+    exFasta <- fileList[[2]];
+  }
+  
+  if (file.exists(paste(oriPath, "_reverse.domains", sep=""))) {
+    domain0 <- read.table(paste(oriPath, "_reverse.domains", sep=""),
+                          sep="\t",
+                          comment.char="");
+    domain0 <- rbind(domain0, fileList[[3]]);
+  } else {
+    domain0 <- fileList[[3]];
+  }
+  
+  if (file.exists(paste(oriPath, "_forward.domains", sep=""))) {
+    domain1 <- read.table(paste(oriPath, "_forward.domains", sep=""),
+                          sep="\t",
+                          comment.char="");
+    domain1 <- rbind(domain1, fileList[[4]]);
+  } else {
+    domain1 <- fileList[[4]];
+  }
   write.table(pp, 
-              paste(jobname, ".phyloprofile", sep=""),
+              paste(oriPath, ".phyloprofile", sep=""),
               row.names=FALSE,
               sep="\t",
               quote=FALSE);
   write.table(domain0, 
-              paste(jobname, "_reverse.domains", sep=""),
+              paste(oriPath, "_reverse.domains", sep=""),
               row.names=FALSE,
               col.names=FALSE,
               sep="\t",
               quote=FALSE);
   write.table(domain1, 
-              paste(jobname, "_forward.domains", sep=""),
+              paste(oriPath, "_forward.domains", sep=""),
               row.names=FALSE,
               col.names=FALSE,
               sep="\t",
               quote=FALSE);
-  writeLines(exFasta, paste(jobname, ".extended.fa", sep=""));
+  writeLines(exFasta, paste(oriPath, ".extended.fa", sep=""));
 }
 
 #' This function takes a path to a core set and run HaMStR to search ortholog on
@@ -228,7 +270,8 @@ runHamstr <- function(root, coreSet, extend=FALSE,
   if (extend == TRUE) {
     outFolder <- paste(root, "phyloprofile", "/", coreSet, "/", 
                        as.character(scoreMode), sep="")
-    concanateFiles(outFolder, outFolder, setName, genomeName);
+    fileList <- concanateFiles(outFolder, genomeName);
+    extendOriginal(root, coreSet, scoreMode, fileList);
   }
   unlink(outPath, recursive=TRUE);
   return(pp);
