@@ -82,7 +82,7 @@ correctPP <- function(PPFile, genome) {
   genomeName <- unlist(lapply(PP$orthoID, checkGenome));
   PP <- cbind(PP, genomeName);
   PP <- subset(PP, genomeName != genome);
-  PP <- PP[c("geneID", "ncbiID", "orthoID", "FAS_F", "FAS_B")];
+  PP <- PP[1:(ncol(PP)-1)];
   write.table(PP, PPFile, row.names=FALSE, quote=FALSE, sep="\t");
 }
 
