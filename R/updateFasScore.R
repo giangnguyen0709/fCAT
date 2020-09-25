@@ -38,12 +38,18 @@ getFasScore<- function(root, coreSet, coreGene, extend=FALSE, refSpec) {
     root <- paste(root, "/", sep="");
   }
   setName <- coreSet;
+  queryGenome <- list.dirs(paste(root, "genome_dir", sep=""),
+                           recursive=FALSE,
+                           full.names=FALSE)[[1]];
   
   seedFasta <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/", 
                           coreGene, ".fa", sep="");
   queryFasta <- paste(root, "phyloprofile", "/", coreSet, "/", "1", "/", 
                       "hamstrout", "/", coreGene, "/", coreGene, 
                       ".extended.fa", sep="");
+  lines <- readLines(queryFasta);
+  newLines <- extractFasta(queryFasta, qqueryGenome);
+  writeLines(newLines, queryFasta);
   
   seedFastaLines <- readLines(seedFasta);
   i <- 1:length(seedFastaLines);
@@ -60,24 +66,35 @@ getFasScore<- function(root, coreSet, coreGene, extend=FALSE, refSpec) {
       break;
     }
   }
-  
   annoDir <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/", 
                    "fas_dir", "/", "annotation_dir", sep="");
   
   queryPP <- read.table(paste(root, "phyloprofile", "/", coreSet, "/", "1", "/",
                               "hamstrout", "/", coreGene, "/", coreGene, 
                               ".phyloprofile", sep=""), header=TRUE, sep="\t");
+  queryPP <- extractPP(queryPP, queryGenome);
+  FAS_F <- list();
+  FAS_B <- list();
+  
+  for (orthoID in queryPP$orthoID) {
+    FAS_F[as.character(orthoID)] <- 0;
+    FAS_B[as.character(orthoID)] <- 0;
+  }
+  
   orthologNumber <- length(queryPP$orthoID);
-  queryGenome <- strsplit(as.character(queryPP$orthoID[1]), "|", fixed=TRUE)[[1]][2];
+  queryGenome <- strsplit(as.character(queryPP$orthoID[1]), 
+                          "|", fixed=TRUE)[[1]][2];
+  
   
   jobname <- paste(root, "phyloprofile", "/", coreSet, "/", "1", "/", 
                    "hamstrout", "/", coreGene, sep="");
   
   R.utils::createLink(paste(annoDir, "/", queryGenome, ".json", sep=""),
-                      paste(root, "weight_dir", "/", queryGenome, ".json", sep=""),
+                      paste(root, "weight_dir", "/", queryGenome, ".json", 
+                            sep=""),
                       overwrite=TRUE);
   #calculate FAS scores 
-  fasScores <- lapply(seedSet,
+  preScores <- lapply(seedSet,
                       function(seedID, seedFasta, queryFasta, annoDir, root,
                                coreSet, setName, refID, jobname, 
                                queryGenome, coreGene) {
@@ -92,14 +109,17 @@ getFasScore<- function(root, coreSet, coreGene, extend=FALSE, refSpec) {
                                          "-s", seedFasta,
                                          "-o", jobname,
                                          "-a", annoDir,
-                                         "--seed_id", paste('"', seedID, '"', sep=""),
+                                         "--seed_id", paste('"', seedID, '"',
+                                                            sep=""),
                                          "-t", 10,
                                          "--ref_2", paste(root, "genome_dir", 
                                                           "/", splited[2], "/", 
-                                                          splited[2], ".fa", sep=""),
+                                                          splited[2], ".fa",
+                                                          sep=""),
                                          "-r", paste(root, "genome_dir",
                                                      "/", queryGenome, "/", 
-                                                     queryGenome, ".fa", sep=""),
+                                                     queryGenome, ".fa", 
+                                                     sep=""),
                                          "--bidirectional",
                                          "-n", coreGene,
                                          "--raw");
@@ -109,15 +129,7 @@ getFasScore<- function(root, coreSet, coreGene, extend=FALSE, refSpec) {
                         lines <- system(command, intern=TRUE);
                         file.remove(paste(annoDir, "/", splited[2], 
                                            ".json", sep=""));
-                        scores <- c();
-                        for (line in lines) {
-                          if (startsWith(line, "#")) {
-                            splited <- strsplit(line, "\t", fixed=TRUE)[[1]];
-                            score <- splited[length(splited)];
-                            scores <- c(scores, score)
-                          }
-                        }
-                        return(as.numeric(scores));
+                        return(lines);
                       },
                       queryFasta=queryFasta,
                       seedFasta=seedFasta,
@@ -136,28 +148,34 @@ getFasScore<- function(root, coreSet, coreGene, extend=FALSE, refSpec) {
     try(extendDomain(paste(jobname, "/", coreGene, "_reverse.domains", sep="")),
         silent=TRUE);
   }
-  i <- 1:orthologNumber;
-  FAS_F <- lapply(i, 
-                  function(i, fasScores) {
-                    scores <- lapply(fasScores, 
-                                     function(scoreSet, i) {
-                                       return(scoreSet[i]);
-                                     }, i=i);
-                    return(mean(as.numeric(scores)));
-                  },
-                  fasScores=fasScores);
-  i <- (orthologNumber + 1):(orthologNumber * 2);
-  FAS_B <- lapply(i, 
-                  function(i, fasScores) {
-                    scores <- lapply(fasScores, 
-                                     function(scoreSet, i) {
-                                       return(scoreSet[i]);
-                                     }, i=i);
-                    return(mean(as.numeric(scores)));
-                  },
-                  fasScores=fasScores);
+  
+  bcount <- 0;
+  fcount <- 0;
+  for (lines in preScores) {
+    count <- 1;
+    for (line in lines) {
+      if (startsWith(line, "#")) {
+        splited <- strsplit(line, "\t", fixed=TRUE)[[1]];
+        if (count > orthologNumber) {
+          q <- strsplit(splited[2], "|", fixed=TRUE)[[1]][2];
+          s <- strsplit(splited[3], "|", fixed=TRUE)[[1]][2];
+          score <- as.numeric(splited[length(splited)]);
+          FAS_B[[q]] <- FAS_B[[q]] + score;
+          bcount <- bcount + 1;
+        } else {
+          q <- strsplit(splited[3], "|", fixed=TRUE)[[1]][2];
+          s <- strsplit(splited[2], "|", fixed=TRUE)[[1]][2];
+          score <- as.numeric(splited[length(splited)]);
+          FAS_F[[q]] <- FAS_F[[q]] + score;
+          fcount <- fcount + 1;
+        }
+      }
+    }
+  }
   FAS_F <- unlist(FAS_F);
   FAS_B <- unlist(FAS_B);
+  FAS_F <- FAS_F / fcount;
+  FAS_B <- FAS_B / bcount;
   pp <- cbind(queryPP, FAS_F, FAS_B);
   write.table(pp, paste(root, "phyloprofile", "/", coreSet, "/", "1", "/", 
                     "hamstrout", "/", coreGene, "/", coreGene,
