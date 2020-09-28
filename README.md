@@ -33,10 +33,10 @@ Using *devtools* to install fCAT
 
 ## Usage
 
-`fCAT::checkCompleteness(genome, fasAnno, root, coreSet, scoreMode, extend, redo, priorityList, cpu)`
-* genome: The path to the genome fasta file
-* fasAnno: The path to the FAS annotation file. If the user did not provide the tool will compute it.
-* root: The path to the root folder
+`checkCompleteness <- function(genome, fasAnno, root, coreSet, extend, redo, scoreMode, priorityList, cpu)`
+* genome: The path to the fasta file of the interested genome
+* fasAnno: The path to the FAS annotation file of the interested genome. If the user did not provide the tool will compute it.
+* root: The path to the root folder, which contains core_orthologs, weight_dir, genome_dir, and blast_dir folder. Please sees DCC 
 * coreSet: The name of the core set
 * scoreMode: The mode to determines the method to assess the founded ortholog
 * extend: A logical value to decide if the phylogenetic profile of the interested genome will be appended into the original phylogenetic profile
