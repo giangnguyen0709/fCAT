@@ -6,7 +6,9 @@
 #' @return none
 #' @export
 extendDomain <- function(domain) {
-    domainFile <- read.table(paste(domain, sep = ""), sep = "\t", comment.char = "")
+    domainFile <- read.table(
+        paste(domain, sep = ""), sep = "\t", comment.char = ""
+    )
     compareSet <- unique(as.vector(domainFile$V1))
     domainSet <- lapply(compareSet,
         function(compare, domainFile) {
@@ -56,7 +58,7 @@ getFasScore <- function(root, coreSet, coreGene, extend = FALSE, refSpec) {
         sep = ""
     )
     lines <- readLines(queryFasta)
-    newLines <- extractFasta(queryFasta, qqueryGenome)
+    newLines <- extractFasta(queryFasta, queryGenome)
     writeLines(newLines, queryFasta)
 
     seedFastaLines <- readLines(seedFasta)
@@ -76,16 +78,21 @@ getFasScore <- function(root, coreSet, coreGene, extend = FALSE, refSpec) {
             break
         }
     }
-    annoDir <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+    annoDir <- paste(
+        root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
         "fas_dir", "/", "annotation_dir",
         sep = ""
     )
 
-    queryPP <- read.table(paste(root, "phyloprofile", "/", coreSet, "/", "1", "/",
-        "hamstrout", "/", coreGene, "/", coreGene,
-        ".phyloprofile",
-        sep = ""
-    ), header = TRUE, sep = "\t")
+    queryPP <- read.table(
+        paste(
+            root, "phyloprofile", "/", coreSet, "/", "1", "/", 
+            "hamstrout", "/", coreGene, "/", coreGene, ".phyloprofile",
+            sep = ""
+        ), 
+        header = TRUE, 
+        sep = "\t"
+    )
     queryPP <- extractPP(queryPP, queryGenome)
     FAS_F <- list()
     FAS_B <- list()
@@ -96,38 +103,35 @@ getFasScore <- function(root, coreSet, coreGene, extend = FALSE, refSpec) {
     }
 
     orthologNumber <- length(queryPP$orthoID)
-    queryGenome <- strsplit(as.character(queryPP$orthoID[1]),
+    queryGenome <- strsplit(
+        as.character(queryPP$orthoID[1]),
         "|",
         fixed = TRUE
     )[[1]][2]
 
 
-    jobname <- paste(root, "phyloprofile", "/", coreSet, "/", "1", "/",
+    jobname <- paste(
+        root, "phyloprofile", "/", coreSet, "/", "1", "/",
         "hamstrout", "/", coreGene,
         sep = ""
     )
 
-    R.utils::createLink(paste(annoDir, "/", queryGenome, ".json", sep = ""),
-        paste(root, "weight_dir", "/", queryGenome, ".json",
-            sep = ""
-        ),
+    R.utils::createLink(
+        paste(annoDir, "/", queryGenome, ".json", sep = ""),
+        paste(root, "weight_dir", "/", queryGenome, ".json", sep = ""),
         overwrite = TRUE
     )
     # calculate FAS scores
     preScores <- lapply(seedSet,
-        function(seedID, seedFasta, queryFasta, annoDir, root,
-                 coreSet, setName, refID, jobname,
-                 queryGenome, coreGene) {
+        function(
+            seedID, seedFasta, queryFasta, annoDir, root, coreSet, setName, 
+            refID, jobname, queryGenome, coreGene
+        ) {
             splited <- strsplit(seedID, "|", fixed = TRUE)[[1]]
-            R.utils::createLink(paste(annoDir, "/", splited[2],
-                ".json",
-                sep = ""
-            ),
-            paste(root, "weight_dir", "/",
-                splited[2], ".json",
-                sep = ""
-            ),
-            overwrite = TRUE
+            R.utils::createLink(
+                paste(annoDir, "/", splited[2], ".json", sep = ""),
+                paste(root, "weight_dir", "/", splited[2], ".json", sep = ""),
+                overwrite = TRUE
             )
             command <- paste(
                 "calcFAS",
@@ -135,9 +139,7 @@ getFasScore <- function(root, coreSet, coreGene, extend = FALSE, refSpec) {
                 "-s", seedFasta,
                 "-o", jobname,
                 "-a", annoDir,
-                "--seed_id", paste('"', seedID, '"',
-                    sep = ""
-                ),
+                "--seed_id", paste('"', seedID, '"', sep = ""),
                 "-t", 10,
                 "--ref_2", paste(root, "genome_dir",
                     "/", splited[2], "/",
@@ -176,12 +178,14 @@ getFasScore <- function(root, coreSet, coreGene, extend = FALSE, refSpec) {
     )
     file.remove(paste(annoDir, "/", queryGenome, ".json", sep = ""))
     if (extend == TRUE) {
-        try(extendDomain(paste(jobname, "/", coreGene, "_forward.domains", sep = "")),
+        try(extendDomain(
+            paste(jobname, "/", coreGene, "_forward.domains", sep = "")),
             silent = TRUE
         )
-        try(extendDomain(paste(jobname, "/", coreGene, "_reverse.domains", sep = "")),
+        try(extendDomain(
+            paste(jobname, "/", coreGene, "_reverse.domains", sep = "")),
             silent = TRUE
-        )
+        ) 
     }
 
     bcount <- 0
@@ -212,14 +216,14 @@ getFasScore <- function(root, coreSet, coreGene, extend = FALSE, refSpec) {
     FAS_F <- FAS_F / fcount
     FAS_B <- FAS_B / bcount
     pp <- cbind(queryPP, FAS_F, FAS_B)
-    write.table(pp, paste(root, "phyloprofile", "/", coreSet, "/", "1", "/",
-        "hamstrout", "/", coreGene, "/", coreGene,
-        ".phyloprofile",
-        sep = ""
-    ),
-    sep = "\t",
-    row.names = FALSE,
-    quote = FALSE
+    write.table(pp, 
+                paste(
+                    root, "phyloprofile", "/", coreSet, "/", "1", "/", 
+                    "hamstrout", "/", coreGene, "/", coreGene, ".phyloprofile",
+                    sep = ""),
+                sep = "\t",
+                row.names = FALSE,
+                quote = FALSE
     )
 }
 
@@ -240,15 +244,19 @@ updateFasScore <- function(root, coreSet, coreGene, extend, refSpec) {
         coreSet <- paste(coreSet, "/", sep = "")
     }
     getFasScore(root, coreSet, coreGene, extend, refSpec)
-    file.remove(paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
-        "fas_dir", "/", "annotation_dir", "/", coreGene,
-        "extended.json",
-        sep = ""
-    ))
-    unlink(paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
-        "fas_dir", "/", "annotation_dir", "/", "tmp",
-        sep = ""
-    ),
-    recursive = TRUE
+    file.remove(
+        paste(
+            root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+            "fas_dir", "/", "annotation_dir", "/", coreGene, "extended.json",
+            sep = ""
+        )
+    )
+    unlink(
+        paste(
+            root, "core_orthologs", "/", coreSet, "/", coreGene, "/", "fas_dir", 
+            "/", "annotation_dir", "/", "tmp", 
+            sep = ""
+        ),
+        recursive = TRUE
     )
 }

@@ -13,40 +13,43 @@ updateLength <- function(root, coreSet, coreGene) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
-    exFasta <- readLines(paste(root, "phyloprofile", "/", coreSet, "/", "busco",
-        "/", "hamstrout", "/", coreGene, "/",
-        coreGene, ".extended.fa",
-        sep = ""
-    ))
+    exFasta <- readLines(
+        paste(
+            root, "phyloprofile", "/", coreSet, "/", "busco", "/", "hamstrout", 
+            "/", coreGene, "/", coreGene, ".extended.fa", sep = ""
+        )
+    )
 
-    pp <- read.table(paste(root, "phyloprofile", "/", coreSet, "/", "busco", "/",
-        "hamstrout", "/", coreGene, "/",
-        coreGene, ".phyloprofile",
-        sep = ""
-    ),
-    header = TRUE,
-    sep = "\t"
+    pp <- read.table(
+        paste(
+            root, "phyloprofile", "/", coreSet, "/", "busco", "/",
+            "hamstrout", "/", coreGene, "/", coreGene, ".phyloprofile",
+            sep = ""
+        ),
+        header = TRUE,
+        sep = "\t"
     )
     i <- (1:nrow(pp))
 
-    orthoLength <- unlist(lapply(i,
-        function(i, exFasta, pp) {
-            orthoID <- pp$orthoID[i]
-            for (j in 1:length(exFasta)) {
-                if (exFasta[j] == paste(">",
-                    orthoID,
-                    sep = ""
-                )) {
-                    return(nchar(exFasta[j + 1]))
+    orthoLength <- unlist(
+        lapply(
+            i, 
+            function(i, exFasta, pp) {
+                orthoID <- pp$orthoID[i]
+                for (j in 1:length(exFasta)) {
+                    if (exFasta[j] == paste(">", orthoID, sep = "")) {
+                        return(nchar(exFasta[j + 1]))
+                    }
                 }
-            }
-        },
-        exFasta = exFasta,
-        pp = pp
+            },
+            exFasta = exFasta,
+            pp = pp
     ))
     pp <- cbind(pp, length = orthoLength)
-    write.table(pp,
-        paste(root, "phyloprofile", "/", coreSet, "/", "busco", "/",
+    write.table(
+        pp,
+        paste(
+            root, "phyloprofile", "/", coreSet, "/", "busco", "/",
             "hamstrout", "/", coreGene, "/",
             coreGene, ".phyloprofile",
             sep = ""

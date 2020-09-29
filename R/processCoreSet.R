@@ -10,7 +10,8 @@ createAnnotation <- function(root, coreSet, coreGene) {
         root <- paste(root, "/", sep = "")
     }
 
-    annoFolder <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+    annoFolder <- paste(
+        root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
         "fas_dir", "/", "annotation_dir",
         sep = ""
     )
@@ -75,7 +76,8 @@ calculateCutoff <- function(root, coreSet, coreGene) {
         coreGene, "/", coreGene, ".fa",
         sep = ""
     )
-    annoDir <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+    annoDir <- paste(
+        root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
         "fas_dir", "/", "annotation_dir",
         sep = ""
     )
@@ -112,14 +114,15 @@ calculateCutoff <- function(root, coreSet, coreGene) {
     scoreSet <- lapply(querySet,
         function(queryID, fastaFile, annoDir, root, coreSet) {
             refSpec <- strsplit(queryID, "|", fixed = TRUE)[[1]][2]
-            refProteome <- paste(root, "weight_dir", "/",
+            refProteome <- paste(
+                root, "weight_dir", "/",
                 refSpec, ".json",
                 sep = ""
             )
-            R.utils::createLink(paste(annoDir, "/", refSpec, ".json",
-                sep = ""
-            ), refProteome,
-            overwrite = TRUE
+            R.utils::createLink(
+                paste(annoDir, "/", refSpec, ".json", sep = ""), 
+                refProteome,
+                overwrite = TRUE
             )
             command <- paste(
                 "calcFAS",
@@ -185,7 +188,8 @@ calculateCutoff <- function(root, coreSet, coreGene) {
     lcl <- 1 / (features$interval$limits[[2]])
     ucl <- 1 / (features$interval$limits[[1]])
 
-    scoreFolder <- paste(root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+    scoreFolder <- paste(
+        root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
         "fas_dir", "/", "score_dir",
         sep = ""
     )
@@ -198,7 +202,9 @@ calculateCutoff <- function(root, coreSet, coreGene) {
     cutoffTable <- data.frame(label, value)
 
     cutoffFile <- paste(scoreFolder, "/", "1", ".cutoff", sep = "")
-    write.table(cutoffTable, cutoffFile, sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(
+        cutoffTable, cutoffFile, sep = "\t", quote = FALSE, row.names = FALSE
+    )
 
     # Table 2:
     cutoffTable <- data.frame(
@@ -206,7 +212,9 @@ calculateCutoff <- function(root, coreSet, coreGene) {
         cutoff = genomeScores
     )
     cutoffFile <- paste(scoreFolder, "/", "2", ".cutoff", sep = "")
-    write.table(cutoffTable, cutoffFile, sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(
+        cutoffTable, cutoffFile, sep = "\t", quote = FALSE, row.names = FALSE
+    )
 }
 
 #' The function calculate cut off values for all core genes in the set

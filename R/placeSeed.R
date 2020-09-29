@@ -27,12 +27,14 @@ placeSeed <- function(genome, fasAnno = NULL, root, process = FALSE) {
 
     if (process == FALSE) {
         if (!is.null(fasAnno)) {
-            R.utils::createLink(paste(weightPath, "/", genomeName, ".json", sep = ""),
+            R.utils::createLink(
+                paste(weightPath, "/", genomeName, ".json", sep = ""),
                 fasAnno,
                 overwrite = TRUE
             )
         } else {
-            command <- paste("annoFAS", "-i", genome, "-o", weightPath,
+            command <- paste(
+                "annoFAS", "-i", genome, "-o", weightPath,
                 "-n", genomeName,
                 sep = " "
             )
@@ -41,8 +43,8 @@ placeSeed <- function(genome, fasAnno = NULL, root, process = FALSE) {
     }
 
     dir.create(paste(genomePath, "/", genomeName, sep = ""))
-    file.copy(genome, paste(genomePath, "/", genomeName, "/",
-        genomeName, ".fa",
-        sep = ""
-    ))
+    file.copy(
+        genome, 
+        paste(genomePath, "/", genomeName, "/", genomeName, ".fa", sep = "")
+    )
 }

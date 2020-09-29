@@ -11,17 +11,19 @@
 #'
 #' @return the status of the ortholog of the core gene
 #' @export
-assessStatus <- function(fasF, fasB, root, coreSet, coreGene,
-                         scoreMode, f, priorityList) {
+assessStatus <- function(
+    fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList
+) {
     if (scoreMode == 1) {
         fas <- (fasF + fasB) / 2
-        cutoff <- read.table(paste(root, "core_orthologs", "/", coreSet, "/",
-            coreGene, "/", "fas_dir", "/", "score_dir", "/",
-            "1.cutoff",
-            sep = ""
-        ),
-        header = TRUE,
-        sep = "\t"
+        cutoff <- read.table(
+            paste(
+                root, "core_orthologs", "/", coreSet, "/",
+                coreGene, "/", "fas_dir", "/", "score_dir", "/",
+                "1.cutoff", sep = ""
+            ),
+            header = TRUE,
+            sep = "\t"
         )
         cutoffValue <- cutoff[1, 2]
     }
@@ -35,13 +37,13 @@ assessStatus <- function(fasF, fasB, root, coreSet, coreGene,
             ),
             priorityList
         )
-        cutoff <- read.table(paste(root, "core_orthologs", "/", coreSet, "/",
-            coreGene, "/", "fas_dir", "/", "score_dir", "/",
-            "2.cutoff",
-            sep = ""
-        ),
-        header = TRUE,
-        sep = "\t"
+        cutoff <- read.table(
+            paste(
+                root, "core_orthologs", "/", coreSet, "/", coreGene, "/", 
+                "fas_dir", "/", "score_dir", "/", "2.cutoff", sep = ""
+            ),
+            header = TRUE,
+            sep = "\t"
         )
         subCutoff <- subset(cutoff, taxa == refSpec)
         cutoffValue <- subCutoff[1, 2]
@@ -56,13 +58,13 @@ assessStatus <- function(fasF, fasB, root, coreSet, coreGene,
             ),
             priorityList
         )
-        meanTable <- read.table(paste(root, "core_orthologs", "/", coreSet, "/",
-            coreGene, "/", "fas_dir", "/", "score_dir", "/",
-            "1.cutoff",
-            sep = ""
-        ),
-        header = TRUE,
-        sep = "\t"
+        meanTable <- read.table(
+            paste(
+                root, "core_orthologs", "/", coreSet, "/", coreGene, "/", 
+                "fas_dir", "/", "score_dir", "/", "1.cutoff", sep = ""
+            ),
+            header = TRUE,
+            sep = "\t"
         )
         lcl <- meanTable[2, 2]
         ucl <- meanTable[3, 2]
@@ -102,10 +104,13 @@ calculateBuscoCutoff <- function(root, coreSet, coreGene) {
         root <- paste(root, "/", sep = "")
     }
 
-    seedFasta <- readLines(paste(root, "core_orthologs", "/", coreSet, "/",
-        coreGene, "/", coreGene, ".fa",
-        sep = ""
-    ))
+    seedFasta <- readLines(
+        paste(
+            root, "core_orthologs", "/", coreSet, "/",
+            coreGene, "/", coreGene, ".fa",
+            sep = ""
+        )
+    )
     i <- 1:length(seedFasta)
     seedFasta <- seedFasta[i[i %% 2 == 0]]
     lengthSet <- lapply(
@@ -198,15 +203,15 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
         root <- paste(root, "/", sep = "")
     }
 
-    coreGeneList <- list.dirs(paste(root, "core_orthologs", "/", coreSet, sep = ""),
+    coreGeneList <- list.dirs(
+        paste(root, "core_orthologs", "/", coreSet, sep = ""),
         recursive = FALSE,
         full.names = FALSE
     )
     frequency <- table(pp$geneID)
     if (scoreMode != "busco") {
         status <- unlist(lapply(1:nrow(pp),
-            function(i, frequency, pp, scoreMode, root,
-                     coreSet, priorityList) {
+            function(i, frequency, pp, scoreMode, root, coreSet, priorityList) {
                 fasF <- pp[i, 4]
                 fasB <- pp[i, 5]
                 coreGene <- pp[i, 1]
@@ -253,10 +258,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
     if (length(missingGene) != 0) {
         missingStatus <- unlist(lapply(missingGene,
             function(gene, root, coreSet, priorityList) {
-                check <- filterIgnore(
-                    root, coreSet, gene,
-                    priorityList
-                )
+                check <- filterIgnore( root, coreSet, gene, priorityList)
                 if (check == TRUE) {
                     return("ignored")
                 } else {
@@ -326,8 +328,8 @@ translateReport <- function(genomeID, report, scoreMode) {
             ignored <- 0
         }
 
-        duplicated <- length(unique(report$geneID)) - complete -
-            fragmented - missing - ignored
+        duplicated <- length(unique(report$geneID)) - 
+            complete - fragmented - missing - ignored
         translated <- data.frame(
             genomeID = c(genomeID),
             complete = c(complete),

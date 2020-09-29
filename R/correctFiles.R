@@ -11,10 +11,7 @@
 #' @return none
 #' @export
 correctPriority <- function(priorityFile, genome) {
-    priorityTable <- read.table(priorityFile,
-        header = TRUE,
-        sep = "\t"
-    )
+    priorityTable <- read.table(priorityFile, header = TRUE, sep = "\t")
     priorityTable <- subset(priorityTable, genomeID != genome)
     write.table(priorityTable,
         priorityFile,
@@ -66,7 +63,9 @@ correctDomains <- function(domainsFile, genome) {
     domains <- cbind(domains, genomeName)
     domains <- subset(domains, genomeName != genome)
     domains <- domains[c("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8")]
-    write.table(domains, domainsFile, quote = FALSE, sep = "\t", row.names = FALSE, col.names = FALSE)
+    write.table(
+        domains, domainsFile, quote = FALSE, sep = "\t", 
+        row.names = FALSE, col.names = FALSE)
 }
 
 #' remove the lines of a specific genome from a phylogenetic profile

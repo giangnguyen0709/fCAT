@@ -16,8 +16,12 @@ computeOriginal <- function(root, coreSet, scoreMode, cpu = 4) {
     genomeDir <- paste(root, "genome_dir", sep = "")
     weightDir <- paste(root, "weight_dir", sep = "")
 
-    for (genome in list.dirs(genomeDir, full.names = FALSE, recursive = FALSE)) {
-        genomeFasta <- paste(genomeDir, "/", genome, "/", genome, ".fa", sep = "")
+    for (
+        genome in list.dirs(genomeDir, full.names = FALSE, recursive = FALSE)
+    ) {
+        genomeFasta <- paste(
+            genomeDir, "/", genome, "/", genome, ".fa", sep = ""
+        )
         fasAnno <- paste(weightDir, "/", genome, ".json", sep = "")
         computeReport(genomeFasta, fasAnno, root, coreSet,
             TRUE, scoreMode,

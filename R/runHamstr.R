@@ -26,7 +26,8 @@ concanateFiles <- function(directory, genomeName) {
         }
 
         if (endsWith(file, "_reverse.domains")) {
-            domain <- try(read.table(file, sep = "\t", comment.char = ""), silent = TRUE)
+            domain <- try(
+                read.table(file, sep = "\t", comment.char = ""), silent = TRUE)
             if (!inherits(domain, "try-error")) {
                 if (is.null(domain0)) {
                     domain0 <- domain
@@ -37,12 +38,15 @@ concanateFiles <- function(directory, genomeName) {
         }
 
         if (endsWith(file, "_forward.domains")) {
-            domain <- try(read.table(file, sep = "\t", comment.char = ""), silent = TRUE)
+            domain <- try(
+                read.table(file, sep = "\t", comment.char = ""), silent = TRUE)
             if (!inherits(domain, "try-error")) {
                 if (is.null(domain1)) {
                     domain1 <- read.table(file, sep = "\t", comment.char = "")
                 } else {
-                    domain1 <- rbind(domain1, read.table(file, sep = "\t", comment.char = ""))
+                    domain1 <- rbind(
+                        domain1, read.table(
+                            file, sep = "\t", comment.char = ""))
                 }
             }
         }
@@ -150,8 +154,8 @@ extendOriginal <- function(root, coreSet, scoreMode, fileList) {
 #'
 #' @return phylogenetic profile of the genome
 #' @export
-runHamstr <- function(root, coreSet, extend = FALSE,
-                      scoreMode, priorityList = NULL, cpu) {
+runHamstr <- function(
+    root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
@@ -188,9 +192,9 @@ runHamstr <- function(root, coreSet, extend = FALSE,
     ),
     recursive = FALSE, full.names = FALSE
     ),
-    function(coreGene, hmmPath, blastPath, searchPath,
-             outPath, weightPath, root, coreSet, scoreMode,
-             extend, priorityList, genomeName) {
+    function(
+        coreGene, hmmPath, blastPath, searchPath, outPath, weightPath, root,
+        coreSet, scoreMode, extend, priorityList) {
         refSpec <- getSpec(
             paste(hmmPath, "/", coreGene,
                 "/", coreGene, ".fa",
@@ -302,7 +306,7 @@ runHamstr <- function(root, coreSet, extend = FALSE,
     coreSet = coreSet,
     scoreMode = scoreMode,
     extend = extend,
-    priorityList
+    priorityList = priorityList
     )
     pp <- do.call("rbind", ppSet)
     pp <- extractPP(pp, genomeName)

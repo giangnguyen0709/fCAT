@@ -99,9 +99,8 @@ printPriority <- function(genomeID, priorityList, root, coreSet, scoreMode) {
 #'
 #' @return none
 #' @export
-computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE,
-                          scoreMode, priorityList = NULL,
-                          cpu, computeOri = FALSE) {
+computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE, 
+    scoreMode, priorityList = NULL, cpu, computeOri = FALSE) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
@@ -144,9 +143,14 @@ computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE,
         printReport(translated, root, coreSet, scoreMode)
     }
 
-    unlink(paste(root, "check_dir", "/", genomeName, sep = ""), recursive = TRUE)
+    unlink(
+        paste(root, "check_dir", "/", genomeName, sep = ""), 
+        recursive = TRUE
+    )
     if (computeOri == FALSE) {
-        file.remove(paste(root, "weight_dir", "/", genomeName, ".json", sep = ""))
+        file.remove(
+            paste(root, "weight_dir", "/", genomeName, ".json", sep = "")
+        )
     }
     return(report)
 }
