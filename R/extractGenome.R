@@ -22,10 +22,12 @@ extractPP <- function(pp, genome) {
 #'
 #' @param domains the domains table
 #' @param genome name of the genome in the file, that should be remove
+#' @param reverse if reverse = TRUE then the function will not extract the 
+#' lines of the genome but remove it
 #'
 #' @return the new domains table
 #' @export
-extractDomains <- function(domains, genome) {
+extractDomains <- function(domains, genome, reverse = FALSE) {
     checkGenome <- function(compareLine) {
         characterized <- as.character(compareLine)
         splited <- strsplit(characterized, "#", fixed = TRUE)[[1]]
@@ -36,7 +38,11 @@ extractDomains <- function(domains, genome) {
 
     genomeName <- unlist(lapply(domains$V1, checkGenome))
     domains <- cbind(domains, genomeName)
-    domains <- subset(domains, genomeName == genome)
+    if (reverse == TRUE) {
+        domains <- subset(domains, genomeName != genome)
+    } else {
+        domains <- subset(domains, genomeName == genome)
+    }
     domains <- domains[c("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8")]
     return(domains)
 }

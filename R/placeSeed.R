@@ -10,7 +10,9 @@
 #'
 #' @return none
 #' @export
-placeSeed <- function(genome, fasAnno = NULL, root, process = FALSE) {
+placeSeed <- function(
+    genome, fasAnno = NULL, root, process = FALSE, weightDir=NULL
+) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
@@ -19,11 +21,16 @@ placeSeed <- function(genome, fasAnno = NULL, root, process = FALSE) {
     splited <- strsplit(splited[length(splited)], ".", fixed = TRUE)[[1]]
     genomeName <- splited[1]
 
-    genomePath <- paste(root, "check_dir", sep = "")
+    genomePath <- paste(root, "query_taxon", sep = "")
     if (!dir.exists(genomePath)) {
         dir.create(genomePath)
     }
-    weightPath <- paste(root, "weight_dir", sep = "")
+    
+    if (!is.null(weightDir)) {
+        weightPath <- weightDir;
+    } else {
+        weightPath <- paste(root, "weight_dir", sep = "")
+    }
 
     if (process == FALSE) {
         if (!is.null(fasAnno)) {
