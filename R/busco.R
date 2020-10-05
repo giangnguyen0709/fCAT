@@ -50,7 +50,7 @@ updateLength <- function(pp, exFasta) {
 #' @export
 runFdogBusco <- function(
     root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu,
-    blastDir = NULL, weightDir = NULL, outDir = NULL, cleanup = FALSE
+    blastDir = NULL, weightDir = NULL, cleanup = FALSE, reFdog, fdogDir, ppDir
 ) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
@@ -75,10 +75,17 @@ runFdogBusco <- function(
     } else {
         weightPath <- paste(root, "weight_dir", sep = "")
     }
-    outPath <- paste(
-        root, "hamstrout", "/", genomeName,
-        sep = ""
-    )
+    if (!is.null(fdogDir)) {
+        if (!endsWith(fdogDir, "/")) {
+            fdogDir <- paste(fdogDir, "/", sep = "")
+        }
+        outPath <- paste(fdogDir, genomeName, sep = "")
+    } else {
+        outPath <- paste(
+            root, "fdogout", "/", genomeName,
+            sep = ""
+        )
+    }
     ### - check Data - ###
     command <- paste(
         "checkData1s",
@@ -90,6 +97,17 @@ runFdogBusco <- function(
     if (!dir.exists(outPath)) {
         dir.create(outPath, recursive = TRUE)
     }
+    
+    if (reFdog == TRUE) {
+        for (
+            folder in list.dirs(
+                outPath, recursive = TRUE, full.names = TRUE
+            )
+        ) {
+            unlink(folder, recursive = TRUE)
+        }
+    }
+    
     outputSet <- lapply(
         list.dirs(
             paste(root, "core_orthologs", "/", coreSet, sep = ""),
@@ -230,16 +248,15 @@ runFdogBusco <- function(
     
     pp <- updateLength(pp, exFasta)
 
-    if (!is.null(outDir)) {
-        if (!endsWith(outDir, "/")) {
-            outDir <- paste(outDir, "/", sep = "");
-        }
+    if (!is.null(ppDir)) {
+        outDir <- ppDir
     } else {
         outDir <- paste(
             root, "output", "/",  setName, "/", as.character(scoreMode), "/", 
             sep = ""
         )
     }
+    
     if (!dir.exists(outDir)) {
         dir.create(outDir, recursive = TRUE)
     }

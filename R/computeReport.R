@@ -8,19 +8,17 @@
 #'
 #' @return none
 #' @export
-printReport <- function(report, root, coreSet, scoreMode, outDir=NULL) {
+printReport <- function(report, root, coreSet, scoreMode, ppDir) {
     setName <- coreSet
 
-    if (!is.null(outDir)) {
-        if (!endsWith(outDir, "/")) {
-            outDir <- paste(outDir, "/", sep = "")
-        }
-        reportFile <- paste(outDir, setName, ".report")
+    if (!is.null(ppDir)) {
+        reportFile <- paste(ppDir, setName, ".report", sep = "")
+    } else {
+        reportFile <- paste(root, "output", "/", coreSet, "/",
+                            as.character(scoreMode), "/", setName, ".report",
+                            sep = ""
+        )
     }
-    reportFile <- paste(root, "output", "/", coreSet, "/",
-        as.character(scoreMode), "/", setName, ".report",
-        sep = ""
-    )
 
     if (!file.exists(reportFile)) {
         write.table(report,
@@ -54,17 +52,15 @@ printReport <- function(report, root, coreSet, scoreMode, outDir=NULL) {
 #' @return none
 #' @export
 printPriority <- function(
-    genomeID, priorityList, root, coreSet, scoreMode, outDir = NULL
+    genomeID, priorityList, root, coreSet, scoreMode, ppDir
 ) {
     table <- data.frame(
         genomeID = c(genomeID),
         priority_list = c(paste(priorityList, collapse = ","))
     )
-    if (!is.null(outDir)) {
-        if (!endsWith(outDir, "/")) {
-            outDir <- paste(outDir, "/", sep = "")
-        }
-        priorityFile <- paste(outDir, coreSet, ".prioritylist", sep = "")
+    
+    if (!is.null(ppDir)) {
+        priorityFile <- paste(ppDir, coreSet, ".prioritylist", sep = "")
     } else {
         priorityFile <- paste(root, "output", "/", coreSet, "/",
                               as.character(scoreMode), "/", coreSet, 
@@ -112,18 +108,18 @@ printPriority <- function(
 #' @export
 computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE, 
     scoreMode, priorityList = NULL, cpu, computeOri = FALSE,
-    blastDir = NULL, weightDir = NULL, outDir = NULL, cleanup = FALSE) {
+    blastDir = NULL, weightDir = NULL, cleanup = FALSE, reFdog, fdogDir, ppDir) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
-    if (!is.null(outDir)) {
-        modeFolder <- outDir
-    } else {
-        modeFolder <- paste(root, "output", "/", coreSet, "/",
-                            as.character(scoreMode),
-                            sep = ""
-        )
+    
+    if (!is.null(ppDir)) {
+        modeFolder <- ppDir
     }
+    modeFolder <- paste(root, "output", "/", coreSet, "/",
+                        as.character(scoreMode),
+                        sep = ""
+    )
     
     if (!dir.exists(modeFolder)) {
         dir.create(modeFolder, recursive = TRUE)
@@ -149,23 +145,23 @@ computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE,
     }
 
     if (extend == TRUE) {
-        printPriority(genomeName, priorityList, root, coreSet, scoreMode)
+        printPriority(genomeName, priorityList, root, coreSet, scoreMode, ppDir)
     }
 
     if (scoreMode == "busco") {
         pp <- runFdogBusco(
             root, coreSet, extend, scoreMode, priorityList, cpu,
-            blastDir, weightDir, outDir, cleanup)
+            blastDir, weightDir, cleanup, reFdog, fdogDir, ppDir)
     } else {
         pp <- runFdog(
             root, coreSet, extend, scoreMode, priorityList, cpu,
-            blastDir, weightDir, outDir, cleanup)
+            blastDir, weightDir, cleanup, reFdog, fdogDir, ppDir)
     }
 
     report <- reportSingle(pp, root, coreSet, scoreMode, priorityList)
     if (extend == TRUE) {
         translated <- translateReport(genomeName, report, scoreMode)
-        printReport(translated, root, coreSet, scoreMode)
+        printReport(translated, root, coreSet, scoreMode, ppDir)
     }
 
     unlink(
@@ -174,7 +170,7 @@ computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE,
     )
     if (computeOri == FALSE) {
         if (!is.null(weightDir)) {
-            if (!endsWith(weightDir)) {
+            if (!endsWith(weightDir, "/")) {
                 weightDir <- paste(weightDir, "/", sep = "")
             }
             file.remove(

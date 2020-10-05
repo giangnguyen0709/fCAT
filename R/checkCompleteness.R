@@ -5,7 +5,7 @@
 #' @return none
 #' @export
 handleError <- function(root, weightDir = NULL) {
-    genomeDir <- paste(root, "query_taxong", sep = "")
+    genomeDir <- paste(root, "query_taxon", sep = "")
     if (is.null(weightDir)) {
         weightDir <- paste(root, "weight_dir", sep = "")
     } else {
@@ -77,14 +77,13 @@ checkPreProcess <- function(root, coreSet) {
 #'
 #' @return TRUE or FALSE
 #' @export
-checkExist <- function(genomeName, root, coreSet, scoreMode, outDir = NULL) {
+checkExist <- function(genomeName, root, coreSet, scoreMode, ppDir) {
     setName <- coreSet
     
-    if (!is.null(outDir)) {
-        if (endsWith(outDir, "/")) {
-            outDir <- paste(outDir, "/", sep = "")
-        }
-        reportFile <- paste(outDir, setName, ".report", sep = "")
+    if (!is.null(ppDir)) {
+        reportFile <- paste(
+            ppDir, setName, ".report", sep = ""
+        )
     } else {
         reportFile <- paste(
             root, "output", "/", coreSet, "/",
@@ -123,9 +122,10 @@ checkExist <- function(genomeName, root, coreSet, scoreMode, outDir = NULL) {
 #' @return A list that contains a logical value and the message to the error
 #' @export
 checkArguments <- function(
-    genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE, 
+    genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE, 
     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, weightDir = NULL,
-    outDir = NULL, cleanup = FALSE
+    outDir = NULL, cleanup = FALSE, reFdog = FALSE, fdogDir = NULL,
+    ppDir = NULL
 ) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
@@ -150,13 +150,76 @@ checkArguments <- function(
         check <- FALSE
         status <- "The root folder doesn't exist"
         return(list(check, status))
+    } else {
+        if (is.null(blastDir)) {
+            blastDir <- paste(root, "blast_dir", sep = "")
+            if (!dir.exists(blastDir)) {
+                check <- FALSE
+                status <- "blast_dir is missing"
+                return(list(check, status))
+            }
+            
+            if (length(list.dirs(blastDir)) == 0) {
+                check <- FALSE
+                status <- "blast_dir is empty"
+                return(list(check, status))
+            }
+        } else {
+            if (!dir.exists(blastDir)) {
+                status <- "blast_dir is missing"
+                check <- FALSE
+                return(list(check, status))
+            }
+            
+            if (length(list.dirs(blastDir)) == 0) {
+                check <- FALSE
+                status <- "blast_dir is empty"
+                return(list(check, status))
+            }
+        }
+        
+        if (is.null(weightDir)) {
+            weightDir <- paste(root, "weight_dir", sep = "")
+            if (!dir.exists(weightDir)) {
+                check <- FALSE
+                status <- "weight_dir is missing"
+                return(list(check, status))
+            }
+            
+            if (length(list.dirs(weightDir)) == 0) {
+                check <- FALSE
+                status <- "blast_dir is empty"
+                return(list(check, status))
+            }
+        } else {
+            if (!dir.exists(weightDir)) {
+                check <- FALSE
+                status <- "weight_dir is missing"
+                return(list(check, status))
+            }
+            
+            if (length(list.dirs(weightDir)) == 0) {
+                check <- FALSE
+                status <- "blast_dir is empty"
+                return(list(check, status))
+            }
+        }
+        
+        orthoDir <- paste(root, "core_orthologs", "/", coreSet, sep = "")
+        if (!dir.exists(orthoDir)) {
+            check <- FALSE
+            status <- "The core set does not exist"
+            return(list(check, status))
+        } else {
+            if (length(list.dirs(orthoDir)) == 0) {
+                check <- FALSE
+                status <- "The core_orthologs is empty"
+                return(list(check, status))
+            }
+        }
+        
     }
 
-    if (!dir.exists(paste(root, "core_orthologs", "/", coreSet, sep = ""))) {
-        check <- FALSE
-        status <- "The core set does not exist"
-        return(list(check, status))
-    }
 
     modeList <- list(1, 2, 3, "busco")
     if (!(scoreMode %in% modeList)) {
@@ -171,7 +234,8 @@ checkArguments <- function(
             status <- "priority list must be a list"
             return(list(check, status))
         }
-        coreTaxa <- list.dirs(paste(root, "blast_dir", sep = ""),
+        coreTaxa <- list.dirs(
+            paste(root, "blast_dir", sep = ""),
             recursive = FALSE,
             full.names = FALSE
         )
@@ -210,21 +274,22 @@ checkArguments <- function(
 #' genome within the other taxa in the original pp
 #' @export
 checkCompleteness <- function(
-    genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE, 
+    genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE, 
     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, weightDir = NULL,
-    outDir = NULL, cleanup = FALSE
+    outDir = NULL, cleanup = FALSE, reFdog = FALSE, fdogDir = NULL,
+    ppDir = NULL
 ) {
     start <- Sys.time()
     check <- checkArguments(
-        genome, fasAnno, root, coreSet, extend, redo, scoreMode,
+        genome, fasAnno, coreDir, coreSet, extend, redo, scoreMode,
         priorityList, cpu, blastDir, weightDir, outDir, cleanup
     )
     if (check[[1]] == FALSE) {
         return(check[[2]])
     }
 
-    if (!endsWith(root, "/")) {
-        root <- paste(root, "/", sep = "")
+    if (!endsWith(coreDir, "/")) {
+        coreDir <- paste(coreDir, "/", sep = "")
     }
     if (!is.null(weightDir)) {
         if (!endsWith(weightDir, "/")) {
@@ -241,12 +306,22 @@ checkCompleteness <- function(
             outDir <- paste(outDir, "/", sep = "")
         }
     }
+    if (!is.null(fdogDir)) {
+        if (!endsWith(fdogDir, "/")) {
+            fdogDir <- paste(fdogDir, "/", sep = "")
+        }
+    }
+    if (!is.null(ppDir)) {
+        if (!endsWith(ppDir, "/")) {
+            ppDir <- paste(ppDir, "/", sep = "")
+        }
+    }
     
-    if (!checkPreProcess(root, coreSet)) {
-        processCoreSet(root, coreSet)
+    if (!checkPreProcess(coreDir, coreSet)) {
+        processCoreSet(coreDir, coreSet)
     }
 
-    handleError(root)
+    handleError(coreDir)
 
     setName <- coreSet
 
@@ -254,22 +329,19 @@ checkCompleteness <- function(
     splited <- splited[length(splited)]
     genomeName <- strsplit(splited, ".", fixed = TRUE)[[1]][1]
 
-    if (!checkExist(genomeName, root, coreSet, scoreMode, outDir)) {
+    if (!checkExist(genomeName, coreDir, coreSet, scoreMode, ppDir)) {
         compute <- TRUE
     } else {
         if (redo == FALSE) {
             compute <- FALSE
         } else {
             if (extend == TRUE) {
-                if (!is.null(outDir)) {
-                    correctFiles(
-                        outDir,
-                        genomeName
-                    )   
+                if (!is.null(ppDir)) {
+                    correctFiles(ppDir, genomeName)
                 } else {
                     correctFiles(
                         paste(
-                            root, "output", "/", coreSet, "/",
+                            coreDir, "output", "/", coreSet, "/",
                             as.character(scoreMode),
                             sep = ""
                         ),
@@ -283,16 +355,17 @@ checkCompleteness <- function(
 
     if (compute == TRUE) {
         singleReport <- computeReport(
-            genome, fasAnno, root, coreSet, extend,
+            genome, fasAnno, coreDir, coreSet, extend,
             scoreMode, priorityList, cpu, FALSE, 
-            blastDir, weightDir, outDir, cleanup
+            blastDir, weightDir, cleanup, reFdog, fdogDir, ppDir
         )
         translated <- translateReport(genomeName, singleReport, scoreMode)
-        if (!is.null(outDir)) {
-            reportFile <- paste(outDir, setName, ".report", sep = "")
+        
+        if (!is.null(ppDir)) {
+            reportFile <- paste(ppDir, setName, ".report", sep = "")
         } else {
             reportFile <- paste(
-                root, "output", "/", coreSet, "/",
+                coreDir, "output", "/", coreSet, "/",
                 as.character(scoreMode), "/", setName, ".report",
                 sep = ""
             )
@@ -309,11 +382,11 @@ checkCompleteness <- function(
             allReport <- translated
         }
     } else {
-        if (!is.null(outDir)) {
-            ppPath <- paste(outDir, setName, ".phyloprofile", sep = "")
+        if (!is.null(ppDir)) {
+            ppPath <- paste(ppDir, setName, ".phyloprofile", sep = "")
         } else {
             ppPath <- paste(
-                root, "output", "/", coreSet, "/", 
+                coreDir, "output", "/", coreSet, "/", 
                 as.character(scoreMode), "/", setName, 
                 ".phyloprofile", sep = ""
             )
@@ -324,14 +397,15 @@ checkCompleteness <- function(
             sep = "\t"
         )
         phyloprofile <- extractPP(phyloprofile, genomeName)
-        if (!is.null(outDir)) {
-            prioPath <- paste(outDir, "priority.list", sep = "")
+        if (!is.null(ppDir)) {
+            prioPath <- paste(ppDir, setName, ".prioritylist", sep = "")
         } else {
             prioPath <- paste(
-                root, "output", "/", coreSet, "/", 
-                as.character(scoreMode), "/", "priority", ".list", sep = ""
+                coreDir, "output", "/", coreSet, "/", 
+                as.character(scoreMode), "/", setName, ".prioritylist", sep = ""
             )
         }
+        
         priorityTable <- read.table(
             prioPath,
             header = TRUE,
@@ -342,17 +416,20 @@ checkCompleteness <- function(
             priorityTable[1, 2], ",", fixed = TRUE
         )[[1]]
         singleReport <- reportSingle(
-            phyloprofile, root, coreSet, scoreMode,
+            phyloprofile, coreDir, coreSet, scoreMode,
             priorityList
         )
-        if (!is.null(outDir)) {
-            reportFile <- paste(outDir, setName, ".report", sep = "")
+        
+        if (!is.null(ppDir)) {
+            reportFile <- paste(ppDir, setName, ".report", sep = "")
+        } else {
+            reportFile <- paste(
+                coreDir, "output", "/", coreSet, "/",
+                as.character(scoreMode), "/", setName, ".report",
+                sep = ""
+            )
         }
-        reportFile <- paste(
-            root, "output", "/", coreSet, "/",
-            as.character(scoreMode), "/", setName, ".report",
-            sep = "",
-        )
+
         allReport <- read.table(
             reportFile,
             header = TRUE,
@@ -368,10 +445,17 @@ checkCompleteness <- function(
             quote = FALSE,
             sep = "\t"
         )
+        write.table(
+            allReport,
+            paste(outDir, setName, ".report", sep = ""),
+            row.names = FALSE,
+            quote = FALSE,
+            sep = "\t"
+        )
     } else {
         write.table(
             singleReport,
-            paste(root, "output", "/", coreSet, "/", as.character(scoreMode), 
+            paste(coreDir, "output", "/", coreSet, "/", as.character(scoreMode), 
                   "/", setName, "_details.report", sep = ""),
             row.names = FALSE,
             quote = FALSE,

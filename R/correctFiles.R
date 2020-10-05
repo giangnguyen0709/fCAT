@@ -29,7 +29,8 @@ correctPriority <- function(priorityFile, genome) {
 #' @return none
 #' @export
 correctReport <- function(reportFile, genome) {
-    reportTable <- read.table(reportFile,
+    reportTable <- read.table(
+        reportFile,
         header = TRUE,
         sep = "\t"
     )
@@ -138,11 +139,11 @@ correctFiles <- function(directory, genome) {
             correctDomains(file, genome)
         }
 
-        if (endsWith(file, "priority.list")) {
+        if (endsWith(file, ".prioritylist")) {
             correctPriority(file, genome)
         }
 
-        if (endsWith(file, ".report")) {
+        if (endsWith(file, ".report") && !endsWith(file, "_details.report")) {
             correctReport(file, genome)
         }
     }
