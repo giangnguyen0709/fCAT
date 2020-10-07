@@ -1,12 +1,20 @@
-#' The function move the fasta file and the annotation file of the interested
-#' genome in to the equivalent folder in the core set to perfome the assessment
+#' This function take the path to the interested genome and its FAS annotation 
+#' (if FAS annotation was not provided, the function will call annoFAS tool to
+#' compute it) as the input. The function will make a copy of the genome fasta
+#' file and a symbolic link (not in case annoFAS is called) and arrange them 
+#' into the query_taxon folder and into the weight_dir folder of the core 
+#' directory.
 #'
 #' @param genome the path to the fasta file of the genome
 #' @param fasAnno the path to the fas annotation file of the genome. If equal
-#' NULL, the function will compute the annotation
-#' @param root the path to the root folder
+#' NULL, the function will compute the annotation, and arrange it into the
+#' weight_dir folder of the core directory
+#' @param root The path to the core directory, where the core set is stored 
+#' within weight_dir, blast_dir, etc.
 #' @param process A logical option to determine if the function was used as a
-#' subfunction in the processCoreSet function
+#' modul in the processCoreSet function
+#' @param weightDir The user can replace the weight_dir folder in the core 
+#' directory by specifying the path to the replacing folder in this argument
 #'
 #' @return none
 #' @export

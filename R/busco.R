@@ -1,13 +1,16 @@
-#' In the scoreMode "busco" the tool must calculate the length of the founded
-#' ortholog to perfome the assessment. After HaMStR founded an ortholog the
-#' function will be called to update the length of the ortholog in phylogenetic
-#' profile
+#' In the score mode "busco" the tool must calculate the length of the founded
+#' ortholog sequence to classify it into "complete" or "fragmented". The
+#' function will take the phylogenetic profile and the extended fasta file of
+#' the interested genome as the input. Based on the common ID of the sequence
+#' in each file, the function will calculate the length of the sequence in the
+#' fasta file and update it into the phylogenetic profile as a new column.
 #'
-#' @param root the path to the root folder
-#' @param coreSet the core set name
-#' @param coreGene the ID of the core gene
+#' @param pp the phylogenetic profile of the interested genome in data.frame
+#' @param exFasta the extended fasta file in form  of a vector, with each 
+#' element is a line of the file
 #'
-#' @return none
+#' @return the phylogenetic profile of the interested genome with updated
+#' length for each ortholog (or for each line)
 #' @export
 updateLength <- function(pp, exFasta) {
     i <- (1:nrow(pp))
@@ -30,23 +33,75 @@ updateLength <- function(pp, exFasta) {
     return(pp)
 }
 
-#' This function takes a path to a core set and run HaMStR to search ortholog on
-#' the genome in the folder genome_dir of core set
+#' This function is used as a modul in the function computeReport() when using
+#' socre mode "busco". The function computeReport() take the path to the genome 
+#' fasta file and the annotation file (if the user did not input it, it will be 
+#' computed) of the interested genome as one of its inputs and arrange the 
+#' files into the equivalent folder of the core directory. The genome fasta 
+#' file will be copied and saved into the query_taxon folder. A symbolic link 
+#' of the annotation file will be created and saved in the folder weight_dir.
+#' After all the files of the interested genome were arranged into the folder,
+#' the function runFdogBusco or the function runFdog will be called, depent on 
+#' the using score mode, the function will take the path to the core directory
+#' and specify the path of the folder core_orthologs, weight_dir, query_taxon,
+#' blast_dir as the input hmmpath, weightpath, searchpath, blastpath for fDOG
+#' and run fDOG on this inputs to search ortholog on the interested genome for
+#' the equivalent inputed core set. When the search with fDOG is finished, the
+#' function will calculate the FAS score with fdogFAS or the length of each 
+#' ortholog sequence based on the using score mode. The function with return
+#' the phylogenetic profile of the interested genome to the core set within the
+#' FAS scores or the lengths
 #'
-#' @param root Path to the root folder
-#' @param coreSet The core set name
-#' @param extend if extend=TRUE the phylogenetic profile of the genome will be
-#' appended to the original phylogenetic profile
-#' @param scoreMode the mode determines the way to assess the founded ortholog
-#' @param priorityList the list determines the references species
-#' @param cpu determines the cores that HaMStR will use
-#' @param blastDir point to the user's blast_dir folder
-#' @param weightDir point to the user's weight_dir folder
-#' @param outDir point to the user's output folder
-#' @param cleanup a logical value to decide if the fDOG 's output must be 
-#' removed
+#' @param root The path to the core directory, where the core set is stored 
+#' within weight_dir, blast_dir, etc.
+#' @param coreSet The name of the interested core set. The core directory can 
+#' contains more than one core set and the user must specify the interested 
+#' core set. The core set will be stored in the folder core_orthologs in 
+#' subfolder, specify them by the name of the subfolder
+#' @param extend The output of the function is a phylogenetic profile of the 
+#' interested genome. It contains 4 files, .phyloprofile, .extended.fa, 
+#' _reverse.domains and _forward.domains. If extend = TRUE, the files will be 
+#' appended into the old files in the folder output of the core directory or in 
+#' the inputed folder by the user with the argument ppDir. If there is no old 
+#' files in the folder, the output files of the function will be writen in the 
+#' new files.. 
+#' @param scoreMode the mode determines the method to scoring the founded 
+#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
+#' @param priorityList A list contains one or many genome ID of the genomes,
+#' which were used to build the core set. The genome ID of this list will be 
+#' stored with an priority order, the tool look at into the fasta file of each
+#' core group and determine with the priority order to determine the references
+#' species for each core group.
+#' @param cpu determines the cores that fDOG and fdogFAS will uses to be run 
+#' parallel
+#' @param blastDir The user can replace the blast_dir folder in the core
+#' directory by specifying it in this argument
+#' @param weightDir The user can replace the weight_dir folder in the core
+#' directory by specifying it in this argument
+#' @param cleanup The fDOG's output is a set of phylogenetic profile of each
+#' core group to the interested genome. The phylogenetic profile will be stored
+#' into a folder in the core set. The function will merge all the small 
+#' phylogenetic profile, calculate the FAS score or length to have the whole 
+#' phylogenetic profile of the interested genome to the core set. This fDOG's
+#' output can be reused for all score modes. When cleanup is set to TRUE, the
+#' fDOG's output will not be stored to be reused but to be removed
+#' @param reFdog If it already exist a fDOG's output for a specific core group
+#' the tool will skip this core group and go to the next core group. If reFdog 
+#' is set to TRUE, the tool will remove all the existed fDOG's output and rerun
+#' fDOG for all core groups of the set
+#' @param fdogDir Normally the fDOG's output will be stored in the folder 
+#' fdogout in the core directory, but the user can specify the folder for 
+#' fDOG's output by specify the path to it in this argument. Notice here, is 
+#' the fDOG's output folder will contains the subfolder, equivalent to the name
+#' of the interested genome, for example, the folder can contain "HUMAN@9606@3" 
+#' and "AMPQU@400682@2", for a completeness checking on an interested genome,
+#' which has a subfolder in the fDOG's output folder with the same name, the 
+#' function will look into the subfolder to find the existed fDOG's output
+#' @param ppDir The user can replace the default folder output in the core 
+#' directory, where the phylogenetic profiles are stored by his folder. The user
+#' can specify the path to his folder in this argument
 #'
-#' @return phylogenetic profile of the genome
+#' @return phylogenetic profile of the genome in data.frame
 #' @export
 runFdogBusco <- function(
     root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu,

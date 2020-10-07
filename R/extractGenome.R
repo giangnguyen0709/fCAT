@@ -1,10 +1,11 @@
-#' The function extract a phylogenetic profile of a genome from a phylogentic
-#' profile
+#' This function takes a phylogenetic profile, which contains many different
+#' genomes as an input and extract the phylogenetic profile of a specific genome
 #'
-#' @param pp the data frame of the phylogenetic profile
-#' @param genome the ID of the extracted genome
+#' @param pp A phylogenetic profile in data.frame
+#' @param genome The genome ID of the genome, whose pp need to be extracted.
+#' Exp: genome = HUMAN@9606@3
 #'
-#' @return the phylogenetic profile of the interested genome
+#' @return The phylogenetic profile of the interested genome in data.frame
 #' @export
 extractPP <- function(pp, genome) {
     genomeID <- unlist(lapply(
@@ -18,14 +19,15 @@ extractPP <- function(pp, genome) {
     return(singlePP[1:(ncol(singlePP) - 1)])
 }
 
-#' extract from a domains table a specific genome
+#' A domains file can contains lines of many different genomes. This function
+#' extract the domains of a specific genome
 #'
-#' @param domains the domains table
-#' @param genome name of the genome in the file, that should be remove
-#' @param reverse if reverse = TRUE then the function will not extract the 
-#' lines of the genome but remove it
+#' @param domains The domains in data.frame
+#' @param genome The genome ID of the genome, whose domains need to be extracted
+#' @param reverse if reverse = TRUE then the function will not extract the lines
+#' of the genome but remove it
 #'
-#' @return the new domains table
+#' @return the domains of the interested genome in data.frame
 #' @export
 extractDomains <- function(domains, genome, reverse = FALSE) {
     checkGenome <- function(compareLine) {
@@ -47,11 +49,12 @@ extractDomains <- function(domains, genome, reverse = FALSE) {
     return(domains)
 }
 
-#' extract from an extended.fasta file a specific genome
+#' This function extract the sequences of a specific genome from a mulitple 
+#' fasta file
 #'
 #' @param lines a vector that contains lines of an extended.fasta file
-#' @param genome the name of the genome, that should be removed
-#' @return the new vector that contains the lines of the genome
+#' @param genome the name of the genome, that should be extracted
+#' @return the vector, which contains the sequences of the interested genome
 #' @export
 extractFasta <- function(lines, genome) {
     newLines <- c()

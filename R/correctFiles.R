@@ -1,12 +1,17 @@
 #' If user choose the option to extend the phylogenetic profile of the
 #' interested genome into the original phylogenetic profile, the tool must save
-#' the priority list that the user entered to use this one to get the result for
-#' the next calling. When the user want to redo the check, the function will
-#' remove the old taxa in teh priorityFile
+#' the priority list in a file text in the core directory, so that the tool can
+#' recall it to assess the completeness of the genome, which is appended in the 
+#' original phylogenetic profile. When the user want to redo the check, it can 
+#' be that the user can change the priority list, because of that, anytime a
+#' redo is on, the tool must first remove the old priority list of the genome in
+#' the file.
 #'
-#' @param priorityFile The path to the text file, that contains the information
-#' about the priority list of all searching
-#' @param genome the genome ID that need to be remove
+#' @param priorityFile The path to the prioritylist file, which contains the
+#' priority lists, which were used for the completeness checking of the genomes,
+#' that were checked with the tool over the time.
+#' @param genome The genome ID of the genome, that need to be removed from the
+#' prioritylist file
 #'
 #' @return none
 #' @export
@@ -21,9 +26,18 @@ correctPriority <- function(priorityFile, genome) {
     )
 }
 
-#' Remove a specific genome from the report file
+#' For every with the tool checked genomes, fCAT will save the frequency table 
+#' of each genome into a file with ending .report in the phyloprofile folder, 
+#' which by default is the output folder in core directory or can be the
+#' folder specified by the user with the argument ppDir in the function 
+#' checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+#' already in the original pp, the tool must remove the lines of the
+#' genome from the original frequency table. That is the purpose of this 
+#' function
 #'
-#' @param reportFile the path to the report file
+#' @param reportFile The path to the reprot file (or the frequency table), which
+#' contains the priority lists, which were used for the completeness checking of
+#' the genomes, that were checked with the tool over the time.
 #' @param genome the genome ID that need to be removed
 #'
 #' @return none
@@ -43,9 +57,16 @@ correctReport <- function(reportFile, genome) {
     )
 }
 
-#' remove lines of a specific genome from a domains file
+#' For all with the tool checked genomes, fCAT will save the domains
+#' of each genome into a domains file in the phyloprofile folder, 
+#' which by default is the output folder in core directory or can be the
+#' folder specified by the user with the argument ppDir in the function 
+#' checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+#' already in the original pp, the tool must remove the lines of the
+#' genome from the original domains file. That is the purpose of this 
+#' function
 #'
-#' @param domainsFile path to the file
+#' @param domainsFile path to the domains file
 #' @param genome name of the genome in the file, that should be remove
 #'
 #' @return none
@@ -69,9 +90,16 @@ correctDomains <- function(domainsFile, genome) {
         row.names = FALSE, col.names = FALSE)
 }
 
-#' remove the lines of a specific genome from a phylogenetic profile
+##' For every with the tool checked genomes, fCAT will save the phylogenetic 
+#' profile of each genome into a extended fasta file in the phyloprofile folder, 
+#' which by default is the output folder in core directory or can be the
+#' folder specified by the user with the argument ppDir in the function 
+#' checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+#' already in the original pp, the tool must remove the lines of the
+#' genome from the original phyloprofile file. That is the purpose of this 
+#' function
 #'
-#' @param PPFile path to phylogenetic profile
+#' @param PPFile path to phylogenetic profile file
 #' @param genome name of the genome, that should be removed
 #' @return none
 #' @export
@@ -90,7 +118,14 @@ correctPP <- function(PPFile, genome) {
     write.table(PP, PPFile, row.names = FALSE, quote = FALSE, sep = "\t")
 }
 
-#' remove all the lines of a specific genome from a fasta file
+#' For every with the tool checked genomes, fCAT will save the sequences
+#' of each genome into a extended fasta file in the phyloprofile folder, 
+#' which by default is the output folder in core directory or can be the
+#' folder specified by the user with the argument ppDir in the function 
+#' checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+#' already in the original pp, the tool must remove the lines of the
+#' genome from the original extended fasta file. That is the purpose of this 
+#' function
 #'
 #' @param fasta the path to the fasta file
 #' @param genome the name of the genome, that should be removed
@@ -117,8 +152,9 @@ correctFasta <- function(fasta, genome) {
     }
 }
 
-#' remove all the lines of a specific genome from all of the phyloprofile,
-#' domains, fasta files, priority file, and report file in a folder
+#' This function run correctPP, correctFasta, correctDomains, correctPriority 
+#' and correctReport in a loop to correct all phyloprofile, extended fasta, 
+#' domains, prioritylist and report file in a folder
 #' @param directory the path to the directory, that contains the files
 #' @param genome name of the genome, that should be removed
 #' @return none

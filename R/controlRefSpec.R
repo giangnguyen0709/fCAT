@@ -1,9 +1,14 @@
 #' The function read the fasta file in each core gene and extract the references
-#' species based on the priority order in the priorityList
+#' species based on the priority order in the priority list. The function search
+#' in the fasta file to find the refererences species in priority order of the
+#' list. If no references taxon is determined, the function returns NULL
 #'
-#' @param fasta the path to the fasta file
-#' @param priorityList a vector that contains the taxa of the core set (it does
-#' not need to contain all the taxa, can be all or fewer) in a priority list
+#' @param fasta the path to the fasta file in the core gene
+#' @param priorityList A list contains one or many genome ID of the genomes,
+#' which were used to build the core set. The genome ID of this list will be 
+#' stored with an priority order, the tool look at into the fasta file of each
+#' core group and determine with the priority order to determine the references
+#' species for each core group.
 #'
 #' @return The function will return the references species. If the function did
 #' not find any references species, it will return the value NULL
@@ -33,13 +38,13 @@ getSpec <- function(fasta, priorityList) {
 }
 
 #' The function determines the priority order of a list of taxa based on the
-#' taxonomic distance of the taxa in the list with a given taxon
+#' taxonomic distance between the taxa in the list and a given taxon
 #'
 #' @param query The genome ID of the interested genome
-#' @param refSet the list of taxa in the core set
+#' @param refSet the list of genome ID of the core genomes
 #'
-#' @return The list of taxa with a priority order based on the taxanomic
-#' distance
+#' @return The list of core genomes'ID with a priority order based on the 
+#' taxanomic distance
 #' @export
 autofindPriority <- function(query, refSet) {
     position <- function(i, j, n) {

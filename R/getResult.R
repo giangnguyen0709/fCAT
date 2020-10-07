@@ -1,15 +1,28 @@
-#' The function to assess the status of a founded ortholog
+#' The function to classify a founded ortholog from its information like FAS 
+#' scores, the appearance frequence of the core gene in phylogenetic profile, 
+#' etc.
 #'
 #' @param fasF the forward fas score of the ortholog
 #' @param fasB the backward fas score of the ortholog
-#' @param root the path to the root folder
-#' @param coreSet the core set name
-#' @param coreGene the ID of the core gene
-#' @param scoreMode the mode to determines the method to assess the ortholog
-#' @param f the frequent of the core genes in the pp
-#' @param priorityList the priority list to determines the references species
+#' @param root The path to the core directory, where the core set is stored 
+#' within weight_dir, blast_dir, etc.
+#' @param coreSet The name of the interested core set. The core directory can 
+#' contains more than one core set and the user must specify the interested 
+#' core set. The core set will be stored in the folder core_orthologs in 
+#' subfolder, specify them by the name of the subfolder
+#' @param coreGene the ID of the core group
+#' @param scoreMode the mode determines the method to scoring the founded 
+#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
+#' @param f the appearance frequence of the core gene in the phylogenetic 
+#' profile
+#' @param priorityList A list contains one or many genome ID of the genomes,
+#' which were used to build the core set. The genome ID of this list will be 
+#' stored with an priority order, the tool look at into the fasta file of each
+#' core group and determine with the priority order to determine the references
+#' species for each core group.
 #'
-#' @return the status of the ortholog of the core gene
+#' @return the status of the ortholog of the core gene. It can be "similar", 
+#' "dissimilar", "duplicated, similar" or "duplicated, dissimilar"
 #' @export
 assessStatus <- function(
     fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList
@@ -90,10 +103,15 @@ assessStatus <- function(
     return(status)
 }
 
-#' The function to calculate the cutoff value for the busco mode
+#' The function to calculate the cutoff value based on standard deviation of 
+#' the length for each core group
 #'
-#' @param root the path to the root folder
-#' @param coreSet the core set name
+#' @param root The path to the core directory, where the core set is stored 
+#' within weight_dir, blast_dir, etc.
+#' @param coreSet The name of the interested core set. The core directory can 
+#' contains more than one core set and the user must specify the interested 
+#' core set. The core set will be stored in the folder core_orthologs in 
+#' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core gene
 #'
 #' @return a list that contains the mean length and the standard deviation of
@@ -127,15 +145,21 @@ calculateBuscoCutoff <- function(root, coreSet, coreGene) {
     return(list(meanLength, standardDeviation))
 }
 
-#' The function to assess the founded ortholog with the algorithm of busco
+#' The function to classify the founded ortholog based on its length 
 #'
 #' @param orthoLength the length of the ortholg sequence
-#' @param root the path to the root folder
-#' @param coreSet the core set name
+#' @param root The path to the core directory, where the core set is stored 
+#' within weight_dir, blast_dir, etc.
+#' @param coreSet The name of the interested core set. The core directory can 
+#' contains more than one core set and the user must specify the interested 
+#' core set. The core set will be stored in the folder core_orthologs in 
+#' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core gene
-#' @param f the frequent of the core gene in the pp
+#' @param f the appearance frequence of the core gene in the phylogenetic 
+#' profile
 #'
-#' @return the status of the core gene
+#' @return the status of the core gene, it can be "fragmented", "complete",
+#' "duplicated, complete" or "duplicated, fragmented"
 #' @export
 assessBusco <- function(orthoLength, root, coreSet, coreGene, f) {
     cutoff <- calculateBuscoCutoff(root, coreSet, coreGene)
@@ -164,10 +188,18 @@ assessBusco <- function(orthoLength, root, coreSet, coreGene, f) {
 #' Determine if a core gene was ignored by the tool because of the unknown
 #' references species
 #'
-#' @param root the path to the root folder
-#' @param coreSet the core set name
+#' @param root The path to the core directory, where the core set is stored 
+#' within weight_dir, blast_dir, etc.
+#' @param coreSet The name of the interested core set. The core directory can 
+#' contains more than one core set and the user must specify the interested 
+#' core set. The core set will be stored in the folder core_orthologs in 
+#' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core gene
-#' @param priorityList the priority list to determine the references species
+#' @param priorityList A list contains one or many genome ID of the genomes,
+#' which were used to build the core set. The genome ID of this list will be 
+#' stored with an priority order, the tool look at into the fasta file of each
+#' core group and determine with the priority order to determine the references
+#' species for each core group.
 #'
 #' @return TRUE or FALSE
 #' @export
@@ -188,13 +220,22 @@ filterIgnore <- function(root, coreSet, coreGene, priorityList) {
 }
 
 #' Create the report of the completeness of a genome based on its phylogenetic
-#' profile
+#' profile to the interested core set
 #'
-#' @param pp the phylogenetic profile of the genome in data frame
-#' @param root the path to the root folder
-#' @param coreSet the core set name
-#' @param scoreMode the mode to determined the method to assess the ortholog
-#' @param priorityList the list to determinde the references species
+#' @param pp the phylogenetic profile of the genome in data.frame
+#' @param root The path to the core directory, where the core set is stored 
+#' within weight_dir, blast_dir, etc.
+#' @param coreSet The name of the interested core set. The core directory can 
+#' contains more than one core set and the user must specify the interested 
+#' core set. The core set will be stored in the folder core_orthologs in 
+#' subfolder, specify them by the name of the subfolder
+#' @param scoreMode the mode determines the method to scoring the founded 
+#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
+#' @param priorityList A list contains one or many genome ID of the genomes,
+#' which were used to build the core set. The genome ID of this list will be 
+#' stored with an priority order, the tool look at into the fasta file of each
+#' core group and determine with the priority order to determine the references
+#' species for each core group.
 #'
 #' @return the report in data frame
 #' @export
@@ -298,13 +339,17 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
     return(report)
 }
 
-#' Translate the report table into a frequent table, how many is complete, etc.
+#' Translate the report table into a frequence table, which tell the user, how
+#' many "dissimilar", "simillar", "missing", etc.
 #'
 #' @param genomeID the genome ID of the interested genome
-#' @param report the report in data frame
-#' @param scoreMode the mode to determine the method to assess the ortholog
+#' @param report the report of the completeness of the interested genome based
+#' on its phylogenetic profile
+#' @param scoreMode the mode determines the method to scoring the founded 
+#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
 #'
-#' @return A frequencies table in data frame
+#' @return A frequency table of the completeness of the interested genome in 
+#' data.frame
 #' @export
 translateReport <- function(genomeID, report, scoreMode) {
     if (scoreMode == "busco") {
