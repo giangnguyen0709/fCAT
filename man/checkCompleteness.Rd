@@ -111,3 +111,10 @@ table give an general sight about how many "dissimilar", "similar",
 The function to check completeness of a interested genome based on an
 interested core set.
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+checkCompleteness(genome[1], fasAnno[1], coreSet[1], "test", extend = TRUE,
+scoreMode = 2, priorityList = c("HUMAN@9606@1"))
+}

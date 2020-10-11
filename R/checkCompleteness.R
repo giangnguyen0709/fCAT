@@ -10,6 +10,9 @@
 #' directory by specifying the path to the replacing folder in this argument
 #'
 #' @return none
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' handleError(coreFolder)
 #' @export
 handleError <- function(root, weightDir = NULL) {
     genomeDir <- paste(root, "query_taxon", sep = "")
@@ -54,6 +57,7 @@ handleError <- function(root, weightDir = NULL) {
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return TRUE or FALSE
+#' @examples 
 #' @export
 checkPreProcess <- function(root, coreSet) {
     check <- 0
@@ -389,6 +393,12 @@ checkArguments <- function(
 #' genomes, which are present in the old phylogenetic profile. The frequency
 #' table give an general sight about how many "dissimilar", "similar", 
 #' "duplicated" and "missing" genes founded in the interested genome.
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+#' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+#' checkCompleteness(genome[1], fasAnno[1], coreSet[1], "test", extend = TRUE,
+#' scoreMode = 2, priorityList = c("HUMAN@9606@1"))
 #' @export
 checkCompleteness <- function(
     genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE, 

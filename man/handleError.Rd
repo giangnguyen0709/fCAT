@@ -29,3 +29,7 @@ This function will check if the query taxon is empty before the check, if not
 the function will delete the fasta file in the query taxon and its 
 corresponding annotation file in weight_dir
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+handleError(coreFolder)
+}
