@@ -335,6 +335,20 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
             )
             report <- rbind(report, missingTable)
         }
+    } else {
+        if (scoreMode != "busco") {
+            report <- data.frame(
+                geneID = pp$geneID, orthoID = pp$orthoID, status,
+                FAS_F = pp$FAS_F, FAS_B = pp$FAS_B
+            )
+        } else {
+            report <- data.frame(
+                geneID = pp$geneID, orthoID = pp$orthoID,
+                status = status$status, length = pp$length,
+                mean_length = status$mean_length,
+                standard_deviation = status$standard_deviation
+            )
+        }
     }
     return(report)
 }
