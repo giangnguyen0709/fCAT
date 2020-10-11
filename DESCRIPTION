@@ -1,15 +1,18 @@
 Package: fCAT
 Title: fCAT
-Version: 0.2
+Version: 0.5
+Date: 2020-10-07
 Authors@R: 
     person(given = "Giang",
            family = "Nguyen",
            role = c("aut", "cre"),
            email = "giangnguyen0709@gmail.com")
 Description: fCAT is a feature-aware completeness assessment tool.
-License: use_gpl3_license()
+URL: https://github.com/giangnguyen0709/fCAT
+BugReports: https://github.com/giangnguyen0709/fCAT/issues
+License: MIT + file LICENSE
+Depends: R (>= 4.0.0)
 Encoding: UTF-8
 LazyData: true
-Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Imports: EnvStats, taxize
+Imports: EnvStats, taxize, R.utils

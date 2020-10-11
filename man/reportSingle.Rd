@@ -3,25 +3,34 @@
 \name{reportSingle}
 \alias{reportSingle}
 \title{Create the report of the completeness of a genome based on its phylogenetic
-profile}
+profile to the interested core set}
 \usage{
 reportSingle(pp, root, coreSet, scoreMode, priorityList)
 }
 \arguments{
-\item{pp}{the phylogenetic profile of the genome in data frame}
+\item{pp}{the phylogenetic profile of the genome in data.frame}
 
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the core set name}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode to determined the method to assess the ortholog}
+\item{scoreMode}{the mode determines the method to scoring the founded 
+ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
-\item{priorityList}{the list to determinde the references species}
+\item{priorityList}{A list contains one or many genome ID of the genomes,
+which were used to build the core set. The genome ID of this list will be 
+stored with an priority order, the tool look at into the fasta file of each
+core group and determine with the priority order to determine the references
+species for each core group.}
 }
 \value{
 the report in data frame
 }
 \description{
 Create the report of the completeness of a genome based on its phylogenetic
-profile
+profile to the interested core set
 }

@@ -2,18 +2,24 @@
 % Please edit documentation in R/processCoreSet.R
 \name{calculateAllCutoff}
 \alias{calculateAllCutoff}
-\title{The function calculate cut off values for all core genes in the set}
+\title{The function run calculateCutoff in a loop to calculate cutoff values for all
+core genes in the core set}
 \usage{
 calculateAllCutoff(root, coreSet)
 }
 \arguments{
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the core set name}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 }
 \value{
 none
 }
 \description{
-The function calculate cut off values for all core genes in the set
+The function run calculateCutoff in a loop to calculate cutoff values for all
+core genes in the core set
 }

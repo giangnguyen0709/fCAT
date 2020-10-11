@@ -3,20 +3,20 @@
 \name{autofindPriority}
 \alias{autofindPriority}
 \title{The function determines the priority order of a list of taxa based on the
-taxonomic distance of the taxa in the list with a given taxon}
+taxonomic distance between the taxa in the list and a given taxon}
 \usage{
 autofindPriority(query, refSet)
 }
 \arguments{
 \item{query}{The genome ID of the interested genome}
 
-\item{refSet}{the list of taxa in the core set}
+\item{refSet}{the list of genome ID of the core genomes}
 }
 \value{
-The list of taxa with a priority order based on the taxanomic
-distance
+The list of core genomes'ID with a priority order based on the 
+taxanomic distance
 }
 \description{
 The function determines the priority order of a list of taxa based on the
-taxonomic distance of the taxa in the list with a given taxon
+taxonomic distance between the taxa in the list and a given taxon
 }

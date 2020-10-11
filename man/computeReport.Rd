@@ -2,7 +2,9 @@
 % Please edit documentation in R/computeReport.R
 \name{computeReport}
 \alias{computeReport}
-\title{The function create the report of the completeness of an interested genome}
+\title{The function take a path to a genome fasta file and its FAS annotation file
+(if the annotation file is not provided, the funtion will compute it) and
+compute the detailed report of the completeness of the genome}
 \usage{
 computeReport(
   genome,
@@ -13,33 +15,91 @@ computeReport(
   scoreMode,
   priorityList = NULL,
   cpu,
-  computeOri = FALSE
+  computeOri = FALSE,
+  blastDir = NULL,
+  weightDir = NULL,
+  cleanup = FALSE,
+  reFdog = FALSE,
+  fdogDir = NULL,
+  ppDir = NULL
 )
 }
 \arguments{
-\item{genome}{the path to the fasta file of the interested genome}
+\item{genome}{The path to the genome fasta file}
 
-\item{fasAnno}{the path to the json file of the fas annotation of the genome}
+\item{fasAnno}{The path to the fas annotation file. It can equal NULL}
 
-\item{coreSet}{the path to the core set}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{extend}{the logical argument to decision if the information of the
-interested genome will be appended to the original files}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode determines the method to assess the founded
-ortholog}
+\item{extend}{The output of the function is a phylogenetic profile of the 
+interested genome. It contains 4 files, .phyloprofile, .extended.fa, 
+_reverse.domains and _forward.domains. If extend = TRUE, the files will be 
+appended into the old files in the folder output of the core directory or in 
+the inputed folder by the user with the argument ppDir. If there is no old 
+files in the folder, the output files of the function will be writen in the 
+new files.}
 
-\item{priorityList}{the priority list to determines the references species
-If equal NULL the tool will create the list based on the taxonomic distance}
+\item{scoreMode}{the mode determines the method to scoring the founded 
+ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
-\item{cpu}{determines the number of the cores}
+\item{priorityList}{A list contains one or many genome ID of the genomes,
+which were used to build the core set. The genome ID of this list will be 
+stored with an priority order, the tool look at into the fasta file of each
+core group and determine with the priority order to determine the references
+species for each core group.}
 
-\item{computeOri}{a logical argument to determine the special case when the
-function was used as a sub function for the function computeOriPP}
+\item{cpu}{determines the cores that fDOG and fdogFAS will uses to be run 
+parallel}
+
+\item{blastDir}{The user can replace the blast_dir folder in the core
+directory by specifying it in this argument. By default is NULL}
+
+\item{weightDir}{The user can replace the weight_dir folder in the core
+directory by specifying it in this argument. By default is NULL}
+
+\item{cleanup}{The fDOG's output is a set of phylogenetic profile of each
+core group to the interested genome. The phylogenetic profile will be stored
+into a folder in the core set. The function will merge all the small 
+phylogenetic profile, calculate the FAS score or length to have the whole 
+phylogenetic profile of the interested genome to the core set. This fDOG's
+output can be reused for all score modes. When cleanup is set to TRUE, the
+fDOG's output will not be stored to be reused but to be removed}
+
+\item{reFdog}{If it already exist a fDOG's output for a specific core group
+the tool will skip this core group and go to the next core group. If reFdog 
+is set to TRUE, the tool will remove all the existed fDOG's output and rerun
+fDOG for all core groups of the set}
+
+\item{fdogDir}{Normally the fDOG's output will be stored in the folder 
+fdogout in the core directory, but the user can specify the folder for 
+fDOG's output by specify the path to it in this argument. Notice here, is 
+the fDOG's output folder will contains the subfolder, equivalent to the name
+of the interested genome, for example, the folder can contain "HUMAN@9606@3" 
+and "AMPQU@400682@2", for a completeness checking on an interested genome,
+which has a subfolder in the fDOG's output folder with the same name, the 
+function will look into the subfolder to find the existed fDOG's output}
+
+\item{ppDir}{The user can replace the default folder output in the core 
+directory, where the phylogenetic profiles are stored by his folder. The user
+can specify the path to his folder in this argument. By default is NULL}
+
+\item{outDir}{The user can specify the directory to save the output report
+file of the completeness of the interested genome by specifying the path
+to the folder in this argument. By default is NULL}
 }
 \value{
-none
+a report of the completeness of the interested genome with detailed 
+information of every core genes in the core set. Which core gene is "similar"
+, which is "dissimilar", "duplicated" and "missing"
 }
 \description{
-The function create the report of the completeness of an interested genome
+The function take a path to a genome fasta file and its FAS annotation file
+(if the annotation file is not provided, the funtion will compute it) and
+compute the detailed report of the completeness of the genome
 }

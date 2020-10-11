@@ -2,18 +2,22 @@
 % Please edit documentation in R/checkCompleteness.R
 \name{checkPreProcess}
 \alias{checkPreProcess}
-\title{Check if the core set was processed}
+\title{Check if the core set was processed with the function processCoreSet()}
 \usage{
 checkPreProcess(root, coreSet)
 }
 \arguments{
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the path to the core set}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 }
 \value{
 TRUE or FALSE
 }
 \description{
-Check if the core set was processed
+Check if the core set was processed with the function processCoreSet()
 }

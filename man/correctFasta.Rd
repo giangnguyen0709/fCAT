@@ -2,7 +2,14 @@
 % Please edit documentation in R/correctFiles.R
 \name{correctFasta}
 \alias{correctFasta}
-\title{remove all the lines of a specific genome from a fasta file}
+\title{For every with the tool checked genomes, fCAT will save the sequences
+of each genome into a extended fasta file in the phyloprofile folder, 
+which by default is the output folder in core directory or can be the
+folder specified by the user with the argument ppDir in the function 
+checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+already in the original pp, the tool must remove the lines of the
+genome from the original extended fasta file. That is the purpose of this 
+function}
 \usage{
 correctFasta(fasta, genome)
 }
@@ -15,5 +22,12 @@ correctFasta(fasta, genome)
 none
 }
 \description{
-remove all the lines of a specific genome from a fasta file
+For every with the tool checked genomes, fCAT will save the sequences
+of each genome into a extended fasta file in the phyloprofile folder, 
+which by default is the output folder in core directory or can be the
+folder specified by the user with the argument ppDir in the function 
+checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+already in the original pp, the tool must remove the lines of the
+genome from the original extended fasta file. That is the purpose of this 
+function
 }

@@ -2,12 +2,19 @@
 % Please edit documentation in R/correctFiles.R
 \name{correctDomains}
 \alias{correctDomains}
-\title{remove lines of a specific genome from a domains file}
+\title{For all with the tool checked genomes, fCAT will save the domains
+of each genome into a domains file in the phyloprofile folder, 
+which by default is the output folder in core directory or can be the
+folder specified by the user with the argument ppDir in the function 
+checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+already in the original pp, the tool must remove the lines of the
+genome from the original domains file. That is the purpose of this 
+function}
 \usage{
 correctDomains(domainsFile, genome)
 }
 \arguments{
-\item{domainsFile}{path to the file}
+\item{domainsFile}{path to the domains file}
 
 \item{genome}{name of the genome in the file, that should be remove}
 }
@@ -15,5 +22,12 @@ correctDomains(domainsFile, genome)
 none
 }
 \description{
-remove lines of a specific genome from a domains file
+For all with the tool checked genomes, fCAT will save the domains
+of each genome into a domains file in the phyloprofile folder, 
+which by default is the output folder in core directory or can be the
+folder specified by the user with the argument ppDir in the function 
+checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+already in the original pp, the tool must remove the lines of the
+genome from the original domains file. That is the purpose of this 
+function
 }

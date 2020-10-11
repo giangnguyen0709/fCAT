@@ -5,19 +5,31 @@
 \title{Add the priority list of the interested genome to the priority file. If the
 file doesnt exist it will be created}
 \usage{
-printPriority(genomeID, priorityList, root, coreSet, scoreMode)
+printPriority(genomeID, priorityList, root, coreSet, scoreMode, ppDir)
 }
 \arguments{
-\item{genomeID}{the genomeID of the interested genome}
+\item{genomeID}{the genome ID of the interested genome}
 
-\item{priorityList}{the priority list}
+\item{priorityList}{A list contains one or many genome ID of the genomes,
+which were used to build the core set. The genome ID of this list will be 
+stored with an priority order, the tool look at into the fasta file of each
+core group and determine with the priority order to determine the references
+species for each core group.}
 
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the core set name}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode determines the method to assess the founded
-ortholog}
+\item{scoreMode}{the mode determines the method to scoring the founded 
+ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
+
+\item{ppDir}{The user can replace the default folder output in the core 
+directory, where the phylogenetic profiles are stored by his folder. The user
+can specify the path to his folder in this argument}
 }
 \value{
 none

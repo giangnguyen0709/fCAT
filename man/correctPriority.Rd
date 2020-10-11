@@ -4,17 +4,22 @@
 \alias{correctPriority}
 \title{If user choose the option to extend the phylogenetic profile of the
 interested genome into the original phylogenetic profile, the tool must save
-the priority list that the user entered to use this one to get the result for
-the next calling. When the user want to redo the check, the function will
-remove the old taxa in teh priorityFile}
+the priority list in a file text in the core directory, so that the tool can
+recall it to assess the completeness of the genome, which is appended in the 
+original phylogenetic profile. When the user want to redo the check, it can 
+be that the user can change the priority list, because of that, anytime a
+redo is on, the tool must first remove the old priority list of the genome in
+the file.}
 \usage{
 correctPriority(priorityFile, genome)
 }
 \arguments{
-\item{priorityFile}{The path to the text file, that contains the information
-about the priority list of all searching}
+\item{priorityFile}{The path to the prioritylist file, which contains the
+priority lists, which were used for the completeness checking of the genomes,
+that were checked with the tool over the time.}
 
-\item{genome}{the genome ID that need to be remove}
+\item{genome}{The genome ID of the genome, that need to be removed from the
+prioritylist file}
 }
 \value{
 none
@@ -22,7 +27,10 @@ none
 \description{
 If user choose the option to extend the phylogenetic profile of the
 interested genome into the original phylogenetic profile, the tool must save
-the priority list that the user entered to use this one to get the result for
-the next calling. When the user want to redo the check, the function will
-remove the old taxa in teh priorityFile
+the priority list in a file text in the core directory, so that the tool can
+recall it to assess the completeness of the genome, which is appended in the 
+original phylogenetic profile. When the user want to redo the check, it can 
+be that the user can change the priority list, because of that, anytime a
+redo is on, the tool must first remove the old priority list of the genome in
+the file.
 }

@@ -2,7 +2,9 @@
 % Please edit documentation in R/getResult.R
 \name{assessStatus}
 \alias{assessStatus}
-\title{The function to assess the status of a founded ortholog}
+\title{The function to classify a founded ortholog from its information like FAS 
+scores, the appearance frequence of the core gene in phylogenetic profile, 
+etc.}
 \usage{
 assessStatus(fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList)
 }
@@ -11,21 +13,34 @@ assessStatus(fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList)
 
 \item{fasB}{the backward fas score of the ortholog}
 
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the core set name}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 
-\item{coreGene}{the ID of the core gene}
+\item{coreGene}{the ID of the core group}
 
-\item{scoreMode}{the mode to determines the method to assess the ortholog}
+\item{scoreMode}{the mode determines the method to scoring the founded 
+ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
-\item{f}{the frequent of the core genes in the pp}
+\item{f}{the appearance frequence of the core gene in the phylogenetic 
+profile}
 
-\item{priorityList}{the priority list to determines the references species}
+\item{priorityList}{A list contains one or many genome ID of the genomes,
+which were used to build the core set. The genome ID of this list will be 
+stored with an priority order, the tool look at into the fasta file of each
+core group and determine with the priority order to determine the references
+species for each core group.}
 }
 \value{
-the status of the ortholog of the core gene
+the status of the ortholog of the core gene. It can be "similar", 
+"dissimilar", "duplicated, similar" or "duplicated, dissimilar"
 }
 \description{
-The function to assess the status of a founded ortholog
+The function to classify a founded ortholog from its information like FAS 
+scores, the appearance frequence of the core gene in phylogenetic profile, 
+etc.
 }

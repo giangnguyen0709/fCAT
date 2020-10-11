@@ -2,18 +2,20 @@
 % Please edit documentation in R/extractGenome.R
 \name{extractFasta}
 \alias{extractFasta}
-\title{extract from an extended.fasta file a specific genome}
+\title{This function extract the sequences of a specific genome from a mulitple 
+fasta file}
 \usage{
 extractFasta(lines, genome)
 }
 \arguments{
 \item{lines}{a vector that contains lines of an extended.fasta file}
 
-\item{genome}{the name of the genome, that should be removed}
+\item{genome}{the name of the genome, that should be extracted}
 }
 \value{
-the new vector that contains the lines of the genome
+the vector, which contains the sequences of the interested genome
 }
 \description{
-extract from an extended.fasta file a specific genome
+This function extract the sequences of a specific genome from a mulitple 
+fasta file
 }

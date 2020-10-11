@@ -177,7 +177,8 @@ printPriority <- function(
 #' @export
 computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE, 
     scoreMode, priorityList = NULL, cpu, computeOri = FALSE,
-    blastDir = NULL, weightDir = NULL, cleanup = FALSE, reFdog, fdogDir, ppDir) {
+    blastDir = NULL, weightDir = NULL, cleanup = FALSE, 
+    reFdog = FALSE, fdogDir = NULL, ppDir = NULL) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }

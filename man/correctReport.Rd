@@ -2,12 +2,21 @@
 % Please edit documentation in R/correctFiles.R
 \name{correctReport}
 \alias{correctReport}
-\title{Remove a specific genome from the report file}
+\title{For every with the tool checked genomes, fCAT will save the frequency table 
+of each genome into a file with ending .report in the phyloprofile folder, 
+which by default is the output folder in core directory or can be the
+folder specified by the user with the argument ppDir in the function 
+checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+already in the original pp, the tool must remove the lines of the
+genome from the original frequency table. That is the purpose of this 
+function}
 \usage{
 correctReport(reportFile, genome)
 }
 \arguments{
-\item{reportFile}{the path to the report file}
+\item{reportFile}{The path to the reprot file (or the frequency table), which
+contains the priority lists, which were used for the completeness checking of
+the genomes, that were checked with the tool over the time.}
 
 \item{genome}{the genome ID that need to be removed}
 }
@@ -15,5 +24,12 @@ correctReport(reportFile, genome)
 none
 }
 \description{
-Remove a specific genome from the report file
+For every with the tool checked genomes, fCAT will save the frequency table 
+of each genome into a file with ending .report in the phyloprofile folder, 
+which by default is the output folder in core directory or can be the
+folder specified by the user with the argument ppDir in the function 
+checkCompleteness. When redo is on to recheck for a genome, whose pp exists
+already in the original pp, the tool must remove the lines of the
+genome from the original frequency table. That is the purpose of this 
+function
 }

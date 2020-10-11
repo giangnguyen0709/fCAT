@@ -2,18 +2,23 @@
 % Please edit documentation in R/extractGenome.R
 \name{extractDomains}
 \alias{extractDomains}
-\title{extract from a domains table a specific genome}
+\title{A domains file can contains lines of many different genomes. This function
+extract the domains of a specific genome}
 \usage{
-extractDomains(domains, genome)
+extractDomains(domains, genome, reverse = FALSE)
 }
 \arguments{
-\item{domains}{the domains table}
+\item{domains}{The domains in data.frame}
 
-\item{genome}{name of the genome in the file, that should be remove}
+\item{genome}{The genome ID of the genome, whose domains need to be extracted}
+
+\item{reverse}{if reverse = TRUE then the function will not extract the lines
+of the genome but remove it}
 }
 \value{
-the new domains table
+the domains of the interested genome in data.frame
 }
 \description{
-extract from a domains table a specific genome
+A domains file can contains lines of many different genomes. This function
+extract the domains of a specific genome
 }

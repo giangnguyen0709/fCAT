@@ -2,24 +2,44 @@
 % Please edit documentation in R/computeReport.R
 \name{printReport}
 \alias{printReport}
-\title{Create the report of the completeness of the interested genome with the other
-genome in the original phylogenetic profile}
+\title{The function to append the frequency table of the completeness classification
+of the interested genome into the original frequency table of the core set.
+The original frequency table describe the frequencies of each classification
+for all genomes, which were checked the completeness with fCAT and the extend
+was set to TRUE while checking.(How many "complete", "fragmented", "missing",
+and "duplicated" for busco mode or how many "similar", "dissimilar", 
+"missing", and "duplicated" for the other modes)}
 \usage{
-printReport(report, root, coreSet, scoreMode)
+printReport(report, root, coreSet, scoreMode, ppDir)
 }
 \arguments{
-\item{report}{the data frame that contains the report}
+\item{report}{A data frame that contains the frequency table of the 
+interested genome}
 
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the core set name}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode determines the way to assess the founded ortholog}
+\item{scoreMode}{the mode determines the method to scoring the founded 
+ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
+
+\item{ppDir}{The user can replace the default folder output in the core 
+directory, where the phylogenetic profiles are stored by his folder. The user
+can specify the path to his folder in this argument}
 }
 \value{
 none
 }
 \description{
-Create the report of the completeness of the interested genome with the other
-genome in the original phylogenetic profile
+The function to append the frequency table of the completeness classification
+of the interested genome into the original frequency table of the core set.
+The original frequency table describe the frequencies of each classification
+for all genomes, which were checked the completeness with fCAT and the extend
+was set to TRUE while checking.(How many "complete", "fragmented", "missing",
+and "duplicated" for busco mode or how many "similar", "dissimilar", 
+"missing", and "duplicated" for the other modes)
 }

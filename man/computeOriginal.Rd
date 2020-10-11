@@ -5,7 +5,7 @@
 \title{The function compute the initial original phylogenetic profile of all the
 taxa in the score set}
 \usage{
-computeOriginal(root, coreSet, scoreMode, cpu = 4)
+computeOriginal(root, coreSet, scoreMode, cpu = 4, cleanup)
 }
 \arguments{
 \item{root}{the path to the root folder}

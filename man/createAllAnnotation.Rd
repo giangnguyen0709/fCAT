@@ -2,18 +2,24 @@
 % Please edit documentation in R/processCoreSet.R
 \name{createAllAnnotation}
 \alias{createAllAnnotation}
-\title{The function creates all FAS annotation for all core genes in the set}
+\title{The function run createAnnotation function in a loop to compute the FAS 
+annotation file for all core genes in the core set}
 \usage{
 createAllAnnotation(root, coreSet)
 }
 \arguments{
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the core set name}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 }
 \value{
 none
 }
 \description{
-The function creates all FAS annotation for all core genes in the set
+The function run createAnnotation function in a loop to compute the FAS 
+annotation file for all core genes in the core set
 }

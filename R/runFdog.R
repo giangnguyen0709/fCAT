@@ -132,11 +132,13 @@ recalculateScore <- function(pp, genomeName) {
 #'
 #' @param directory path to the folder, that contains the pp files
 #' @param genomeName the genomeID of the interested genome
+#' @param scoreMode the mode determines the method to scoring the founded 
+#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
 #' @return a list which contains the pp of the interested genome in data.frame, 
 #' the extended fasta file of the interested genome in form of a vector, which
 #' contains the lines of the file and 2 domains file in form of data.frame
 #' @export
-concanateFiles <- function(directory, genomeName) {
+concanateFiles <- function(directory, genomeName, scoreMode) {
     if (!endsWith(directory, "/")) {
         directory <- paste(directory, "/", sep = "")
     }
@@ -183,7 +185,9 @@ concanateFiles <- function(directory, genomeName) {
         
         if (endsWith(file, ".phyloprofile")) {
             singlePP <- read.table(file, sep = "\t", header = TRUE)
-            singlePP <- recalculateScore(singlePP, genomeName)
+            if (scoreMode == 1) {
+                singlePP <- recalculateScore(singlePP, genomeName)
+            }
             if (is.null(pp)) {
                 pp <- singlePP
             } else {
@@ -193,6 +197,10 @@ concanateFiles <- function(directory, genomeName) {
     }
     pp <- extractPP(pp, genomeName)
     exFasta <- extractFasta(exFasta, genomeName)
+    if (scoreMode != 1) {
+        domain0 <- extractDomains(domain0, genomeName)
+        domain1 <- extractDomains(domain1, genomeName)
+    }
     return(list(pp, exFasta, domain0, domain1))
 }
 
@@ -346,31 +354,36 @@ runFdog <- function(
             if (is.null(refSpec)) {
                 return(NULL)
             }
+            
             if (file.exists(
                 paste(
-                    outPath, "/", coreGene, "/", "hamstrsearch.log", 
-                    sep = ""
+                    outPath, "/", refSpec, "/", coreGene, "/", 
+                    "hamstrsearch.log", sep = ""
                 )
             )) {
                 if (
                     file.exists(
                         paste(
-                            outPath, "/", coreGene, "/", coreGene, 
+                            outPath, "/", refSpec, "/", coreGene, "/", coreGene, 
                             ".extended.fa", sep = ""
                         )
                     )
                 ) {
-                    exFasta <- readLines(
-                        paste(
-                            outPath, "/", coreGene, "/", coreGene, 
-                            ".extended.fa", sep = ""
+                    if (scoreMode == 1) {
+                        exFasta <- readLines(
+                            paste(
+                                outPath, "/", refSpec, "/", coreGene, "/", 
+                                coreGene, ".extended.fa", sep = ""
+                            )
                         )
-                    )
-                    fastaList <- updateExFasta(
-                        root, coreSet, exFasta, coreGene, genomeName, refSpec,
-                        scoreMode
-                    )
-                    return(fastaList)
+                        fastaList <- updateExFasta(
+                            root, coreSet, exFasta, coreGene, genomeName, 
+                            refSpec, scoreMode
+                        )
+                        return(fastaList)
+                    } else {
+                        return(NULL)
+                    }
                 } else {
                     return(NULL)
                 }
@@ -385,7 +398,7 @@ runFdog <- function(
                 "--seqName", coreGene,
                 "--refspec", refSpec,
                 "--hmmpath", hmmPath,
-                "--outpath", outPath,
+                "--outpath", paste(outPath, "/", refSpec, sep = ""),
                 "--blastpath", blastPath,
                 "--weightpath", weightPath,
                 "--searchpath", searchPath,
@@ -405,24 +418,28 @@ runFdog <- function(
             if (
                 !file.exists(
                     paste(
-                        outPath, "/", coreGene, "/", coreGene, ".extended.fa", 
-                        sep = ""
+                        outPath, "/", refSpec, "/", coreGene, "/", coreGene, 
+                        ".extended.fa", sep = ""
                     )
                 )
             ){
                 return(NULL)
             } else {
-                exFasta <- readLines(
-                    paste(
-                        outPath, "/", coreGene, "/", coreGene, ".extended.fa",
-                        sep = ""
+                if (scoreMode == 1) {
+                    exFasta <- readLines(
+                        paste(
+                            outPath, "/", refSpec, "/", coreGene, "/", coreGene, 
+                            ".extended.fa", sep = ""
+                        )
                     )
-                )
-                fastaList <- updateExFasta(
-                    root, coreSet, exFasta, coreGene, genomeName, refSpec,
-                    scoreMode
-                )
-                return(fastaList)
+                    fastaList <- updateExFasta(
+                        root, coreSet, exFasta, coreGene, genomeName, refSpec,
+                        scoreMode
+                    )
+                    return(fastaList)
+                } else {
+                    return(NULL)
+                }
             }
         },
         hmmPath = hmmPath,
@@ -438,27 +455,29 @@ runFdog <- function(
         scoreMode = scoreMode
         )
     
-    orthoMax <- 1
-    for (fastaList in fastaSet) {
-        if (length(fastaList) > orthoMax) {
-            orthoMax <- length(fastaList)
-        }
-    }
-    
-    i <- 1:orthoMax
-    splitedFasta <- lapply(
-        i,
-        function(i, fastaSet) {
-            subFasta <- c()
-            for (fastaList in fastaSet) {
-                if (length(fastaList) >= i) {
-                    subFasta <- c(subFasta, fastaList[[i]])
-                }
+    if (scoreMode == 1) {
+        orthoMax <- 1
+        for (fastaList in fastaSet) {
+            if (length(fastaList) > orthoMax) {
+                orthoMax <- length(fastaList)
             }
-            return(subFasta)
-        },
-        fastaSet = fastaSet
-    )
+        }
+        
+        i <- 1:orthoMax
+        splitedFasta <- lapply(
+            i,
+            function(i, fastaSet) {
+                subFasta <- c()
+                for (fastaList in fastaSet) {
+                    if (length(fastaList) >= i) {
+                        subFasta <- c(subFasta, fastaList[[i]])
+                    }
+                }
+                return(subFasta)
+            },
+            fastaSet = fastaSet
+        )
+    }
     
     if (!is.null(ppDir)) {
         outDir <- ppDir
@@ -474,32 +493,72 @@ runFdog <- function(
         dir.create(temporary, recursive = TRUE)
     }
     
-    o <- 1
-    for (fasta in splitedFasta) {
-        writeLines(
-            fasta, 
-            paste(temporary, "/", genomeName, "_", o, ".extended.fa", sep = "")
-        )
-        
-        command <- paste(
-            "fdogFAS",
-            "-i", paste(
-                temporary, "/", genomeName, "_", o, ".extended.fa", sep = ""
-            ),
-            "-w", weightPath,
-            "-n", paste(genomeName, "_", o, sep = ""),
-            "-o", temporary,
-            "--cores", cpu
-        )
-        system(command)
-        o <- o + 1
+    if (scoreMode == 1) {
+        o <- 1
+        for (fasta in splitedFasta) {
+            writeLines(
+                fasta, 
+                paste(
+                    temporary, "/", genomeName, "_", o, ".extended.fa", sep = ""
+                )
+            )
+            
+            command <- paste(
+                "fdogFAS",
+                "-i", paste(
+                    temporary, "/", genomeName, "_", o, ".extended.fa", sep = ""
+                ),
+                "-w", weightPath,
+                "-n", paste(genomeName, "_", o, sep = ""),
+                "-o", temporary,
+                "--cores", cpu
+            )
+            system(command)
+            o <- o + 1
+        }
+    } else {
+        o <- 1
+        for (
+            subfolder in list.dirs(
+                outPath, full.names = TRUE, recursive = FALSE
+            )
+        ) {
+            exFasFiles <- list.files(
+                subfolder,
+                pattern = "\\.extended.fa$",
+                recursive = TRUE,
+                full.names = TRUE
+            )
+            subcommand <- paste(exFasFiles, collapse = " ")
+            command <- paste(
+                "cat",
+                subcommand,
+                ">",
+                paste(
+                    temporary, "/", genomeName, "_", o, ".extended.fa", sep = ""
+                )
+            )
+            system(command)
+            command <- paste(
+                "fdogFAS",
+                "-i", paste(
+                    temporary, "/", genomeName, "_", o, ".extended.fa", sep = ""
+                ),
+                "-w", weightPath,
+                "-n", paste(genomeName, "_", o, sep = ""),
+                "-o", temporary,
+                "--cores", cpu
+            )
+            system(command)
+            o <- o + 1
+        }
     }
     
     if (cleanup == TRUE) {
         unlink(outPath, recursive = TRUE)
     }
     
-    outputList <- concanateFiles(temporary, genomeName)
+    outputList <- concanateFiles(temporary, genomeName, scoreMode)
     pp <- outputList[[1]]
     
     if (extend == TRUE) {
@@ -527,8 +586,8 @@ runFdog <- function(
                 paste(outDir, setName, "_forward.domains", sep = "")
             )
         ) {
-            oriDomain0 <- read.table(
-                paste(outDir, "_forward.domains", sep = ""),
+            oriDomain1 <- read.table(
+                paste(outDir, setName, "_forward.domains", sep = ""),
                 sep = "\t",
                 comment.char = ""
             )
@@ -542,8 +601,8 @@ runFdog <- function(
                 paste(outDir, setName, "_reverse.domains", sep = "")
             )
         ) {
-            oriDomain1 <- read.table(
-                paste(outDir, "_reverse.domains", sep = ""),
+            oriDomain0 <- read.table(
+                paste(outDir, setName, "_reverse.domains", sep = ""),
                 sep = "\t",
                 comment.char = ""
             )

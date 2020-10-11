@@ -2,20 +2,21 @@
 % Please edit documentation in R/extractGenome.R
 \name{extractPP}
 \alias{extractPP}
-\title{The function extract a phylogenetic profile of a genome from a phylogentic
-profile}
+\title{This function takes a phylogenetic profile, which contains many different
+genomes as an input and extract the phylogenetic profile of a specific genome}
 \usage{
 extractPP(pp, genome)
 }
 \arguments{
-\item{pp}{the data frame of the phylogenetic profile}
+\item{pp}{A phylogenetic profile in data.frame}
 
-\item{genome}{the ID of the extracted genome}
+\item{genome}{The genome ID of the genome, whose pp need to be extracted.
+Exp: genome = HUMAN@9606@3}
 }
 \value{
-the phylogenetic profile of the interested genome
+The phylogenetic profile of the interested genome in data.frame
 }
 \description{
-The function extract a phylogenetic profile of a genome from a phylogentic
-profile
+This function takes a phylogenetic profile, which contains many different
+genomes as an input and extract the phylogenetic profile of a specific genome
 }

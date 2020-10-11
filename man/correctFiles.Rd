@@ -2,8 +2,9 @@
 % Please edit documentation in R/correctFiles.R
 \name{correctFiles}
 \alias{correctFiles}
-\title{remove all the lines of a specific genome from all of the phyloprofile,
-domains, fasta files, priority file, and report file in a folder}
+\title{This function run correctPP, correctFasta, correctDomains, correctPriority 
+and correctReport in a loop to correct all phyloprofile, extended fasta, 
+domains, prioritylist and report file in a folder}
 \usage{
 correctFiles(directory, genome)
 }
@@ -16,6 +17,7 @@ correctFiles(directory, genome)
 none
 }
 \description{
-remove all the lines of a specific genome from all of the phyloprofile,
-domains, fasta files, priority file, and report file in a folder
+This function run correctPP, correctFasta, correctDomains, correctPriority 
+and correctReport in a loop to correct all phyloprofile, extended fasta, 
+domains, prioritylist and report file in a folder
 }

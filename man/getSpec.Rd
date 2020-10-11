@@ -3,15 +3,20 @@
 \name{getSpec}
 \alias{getSpec}
 \title{The function read the fasta file in each core gene and extract the references
-species based on the priority order in the priorityList}
+species based on the priority order in the priority list. The function search
+in the fasta file to find the refererences species in priority order of the
+list. If no references taxon is determined, the function returns NULL}
 \usage{
 getSpec(fasta, priorityList)
 }
 \arguments{
-\item{fasta}{the path to the fasta file}
+\item{fasta}{the path to the fasta file in the core gene}
 
-\item{priorityList}{a vector that contains the taxa of the core set (it does
-not need to contain all the taxa, can be all or fewer) in a priority list}
+\item{priorityList}{A list contains one or many genome ID of the genomes,
+which were used to build the core set. The genome ID of this list will be 
+stored with an priority order, the tool look at into the fasta file of each
+core group and determine with the priority order to determine the references
+species for each core group.}
 }
 \value{
 The function will return the references species. If the function did
@@ -19,5 +24,7 @@ not find any references species, it will return the value NULL
 }
 \description{
 The function read the fasta file in each core gene and extract the references
-species based on the priority order in the priorityList
+species based on the priority order in the priority list. The function search
+in the fasta file to find the refererences species in priority order of the
+list. If no references taxon is determined, the function returns NULL
 }

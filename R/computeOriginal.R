@@ -8,7 +8,7 @@
 #'
 #' @return none
 #' @export
-computeOriginal <- function(root, coreSet, scoreMode, cpu = 4) {
+computeOriginal <- function(root, coreSet, scoreMode, cpu = 4, cleanup) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
@@ -25,7 +25,7 @@ computeOriginal <- function(root, coreSet, scoreMode, cpu = 4) {
         fasAnno <- paste(weightDir, "/", genome, ".json", sep = "")
         computeReport(genomeFasta, fasAnno, root, coreSet,
             TRUE, scoreMode,
-            priorityList = c(genome), cpu, computeOri = TRUE
+            priorityList = c(genome), cpu, computeOri = TRUE, cleanup = cleanup
         )
     }
 }

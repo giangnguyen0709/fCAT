@@ -2,20 +2,25 @@
 % Please edit documentation in R/getResult.R
 \name{translateReport}
 \alias{translateReport}
-\title{Translate the report table into a frequent table, how many is complete, etc.}
+\title{Translate the report table into a frequence table, which tell the user, how
+many "dissimilar", "simillar", "missing", etc.}
 \usage{
 translateReport(genomeID, report, scoreMode)
 }
 \arguments{
 \item{genomeID}{the genome ID of the interested genome}
 
-\item{report}{the report in data frame}
+\item{report}{the report of the completeness of the interested genome based
+on its phylogenetic profile}
 
-\item{scoreMode}{the mode to determine the method to assess the ortholog}
+\item{scoreMode}{the mode determines the method to scoring the founded 
+ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 }
 \value{
-A frequencies table in data frame
+A frequency table of the completeness of the interested genome in 
+data.frame
 }
 \description{
-Translate the report table into a frequent table, how many is complete, etc.
+Translate the report table into a frequence table, which tell the user, how
+many "dissimilar", "simillar", "missing", etc.
 }
