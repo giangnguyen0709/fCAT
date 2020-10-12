@@ -57,7 +57,9 @@ handleError <- function(root, weightDir = NULL) {
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return TRUE or FALSE
-#' @examples 
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' checkPreProcess(coreFolder, "test")
 #' @export
 checkPreProcess <- function(root, coreSet) {
     check <- 0
@@ -99,6 +101,9 @@ checkPreProcess <- function(root, coreSet) {
 #' @param ppDir The user can replace the default folder output in the core 
 #' directory, where the phylogenetic profiles are stored by his folder. The user
 #' can specify the path to his folder in this argument
+#' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' checkExist("HUMAN@9606@3", coreFolder, "test", 2, NULL)
 #'
 #' @return TRUE or FALSE
 #' @export
@@ -191,6 +196,12 @@ checkExist <- function(genomeName, root, coreSet, scoreMode, ppDir) {
 #' @param ppDir The user can replace the default folder output in the core 
 #' directory, where the phylogenetic profiles are stored by his folder. The user
 #' can specify the path to his folder in this argument
+#' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+#' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+#' checkArguments(genome[1], fasAnno[1], coreFolder[1], "test",
+#' scoreMode = 2, priorityList = c("HUMAN@9606@1"))
 #'
 #' @return A list that contains a logical value and the message to the error
 #' @export
@@ -397,8 +408,8 @@ checkArguments <- function(
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 #' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
-#' checkCompleteness(genome[1], fasAnno[1], coreSet[1], "test", extend = TRUE,
-#' scoreMode = 2, priorityList = c("HUMAN@9606@1"))
+#' checkCompleteness(genome[1], fasAnno[1], coreFolder[1], "test",
+#' scoreMode = 2, priorityList = c("HUMAN@9606@1"), extend = TRUE)
 #' @export
 checkCompleteness <- function(
     genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE, 

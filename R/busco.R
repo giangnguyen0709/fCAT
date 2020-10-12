@@ -11,6 +11,22 @@
 #'
 #' @return the phylogenetic profile of the interested genome with updated
 #' length for each ortholog (or for each line)
+#' @examples
+#' ## Create pseudo data
+#' geneID <- c("530670", "530730")
+#' ncbiID <- c("ncbi9606", "ncbi9606")
+#' orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1")
+#' pp <- data.frame(geneID, ncbiID, orthoID)
+#' 
+#' fasta <- c(
+#' ">530670|HUMAN@9606@3|Q16526|1",
+#' "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+#' ">530730|HUMAN@9606@3|P05091|1",
+#' "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+#' 
+#' ## Updating length
+#' updatedPP <- updateLength(pp, fasta)
+#' print.data.frame(updatedPP)
 #' @export
 updateLength <- function(pp, exFasta) {
     i <- (1:nrow(pp))
@@ -102,10 +118,31 @@ updateLength <- function(pp, exFasta) {
 #' can specify the path to his folder in this argument
 #'
 #' @return phylogenetic profile of the genome in data.frame
+#' @examples 
+#' ## Take the demo data
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+#' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+#' 
+#' ## Place seed
+#' placeSeed(genome, fasAnno, coreFolder)
+#' 
+#' ## Test runFdogBusco
+#' pp <- runFdogBusco(coreFolder, "test", extend = FALSE, scoreMode = "busco",
+#' priorityList = c("HUMAN@9606@1"), cpu = 4)
+#' 
+#' print.data.frame(pp)
+#' 
+#' ## Delete seed
+#' fastaFolder <- paste(coreFolder, "/query_taxon/HUMAN@9606@3", sep = "")
+#' annoPath <- paste(coreFolder, "/weight_dir/HUMAN@9606@3.json", sep = "")
+#' unlink(fastaFolder, recursive = TRUE)
+#' file.remove(annoPath)
 #' @export
 runFdogBusco <- function(
     root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu,
-    blastDir = NULL, weightDir = NULL, cleanup = FALSE, reFdog, fdogDir, ppDir
+    blastDir = NULL, weightDir = NULL, cleanup = FALSE, 
+    reFdog = FALSE, fdogDir = NULL, ppDir = NULL
 ) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")

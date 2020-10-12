@@ -20,9 +20,13 @@
 #' stored with an priority order, the tool look at into the fasta file of each
 #' core group and determine with the priority order to determine the references
 #' species for each core group.
-#'
 #' @return the status of the ortholog of the core gene. It can be "similar", 
 #' "dissimilar", "duplicated, similar" or "duplicated, dissimilar"
+#' #' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' status <- assessStatus(0.7, 0.9, coreFolder, "test", "530670", scoreMode = 2,
+#' f = 1, priorityList = c("HUMAN@9606@1"))
+#' print(status)
 #' @export
 assessStatus <- function(
     fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList
@@ -104,7 +108,8 @@ assessStatus <- function(
 }
 
 #' The function to calculate the cutoff value based on standard deviation of 
-#' the length for each core group
+#' the length for each core group. This function will be used in score mode
+#' "busco"
 #'
 #' @param root The path to the core directory, where the core set is stored 
 #' within weight_dir, blast_dir, etc.
@@ -116,6 +121,10 @@ assessStatus <- function(
 #'
 #' @return a list that contains the mean length and the standard deviation of
 #' the length of the core gene
+#' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' cutoff <- calculateBuscoCutoff(coreFolder, "test", "530670")
+#' print(cutoff)
 #' @export
 calculateBuscoCutoff <- function(root, coreSet, coreGene) {
     if (!endsWith(root, "/")) {
@@ -160,6 +169,10 @@ calculateBuscoCutoff <- function(root, coreSet, coreGene) {
 #'
 #' @return the status of the core gene, it can be "fragmented", "complete",
 #' "duplicated, complete" or "duplicated, fragmented"
+#' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' status <- assessBusco(600, coreFolder, "test", "530670", f = 1)
+#' print(status)
 #' @export
 assessBusco <- function(orthoLength, root, coreSet, coreGene, f) {
     cutoff <- calculateBuscoCutoff(root, coreSet, coreGene)
@@ -202,6 +215,10 @@ assessBusco <- function(orthoLength, root, coreSet, coreGene, f) {
 #' species for each core group.
 #'
 #' @return TRUE or FALSE
+#' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' check <- filterIgnore(coreFolder, "test", "530670", c("HUMAN@9606@1"))
+#' print(check)
 #' @export
 filterIgnore <- function(root, coreSet, coreGene, priorityList) {
     if (!endsWith(root, "/")) {
@@ -238,6 +255,18 @@ filterIgnore <- function(root, coreSet, coreGene, priorityList) {
 #' species for each core group.
 #'
 #' @return the report in data frame
+#' @examples
+#' ## Create a pseudo phylogenetic profile table
+#' geneID <- c("530670", "530730")
+#' ncbiID <- c("ncbi9606", "ncbi9606")
+#' orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1")
+#' FAS_F <- c(1, 1)
+#' FAS_B <- c(1, 1)
+#' pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' ## Translate phylogenetic profile to a detailed report
+#' report <- reportSingle(pp, coreFolder, "test", 2, c("HUMAN@9606@1"))
+#' print.data.frame(report)
 #' @export
 reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
     if (!endsWith(root, "/")) {
@@ -364,6 +393,20 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
 #'
 #' @return A frequency table of the completeness of the interested genome in 
 #' data.frame
+#' @examples 
+#' ## Create a pseudo phylogenetic profile table
+#' geneID <- c("530670", "530730")
+#' ncbiID <- c("ncbi9606", "ncbi9606")
+#' orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1")
+#' FAS_F <- c(1, 1)
+#' FAS_B <- c(1, 1)
+#' pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' ## Translate phylogenetic profile to a detailed report
+#' report <- reportSingle(pp, coreFolder, "test", 2, c("HUMAN@9606@1"))
+#' ## Translate the report table to a frequency table
+#' frequencyTable <- translateReport("HUMAN@9606@3", report, 2)
+#' print.data.frame(frequencyTable)
 #' @export
 translateReport <- function(genomeID, report, scoreMode) {
     if (scoreMode == "busco") {

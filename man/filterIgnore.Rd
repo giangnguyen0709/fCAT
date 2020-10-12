@@ -31,3 +31,8 @@ TRUE or FALSE
 Determine if a core gene was ignored by the tool because of the unknown
 references species
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+check <- filterIgnore(coreFolder, "test", "530670", c("HUMAN@9606@1"))
+print(check)
+}

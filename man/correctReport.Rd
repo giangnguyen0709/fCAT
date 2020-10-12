@@ -33,3 +33,27 @@ already in the original pp, the tool must remove the lines of the
 genome from the original frequency table. That is the purpose of this 
 function
 }
+\examples{
+## Create pseudo frequency table file
+genomeID <- c("HUMAN@9606@3", "AMPQU@400682")
+similar <- c(330, 313)
+dissimilar <- c(3, 0)
+missing <- c(4, 11)
+duplicated <- c(1, 0)
+ignored <- c(8, 22)
+
+table <- data.frame(genomeID, similar, dissimilar, missing, duplicated, 
+ignored)
+
+## Write the table in a file in the current working directory
+wd <- getwd()
+filePath <- paste(wd, "/fCAT_functiontest.report", sep = "")
+write.table(table, filePath, sep = "\t", row.names = FALSE, quote = FALSE)
+
+correctReport(filePath, "HUMAN@9606@3")
+## Check if the file  is corrected
+read.table(filePath, sep = "\t", header = TRUE)
+
+## Delete the file
+file.remove(filePath)
+}

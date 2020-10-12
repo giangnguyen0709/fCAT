@@ -29,3 +29,8 @@ the status of the core gene, it can be "fragmented", "complete",
 \description{
 The function to classify the founded ortholog based on its length
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+status <- assessBusco(600, coreFolder, "test", "530670", f = 1)
+print(status)
+}

@@ -34,3 +34,24 @@ be that the user can change the priority list, because of that, anytime a
 redo is on, the tool must first remove the old priority list of the genome in
 the file.
 }
+\examples{
+## Create a pseudo priority file with 2 genomes
+genomeID <- c("HUMAN@9606@3", "AMPQU@400682@2")
+priority_list <- c("HUMAN@9606@3", "AMPQU@400682@2")
+table <- data.frame(genomeID, priority_list)
+
+## write it in a file in the current working directory
+wd <- getwd()
+filePath <- paste(wd, "/fCAT_functiontest.prioritylist", sep = "")
+write.table(table, filePath, sep = "\t", row.names = FALSE, quote = FALSE)
+
+## Correcting
+correctPriority(filePath, "HUMAN@9606@3")
+
+## Check if HUMAN@9606@3 line is removed from the file
+table <- read.table(filePath, sep = "\t", header = TRUE)
+print.data.frame(table)
+
+## delete the file
+file.remove(filePath)
+}

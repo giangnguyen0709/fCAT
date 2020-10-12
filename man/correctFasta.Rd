@@ -31,3 +31,25 @@ already in the original pp, the tool must remove the lines of the
 genome from the original extended fasta file. That is the purpose of this 
 function
 }
+\examples{
+## Create pseudo extended fasta file
+fasta <- c(">1001705at2759|HUMAN@9606@3|Q15291|1",
+"MNLELLESFGQNYPEEADGTLDCISMALTCTFNRWGT", 
+">1489230at2759|ARATH@3702@2|3702_0:005bc2|1",
+"MAGRATIPARNSALIAMIADEDTVVGFLMAGVGNVDIRRKTNYLIVDS")
+
+## Write it in a file in the current working directory
+wd <- getwd()
+filePath <- paste(wd, "/fCAT_functiontest.fa", sep = "")
+writeLines(fasta, filePath)
+
+## Correcting
+correctFasta(filePath, "HUMAN@9606@3")
+
+## Check if the file is corrected
+fasta <- readLines(filePath)
+print(fasta)
+
+## Delete the file
+file.remove(filePath)
+}

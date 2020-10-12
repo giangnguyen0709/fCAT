@@ -10,6 +10,9 @@
 #' subfolder, specify them by the name of the subfolder
 #' @param coreGene The ID of the core gene in the set
 #' @return none
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' createAnnotation(coreFolder, "test", "530670")
 #' @export
 createAnnotation <- function(root, coreSet, coreGene) {
     if (!endsWith(root, "/")) {
@@ -52,6 +55,9 @@ createAnnotation <- function(root, coreSet, coreGene) {
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return none
+#' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' createAllAnnotation(coreFolder, "test")
 #' @export
 createAllAnnotation <- function(root, coreSet) {
     if (!endsWith(root, "/")) {
@@ -90,6 +96,9 @@ createAllAnnotation <- function(root, coreSet) {
 #' @param coreGene the ID of the core gene in the set
 #'
 #' @return none
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' calculateCutoff(coreFolder, "test", "530670")
 #' @export
 calculateCutoff <- function(root, coreSet, coreGene) {
     if (!endsWith(root, "/")) {
@@ -251,6 +260,9 @@ calculateCutoff <- function(root, coreSet, coreGene) {
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return none
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' calculateAllCutoff(coreFolder, "test")
 #' @export
 calculateAllCutoff <- function(root, coreSet) {
     if (!endsWith(root, "/")) {
@@ -279,6 +291,9 @@ calculateAllCutoff <- function(root, coreSet) {
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return none
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' processCoreSet(coreFolder, "test")
 #' @export
 processCoreSet <- function(root, coreSet) {
     if (!endsWith(root, "/")) {

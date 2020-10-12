@@ -64,3 +64,15 @@ The number of the element of the list equal to the number of the orthologs,
 that fDOG founded for this core group. This function will be used as a modul
 in the function runFdog (not runFdogBusco).
 }
+\examples{
+## Create pseudo extended fasta
+fasta <- c(">530670|HUMAN@9606@1|HUMAN07070|1",
+"MGVNAVHWFRKGLRLHDNPALKECIQGADTIRCVY", ">530670|HUMAN@9606@3|Q16526|1",
+"MGVNAVHWFRKGLRLHDNPALKECIQGADTIRCVYILDP")
+
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+returnList <- updateExFasta(coreFolder, "test", fasta, 
+"530670", "HUMAN@9606@3", "HUMAN@9606@1", scoreMode = 1)
+
+print(returnList)
+}

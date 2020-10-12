@@ -31,3 +31,32 @@ already in the original pp, the tool must remove the lines of the
 genome from the original domains file. That is the purpose of this 
 function
 }
+\examples{
+#' ## Create a pseudo domains table
+V1 <- c("1001705at2759#1001705at2759|HUMAN@9606@3|Q15291|1",
+"551907at2759#551907at2759|AMPQU@400682@2|400682_0:001490|1")
+V2 <- c("1001705at2759|HOMSA@9606@2|9606_0:00004c", 
+"551907at2759|AMPQU@400682@2|400682_0:001490|1")
+V3 <- c(538, 1087)
+V4 <- c("pfam_WD40", "flps_SINGLE_{G}")
+V5 <- c(17, 1030)
+V6 <- c(52, 1058)
+V7 <- c(0.2265, 0.0936)
+V8 <- c("Y", "Y")
+domains <- data.frame(V1, V2, V3, V4, V5, V6, V7, V8)
+
+## Write it in a file
+wd <- getwd()
+filePath <- paste(wd, "/fCAT_functiontest.domains", sep = "")
+write.table(domains, filePath, sep = "\t", row.names = FALSE, 
+quote = FALSE, col.names = FALSE)
+
+## correcting
+correctDomains(filePath, "HUMAN@9606@3")
+
+## Check if the file is corrected
+read.table(filePath, sep = "\t", header = FALSE, comment.char = "")
+
+## delete file
+file.remove(filePath)
+}

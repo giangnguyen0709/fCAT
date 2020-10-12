@@ -38,6 +38,11 @@ species for each core group.}
 \value{
 the status of the ortholog of the core gene. It can be "similar", 
 "dissimilar", "duplicated, similar" or "duplicated, dissimilar"
+#' @examples 
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+status <- assessStatus(0.7, 0.9, coreFolder, "test", "530670", scoreMode = 2,
+f = 1, priorityList = c("HUMAN@9606@1"))
+print(status)
 }
 \description{
 The function to classify a founded ortholog from its information like FAS 

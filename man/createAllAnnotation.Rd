@@ -23,3 +23,7 @@ none
 The function run createAnnotation function in a loop to compute the FAS 
 annotation file for all core genes in the core set
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+createAllAnnotation(coreFolder, "test")
+}

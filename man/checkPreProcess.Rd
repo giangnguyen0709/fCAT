@@ -21,3 +21,7 @@ TRUE or FALSE
 \description{
 Check if the core set was processed with the function processCoreSet()
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+checkPreProcess(coreFolder, "test")
+}

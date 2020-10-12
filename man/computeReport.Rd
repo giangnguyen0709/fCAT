@@ -103,3 +103,11 @@ The function take a path to a genome fasta file and its FAS annotation file
 (if the annotation file is not provided, the funtion will compute it) and
 compute the detailed report of the completeness of the genome
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+report <- computeReport(genome, fasAnno, coreFolder, "test",
+scoreMode = 2, priorityList = c("HUMAN@9606@1"), cpu = 4)
+print.data.frame(report)
+}

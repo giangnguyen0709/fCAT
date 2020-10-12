@@ -12,6 +12,11 @@
 #'
 #' @return The function will return the references species. If the function did
 #' not find any references species, it will return the value NULL
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' fasta <- paste(coreFolder, "/core_orthologs/test/530670/530670.fa", sep = "")
+#' refSpec <- getSpec(fasta, c("HUMAN@9606@1"))
+#' print(refSpec)
 #' @export
 getSpec <- function(fasta, priorityList) {
     lines <- readLines(fasta)

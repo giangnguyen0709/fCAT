@@ -20,11 +20,41 @@
 #' directory, where the phylogenetic profiles are stored by his folder. The user
 #' can specify the path to his folder in this argument
 #' @return none
+#' @examples
+#' genomeID <- c("HUMAN@9606@3", "AMPQU@400682")
+#' similar <- c(330, 313)
+#' dissimilar <- c(3, 0)
+#' missing <- c(4, 11)
+#' duplicated <- c(1, 0)
+#' ignored <- c(8, 22)
+#' 
+#' table <- data.frame(genomeID, similar, dissimilar, missing, duplicated, 
+#' ignored)
+#' 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' 
+#' ppDir <- getwd()
+#' filePath <- paste(ppDir, "/test.report", sep = "")
+#' 
+#' printReport(table, coreFolder, "test", 2, ppDir)
+#' 
+#' ## Check if the report table was printed
+#' read <- read.table(filePath, header = TRUE, sep = "\t")
+#' print.data.frame(read)
+#' 
+#' ## Delete the added line
+#' file.remove(filePath)
 #' @export
 printReport <- function(report, root, coreSet, scoreMode, ppDir) {
+    if (!endsWith(root, "/")) {
+        root <- paste(root, "/", sep = "")
+    }
     setName <- coreSet
 
     if (!is.null(ppDir)) {
+        if (!endsWith(ppDir, "/")) {
+            ppDir <- paste(ppDir, "/", sep = "")
+        }
         reportFile <- paste(ppDir, setName, ".report", sep = "")
     } else {
         reportFile <- paste(root, "output", "/", coreSet, "/",
@@ -74,16 +104,36 @@ printReport <- function(report, root, coreSet, scoreMode, ppDir) {
 #' can specify the path to his folder in this argument
 #'
 #' @return none
+#' @examples
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' ppDir <- getwd()
+#' filePath <- paste(ppDir, "/test.prioritylist", sep = "")
+#' 
+#' printPriority("HUMAN@9606@3", c("HUMAN@9606@1"), coreFolder, "test", 2,
+#' ppDir)
+#' 
+#' ## Check if the report table was printed
+#' read <- read.table(filePath, header = TRUE, sep = "\t")
+#' print.data.frame(read)
+#' 
+#' ## Delete the printed report file
+#' file.remove(filePath)
 #' @export
 printPriority <- function(
     genomeID, priorityList, root, coreSet, scoreMode, ppDir
 ) {
+    if (!endsWith(root, "/")) {
+        root <- paste(root, "/", sep = "")
+    }
     table <- data.frame(
         genomeID = c(genomeID),
         priority_list = c(paste(priorityList, collapse = ","))
     )
     
     if (!is.null(ppDir)) {
+        if (!endsWith(ppDir, "/")) {
+            ppDir <- paste(ppDir, "/", sep = "")
+        }
         priorityFile <- paste(ppDir, coreSet, ".prioritylist", sep = "")
     } else {
         priorityFile <- paste(root, "output", "/", coreSet, "/",
@@ -174,6 +224,13 @@ printPriority <- function(
 #' @return a report of the completeness of the interested genome with detailed 
 #' information of every core genes in the core set. Which core gene is "similar"
 #' , which is "dissimilar", "duplicated" and "missing"
+#' @examples 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+#' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+#' report <- computeReport(genome, fasAnno, coreFolder, "test",
+#' scoreMode = 2, priorityList = c("HUMAN@9606@1"), cpu = 4)
+#' print.data.frame(report)
 #' @export
 computeReport <- function(genome, fasAnno, root, coreSet, extend = FALSE, 
     scoreMode, priorityList = NULL, cpu, computeOri = FALSE,

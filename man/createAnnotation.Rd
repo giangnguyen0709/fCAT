@@ -27,3 +27,7 @@ The function creates FAS annotation for the fasta file of a core gene in the
 core set. This annotation file will be saved in each core gene folder and
 be used then to calculate the cut off value for each score mode.
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+createAnnotation(coreFolder, "test", "530670")
+}

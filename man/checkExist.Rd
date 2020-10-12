@@ -34,3 +34,8 @@ Check if ID of the interested genome exists already in the original
 phylogenetic profile in the output folder of the core set or in the user's
 phyloprofile folder
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+checkExist("HUMAN@9606@3", coreFolder, "test", 2, NULL)
+
+}

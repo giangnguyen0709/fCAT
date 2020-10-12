@@ -105,3 +105,11 @@ A list that contains a logical value and the message to the error
 The function to validate the input. If a input is not validated, it will 
 return a message to the user
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+checkArguments(genome[1], fasAnno[1], coreFolder[1], "test",
+scoreMode = 2, priorityList = c("HUMAN@9606@1"))
+
+}

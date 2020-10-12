@@ -23,3 +23,7 @@ none
 The function run createAllAnnotation and calculateAllCufoff to process the
 core set
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+processCoreSet(coreFolder, "test")
+}

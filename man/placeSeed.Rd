@@ -38,3 +38,23 @@ file and a symbolic link (not in case annoFAS is called) and arrange them
 into the query_taxon folder and into the weight_dir folder of the core 
 directory.
 }
+\examples{
+## Take the demo data
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+## Place seed
+placeSeed(genome, fasAnno, coreFolder)
+## Test if the seed was place
+fastaPath <- paste(coreFolder, "/query_taxon/HUMAN@9606@3/HUMAN@9606@3.fa", 
+sep = "")
+annoPath <- paste(coreFolder, "/weight_dir/HUMAN@9606@3.json", sep = "")
+if (file.exists(fastaPath) && file.exists(annoPath)) {
+print("Seed is placed")}
+
+## Delete seed
+fastaFolder <- paste(coreFolder, "/query_taxon/HUMAN@9606@3", sep = "")
+annoPath <- paste(coreFolder, "/weight_dir/HUMAN@9606@3.json", sep = "")
+unlink(fastaFolder, recursive = TRUE)
+file.remove(annoPath)
+}

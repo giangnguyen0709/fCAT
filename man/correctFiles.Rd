@@ -21,3 +21,40 @@ This function run correctPP, correctFasta, correctDomains, correctPriority
 and correctReport in a loop to correct all phyloprofile, extended fasta, 
 domains, prioritylist and report file in a folder
 }
+\examples{
+## Create some pseudo data
+genomeID <- c("HUMAN@9606@3", "AMPQU@400682@2")
+priority_list <- c("HUMAN@9606@3", "AMPQU@400682@2")
+table1 <- data.frame(genomeID, priority_list)
+
+genomeID <- c("HUMAN@9606@3", "AMPQU@400682")
+similar <- c(330, 313)
+dissimilar <- c(3, 0)
+missing <- c(4, 11)
+duplicated <- c(1, 0)
+ignored <- c(8, 22)
+
+table2 <- data.frame(genomeID, similar, dissimilar, missing, duplicated, 
+ignored)
+
+## Write them in files in a subfolder in the current working directory
+wd <- getwd()
+testFolder <- paste(wd, "/fCAT_functiontest", sep = "")
+dir.create(testFolder, recursive = TRUE)
+filePath1 <- paste(testFolder, "/table1.prioritylist", sep = "")
+filePath2 <- paste(testFolder, "/table2.report", sep = "")
+write.table(table1, filePath1, sep = "\t", row.names = FALSE, quote = FALSE)
+write.table(table2, filePath2, sep = "\t", row.names = FALSE, quote = FALSE)
+
+## Correcting
+correctFiles(testFolder, "HUMAN@9606@3")
+
+## Check if the file in the test folder are corrected
+table1 <- read.table(filePath1, sep = "\t", header = TRUE)
+print.data.frame(table1)
+table2 <- read.table(filePath2, sep = "\t", header = TRUE)
+print.data.frame(table2)
+
+## Delete the folder
+unlink(testFolder, recursive = TRUE)
+}

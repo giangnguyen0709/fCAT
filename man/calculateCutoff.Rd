@@ -43,3 +43,7 @@ distribution, the function will calculate the confidence interval of this
 distribution and write the upper value and the lower value of the interval
 in a file in the core gene folder.
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+calculateCutoff(coreFolder, "test", "530670")
+}

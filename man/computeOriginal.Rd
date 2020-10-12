@@ -5,16 +5,34 @@
 \title{The function compute the initial original phylogenetic profile of all the
 taxa in the score set}
 \usage{
-computeOriginal(root, coreSet, scoreMode, cpu = 4, cleanup)
+computeOriginal(root, coreSet, scoreMode, cpu = 4, cleanup, ppDir)
 }
 \arguments{
-\item{root}{the path to the root folder}
+\item{root}{The path to the core directory, where the core set is stored 
+within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{the core set name}
+\item{coreSet}{The name of the interested core set. The core directory can 
+contains more than one core set and the user must specify the interested 
+core set. The core set will be stored in the folder core_orthologs in 
+subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode determines the way to assess the founded ortholog}
+\item{scoreMode}{the mode determines the method to scoring the founded 
+ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
-\item{cpu}{determines the number of the cores}
+\item{cpu}{determines the cores that fDOG and fdogFAS will uses to be run 
+parallel}
+
+\item{cleanup}{The fDOG's output is a set of phylogenetic profile of each
+core group to the interested genome. The phylogenetic profile will be stored
+into a folder in the core set. The function will merge all the small 
+phylogenetic profile, calculate the FAS score or length to have the whole 
+phylogenetic profile of the interested genome to the core set. This fDOG's
+output can be reused for all score modes. When cleanup is set to TRUE, the
+fDOG's output will not be stored to be reused but to be removed}
+
+\item{ppDir}{The user can replace the default folder output in the core 
+directory, where the phylogenetic profiles are stored by his folder. The user
+can specify the path to his folder in this argument}
 }
 \value{
 none
@@ -22,4 +40,10 @@ none
 \description{
 The function compute the initial original phylogenetic profile of all the
 taxa in the score set
+}
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+computeOriginal(coreFolder, "test", scoreMode = 2, cleanup = TRUE, 
+ppDir = NULL)
+
 }

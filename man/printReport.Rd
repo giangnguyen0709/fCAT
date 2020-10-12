@@ -43,3 +43,28 @@ was set to TRUE while checking.(How many "complete", "fragmented", "missing",
 and "duplicated" for busco mode or how many "similar", "dissimilar", 
 "missing", and "duplicated" for the other modes)
 }
+\examples{
+genomeID <- c("HUMAN@9606@3", "AMPQU@400682")
+similar <- c(330, 313)
+dissimilar <- c(3, 0)
+missing <- c(4, 11)
+duplicated <- c(1, 0)
+ignored <- c(8, 22)
+
+table <- data.frame(genomeID, similar, dissimilar, missing, duplicated, 
+ignored)
+
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+
+ppDir <- getwd()
+filePath <- paste(ppDir, "/test.report", sep = "")
+
+printReport(table, coreFolder, "test", 2, ppDir)
+
+## Check if the report table was printed
+read <- read.table(filePath, header = TRUE, sep = "\t")
+print.data.frame(read)
+
+## Delete the added line
+file.remove(filePath)
+}

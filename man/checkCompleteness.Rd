@@ -115,6 +115,6 @@ interested core set.
 coreFolder <- system.file("extdata", "sample", package = "fCAT")
 genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
-checkCompleteness(genome[1], fasAnno[1], coreSet[1], "test", extend = TRUE,
-scoreMode = 2, priorityList = c("HUMAN@9606@1"))
+checkCompleteness(genome[1], fasAnno[1], coreFolder[1], "test",
+scoreMode = 2, priorityList = c("HUMAN@9606@1"), extend = TRUE)
 }

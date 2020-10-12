@@ -31,11 +31,25 @@
 #' @return A list, which contains the vector of the sequences. 
 #' The number of the element of the list equal to the number of the orthologs,
 #' that fDOG founded for this core group
+#' @examples
+#' ## Create pseudo extended fasta
+#' fasta <- c(">530670|HUMAN@9606@1|HUMAN07070|1",
+#' "MGVNAVHWFRKGLRLHDNPALKECIQGADTIRCVY", ">530670|HUMAN@9606@3|Q16526|1",
+#' "MGVNAVHWFRKGLRLHDNPALKECIQGADTIRCVYILDP")
+#' 
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' returnList <- updateExFasta(coreFolder, "test", fasta, 
+#' "530670", "HUMAN@9606@3", "HUMAN@9606@1", scoreMode = 1)
+#' 
+#' print(returnList)
 #' @export
 
 updateExFasta <- function(
     root, coreSet, fasta, coreGene, genomeName, refSpec, scoreMode
 ) {
+    if (!endsWith(root, "/")) {
+        root <- paste(root, "/", sep = "")
+    }
     queryFasta <- extractFasta(fasta, genomeName)
     coreFasta <- readLines(
         paste(
@@ -90,6 +104,23 @@ updateExFasta <- function(
 #' @param genomeName The genome ID of the interested genome
 #' 
 #' @return The phylogenetic profile of the interested genome.
+#' @examples 
+#' ## Create pseudo phylogenetic profile data
+#' geneID <- c(
+#' "1426075at2759", "1426075at2759", "1426075at2759", "1426075at2759")
+#' ncbiID <- c("ncbi9606", "ncbi3055", "ncbi3702", "ncbi400682")
+#' orthoID <- c(
+#' "1426075at2759|HUMAN@9606@3|P0DI81|0",
+#' "1426075at2759|CHLRE@3055@2|3055_0:003348|1",
+#' "1426075at2759|ARATH@3702@2|3702_0:00057f|1",
+#' "1426075at2759|AMPQU@400682@2|400682_0:000143|1")
+#' FAS_F <- c(1, 0.99766, 0.9975999, 0.996729)
+#' FAS_B <- c(1, 0.99766, 0.99759, 0.996729)
+#' pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+#' 
+#' ## recalculating scores
+#' rePP <- recalculateScore(pp, "HUMAN@9606@3")
+#' print.data.frame(rePP)
 #' @export
 recalculateScore <- function(pp, genomeName) {
     queryPP <- extractPP(pp, genomeName)
@@ -137,6 +168,30 @@ recalculateScore <- function(pp, genomeName) {
 #' @return a list which contains the pp of the interested genome in data.frame, 
 #' the extended fasta file of the interested genome in form of a vector, which
 #' contains the lines of the file and 2 domains file in form of data.frame
+#' @examples
+#' ## Creating some pseudo data
+#' geneID <- c("HUMAN@96063")
+#' ncbiID <- c("ncbi9606")
+#' orthoID <- c("123at123|HUMAN@9606@3|Q123123|1")
+#' FAS_F <- c(1)
+#' FAS_B <- c(1)
+#' pp1 <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+#' pp2 <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+#' 
+#' ## Write them in 2 files in a test folder in the current working directory
+#' wd <- getwd()
+#' testFolder <- paste(wd, "/fCAT_testfunction", sep = "")
+#' dir.create(testFolder, recursive = TRUE)
+#' filePath1 <- paste(testFolder, "/test1.phyloprofile", sep = "")
+#' filePath2 <- paste(testFolder, "/test2.phyloprofile", sep = "")
+#' write.table(pp1, filePath1, row.names = FALSE, quote = FALSE, sep = "\t")
+#' write.table(pp2, filePath2, row.names = FALSE, quote = FALSE, sep = "\t")
+#' 
+#' test <- concanateFiles(testFolder, "HUMAN@9606@3", scoreMode = 2)
+#' print(test)
+#' 
+#' ## Delete test folder
+#' unlink(testFolder, recursive = TRUE)
 #' @export
 concanateFiles <- function(directory, genomeName, scoreMode) {
     if (!endsWith(directory, "/")) {
@@ -195,11 +250,19 @@ concanateFiles <- function(directory, genomeName, scoreMode) {
             }
         }
     }
-    pp <- extractPP(pp, genomeName)
-    exFasta <- extractFasta(exFasta, genomeName)
+    if (!is.null(pp)) {
+        pp <- extractPP(pp, genomeName)
+    }
+    if (!is.null(exFasta)) {
+        exFasta <- extractFasta(exFasta, genomeName)
+    }
     if (scoreMode != 1) {
-        domain0 <- extractDomains(domain0, genomeName)
-        domain1 <- extractDomains(domain1, genomeName)
+        if (!is.null(domain0)) {
+            domain0 <- extractDomains(domain0, genomeName)
+        }
+        if (!is.null(domain1)) {
+            domain1 <- extractDomains(domain1, genomeName)
+        }
     }
     return(list(pp, exFasta, domain0, domain1))
 }
@@ -273,10 +336,31 @@ concanateFiles <- function(directory, genomeName, scoreMode) {
 #' can specify the path to his folder in this argument
 #'
 #' @return phylogenetic profile of the genome in data.frame
+#' @examples 
+#' ## Take the demo data
+#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
+#' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
+#' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
+#' 
+#' ## Place seed
+#' placeSeed(genome, fasAnno, coreFolder)
+#' 
+#' ## Test runFdog
+#' pp <- runFdog(coreFolder, "test", extend = FALSE, scoreMode = 2,
+#' priorityList = c("HUMAN@9606@1"), cpu = 4)
+#' 
+#' print.data.frame(pp)
+#' 
+#' ## Delete seed
+#' fastaFolder <- paste(coreFolder, "/query_taxon/HUMAN@9606@3", sep = "")
+#' annoPath <- paste(coreFolder, "/weight_dir/HUMAN@9606@3.json", sep = "")
+#' unlink(fastaFolder, recursive = TRUE)
+#' file.remove(annoPath)
 #' @export
 runFdog <- function(
     root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu,
-    blastDir = NULL, weightDir = NULL, cleanup = FALSE, reFdog, fdogDir, ppDir
+    blastDir = NULL, weightDir = NULL, cleanup = FALSE, 
+    reFdog = FALSE, fdogDir = NULL, ppDir = NULL
 ) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")

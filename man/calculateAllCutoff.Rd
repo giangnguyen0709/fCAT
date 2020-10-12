@@ -23,3 +23,7 @@ none
 The function run calculateCutoff in a loop to calculate cutoff values for all
 core genes in the core set
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+calculateAllCutoff(coreFolder, "test")
+}

@@ -28,3 +28,9 @@ species based on the priority order in the priority list. The function search
 in the fasta file to find the refererences species in priority order of the
 list. If no references taxon is determined, the function returns NULL
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+fasta <- paste(coreFolder, "/core_orthologs/test/530670/530670.fa", sep = "")
+refSpec <- getSpec(fasta, c("HUMAN@9606@1"))
+print(refSpec)
+}

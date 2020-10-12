@@ -38,3 +38,18 @@ none
 Add the priority list of the interested genome to the priority file. If the
 file doesnt exist it will be created
 }
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+ppDir <- getwd()
+filePath <- paste(ppDir, "/test.prioritylist", sep = "")
+
+printPriority("HUMAN@9606@3", c("HUMAN@9606@1"), coreFolder, "test", 2,
+ppDir)
+
+## Check if the report table was printed
+read <- read.table(filePath, header = TRUE, sep = "\t")
+print.data.frame(read)
+
+## Delete the printed report file
+file.remove(filePath)
+}

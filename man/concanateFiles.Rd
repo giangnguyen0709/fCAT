@@ -28,3 +28,28 @@ phylogenetic profiles (pp). The pps can not be used direct to assess the
 completeness of the interested genome. This function processes the pp files
 in a folder and merged them.
 }
+\examples{
+## Creating some pseudo data
+geneID <- c("HUMAN@96063")
+ncbiID <- c("ncbi9606")
+orthoID <- c("123at123|HUMAN@9606@3|Q123123|1")
+FAS_F <- c(1)
+FAS_B <- c(1)
+pp1 <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+pp2 <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+
+## Write them in 2 files in a test folder in the current working directory
+wd <- getwd()
+testFolder <- paste(wd, "/fCAT_testfunction", sep = "")
+dir.create(testFolder, recursive = TRUE)
+filePath1 <- paste(testFolder, "/test1.phyloprofile", sep = "")
+filePath2 <- paste(testFolder, "/test2.phyloprofile", sep = "")
+write.table(pp1, filePath1, row.names = FALSE, quote = FALSE, sep = "\t")
+write.table(pp2, filePath2, row.names = FALSE, quote = FALSE, sep = "\t")
+
+test <- concanateFiles(testFolder, "HUMAN@9606@3", scoreMode = 2)
+print(test)
+
+## Delete test folder
+unlink(testFolder, recursive = TRUE)
+}

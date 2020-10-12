@@ -3,7 +3,8 @@
 \name{calculateBuscoCutoff}
 \alias{calculateBuscoCutoff}
 \title{The function to calculate the cutoff value based on standard deviation of 
-the length for each core group}
+the length for each core group. This function will be used in score mode
+"busco"}
 \usage{
 calculateBuscoCutoff(root, coreSet, coreGene)
 }
@@ -24,5 +25,11 @@ the length of the core gene
 }
 \description{
 The function to calculate the cutoff value based on standard deviation of 
-the length for each core group
+the length for each core group. This function will be used in score mode
+"busco"
+}
+\examples{
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+cutoff <- calculateBuscoCutoff(coreFolder, "test", "530670")
+print(cutoff)
 }

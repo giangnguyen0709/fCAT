@@ -38,3 +38,21 @@ sequence. This function will be used as a modul in concanateFiles. The
 function will remove all the line of the training sequences and return the pp
 of the interested genome.
 }
+\examples{
+## Create pseudo phylogenetic profile data
+geneID <- c(
+"1426075at2759", "1426075at2759", "1426075at2759", "1426075at2759")
+ncbiID <- c("ncbi9606", "ncbi3055", "ncbi3702", "ncbi400682")
+orthoID <- c(
+"1426075at2759|HUMAN@9606@3|P0DI81|0",
+"1426075at2759|CHLRE@3055@2|3055_0:003348|1",
+"1426075at2759|ARATH@3702@2|3702_0:00057f|1",
+"1426075at2759|AMPQU@400682@2|400682_0:000143|1")
+FAS_F <- c(1, 0.99766, 0.9975999, 0.996729)
+FAS_B <- c(1, 0.99766, 0.99759, 0.996729)
+pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+
+## recalculating scores
+rePP <- recalculateScore(pp, "HUMAN@9606@3")
+print.data.frame(rePP)
+}

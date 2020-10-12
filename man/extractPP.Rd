@@ -20,3 +20,15 @@ The phylogenetic profile of the interested genome in data.frame
 This function takes a phylogenetic profile, which contains many different
 genomes as an input and extract the phylogenetic profile of a specific genome
 }
+\examples{
+## Create pseudo phylogenetic profile, which contains two different genomes
+geneID <- c("530670", "530730", "603043")
+ncbiID <- c("ncbi9606", "ncbi9606", "ncbi9606")
+orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1",
+"603043|HOMSA@9606@2|Q39233|1")
+FAS_F <- c(1, 1, 1)
+FAS_B <- c(1, 1, 1)
+pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+newPP <- extractPP(pp, "HUMAN@9606@3")
+print.data.frame(newPP)
+}

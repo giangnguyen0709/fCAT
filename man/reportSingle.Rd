@@ -34,3 +34,16 @@ the report in data frame
 Create the report of the completeness of a genome based on its phylogenetic
 profile to the interested core set
 }
+\examples{
+## Create a pseudo phylogenetic profile table
+geneID <- c("530670", "530730")
+ncbiID <- c("ncbi9606", "ncbi9606")
+orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1")
+FAS_F <- c(1, 1)
+FAS_B <- c(1, 1)
+pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
+coreFolder <- system.file("extdata", "sample", package = "fCAT")
+## Translate phylogenetic profile to a detailed report
+report <- reportSingle(pp, coreFolder, "test", 2, c("HUMAN@9606@1"))
+print.data.frame(report)
+}
