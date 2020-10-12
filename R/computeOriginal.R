@@ -1,7 +1,7 @@
 #' The function compute the initial original phylogenetic profile of all the
 #' taxa in the score set
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param coreDir The path to the core directory, where the core set is stored 
 #' within weight_dir, blast_dir, etc.
 #' @param coreSet The name of the interested core set. The core directory can 
 #' contains more than one core set and the user must specify the interested 
@@ -29,26 +29,27 @@
 #' ppDir = NULL)
 #' 
 #' @export
-computeOriginal <- function(root, coreSet, scoreMode, cpu = 4, cleanup, ppDir) {
-    if (!endsWith(root, "/")) {
-        root <- paste(root, "/", sep = "")
+computeOriginal <- function(coreDir, coreSet, scoreMode, cpu = 4, cleanup=FALSE, 
+                            ppDir = NULL) {
+    if (!endsWith(coreDir, "/")) {
+        coreDir <- paste(coreDir, "/", sep = "")
     }
-    if (!checkPreProcess(root, coreSet)) {
-        processCoreSet(root, coreSet)
+    if (!checkPreProcess(coreDir, coreSet)) {
+        processCoreSet(coreDir, coreSet)
     }
 
-    genomeDir <- paste(root, "genome_dir", sep = "")
-    weightDir <- paste(root, "weight_dir", sep = "")
+    genomeDir <- paste(coreDir, "genome_dir", sep = "")
+    weightDir <- paste(coreDir, "weight_dir", sep = "")
 
     for (
         genome in list.dirs(genomeDir, full.names = FALSE, recursive = FALSE)
     ) {
-        if (!checkExist(genome, root, coreSet, scoreMode, ppDir)) {
+        if (!checkExist(genome, coreDir, coreSet, scoreMode, ppDir)) {
             genomeFasta <- paste(
                 genomeDir, "/", genome, "/", genome, ".fa", sep = ""
             )
             fasAnno <- paste(weightDir, "/", genome, ".json", sep = "")
-            computeReport(genomeFasta, fasAnno, root, coreSet,
+            computeReport(genomeFasta, fasAnno, coreDir, coreSet,
                           extend = TRUE, scoreMode,
                           priorityList = c(genome), cpu, computeOri = TRUE, 
                           cleanup = cleanup,

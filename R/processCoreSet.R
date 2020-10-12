@@ -283,7 +283,7 @@ calculateAllCutoff <- function(root, coreSet) {
 #' The function run createAllAnnotation and calculateAllCufoff to process the
 #' core set
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param coreDir The path to the core directory, where the core set is stored 
 #' within weight_dir, blast_dir, etc.
 #' @param coreSet The name of the interested core set. The core directory can 
 #' contains more than one core set and the user must specify the interested 
@@ -295,11 +295,11 @@ calculateAllCutoff <- function(root, coreSet) {
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' processCoreSet(coreFolder, "test")
 #' @export
-processCoreSet <- function(root, coreSet) {
-    if (!endsWith(root, "/")) {
-        root <- paste(root, "/", sep = "")
+processCoreSet <- function(coreDir, coreSet) {
+    if (!endsWith(coreDir, "/")) {
+        coreDir <- paste(coreDir, "/", sep = "")
     }
 
-    createAllAnnotation(root, coreSet)
-    calculateAllCutoff(root, coreSet)
+    createAllAnnotation(coreDir, coreSet)
+    calculateAllCutoff(coreDir, coreSet)
 }

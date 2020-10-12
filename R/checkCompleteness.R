@@ -341,7 +341,7 @@ checkArguments <- function(
 #'
 #' @param genome The path to the genome fasta file
 #' @param fasAnno The path to the fas annotation file. It can equal NULL
-#' @param root The path to the core directory, where the core set is stored 
+#' @param coreDir The path to the core directory, where the core set is stored 
 #' within weight_dir, blast_dir, etc.
 #' @param coreSet The name of the interested core set. The core directory can 
 #' contains more than one core set and the user must specify the interested 
