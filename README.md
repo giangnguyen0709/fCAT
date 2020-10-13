@@ -88,6 +88,8 @@ The test data is the eukaryota_busco set, which can be downloaded in https://app
 
 The core set folder has some conflicts with the input of fCAT, which must be removed first. All the core gene folders in the folder core_orthologs must be contained in a subfolder (The name of the subfolder is the core set argument of fCAT) and this subfolder must be stored in core orthologs. In this document I will set the name of this subfolder eukaryota_busco. In the blast dir folder of CRYNE, the symbolic link of the fasta file of CRYNE was directed by a mistake to the symbolic link of CHRLE. This must be corrected before testing
 
+The folder weight_dir of the core set contains the the xml files, which can not be run with fCAT. Please download the annotation files of the core set from https://drive.google.com/file/d/113MBwT1n7E64Xk54Ul-_r82aEK2v8jdl/view?usp=sharing and replace the xml files with the json files 
+
 In all following examples, I assumed that I has a genome fasta file and its FAS annotation file, which named HUMAN@9606@3.fa and HUMAN@9606@3.json, the core folder named eukaryota_busco, the core set named eukaryota_busco and all this data is placed in the home folder. You can replace them by your corresponding path and names
 
 ```
