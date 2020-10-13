@@ -12,30 +12,9 @@ if (!requireNamespace("devtools"))
 devtools::install_github("giangnguyen0709/fCAT")
 ```
 
-## Depencies
-
-*fCAT* is depended on some tools.
-
-### fDOG
-
-> https://github.com/BIONF/fDOG
-
-### FAS
-
-> https://github.com/BIONF/FAS
-
-### Packages in R
-> R.utils
-
-> taxize
-
-> EnvStats
-
 ## Usage
 
-```
-checkCompleteness <- function(genome, fasAnno, coreDir, coreSet, extend, redo, scoreMode, priorityList, cpu, blastDir, weightDir, outDir, cleanup, reFdog, fdogDir, ppDir)
-```
+### checkCompleteness
 
 The function to check the completeness of an interested genome
 
@@ -58,9 +37,30 @@ The function to check the completeness of an interested genome
 
 The function returns two reports. A detailed report of the completeness of the interested genome and a frequency table of all taxa, which were checked completeness with fCAT with option extend = TRUE. The frequency table show how many core genes "similar", "dissimilar", "duplicated", "missing" and "ignored" in each taxon.
 
+
 ```
-fCAT::computeOriginal(coreDir, coreSet, scoreMode, cpu, cleanup, ppDir)
+genome <- "/path/to/query/genome.fa"
+fasAnno <- "/path/to/fas/annotation/genome.json"
+coreDir <- "/path/to/the/core/directory"
+coreSet <- "name of the core set"
+extend <- TRUE #by default is FALSE
+redo <- TRUE #by default is FALSE
+scoreMode <- 2 #Choices: 1,2,3, "busco"
+priorityList <- c("HUMAN@9606@1", "ECOLI@511145@1") 
+cpu <- 4
+blastDir <- "/path/to/blast_dir" #Optional
+weightDir <- "/path/to/weight_dir" #Optional
+outDir <- "/path/to/the/output/folder" #By default the report files will be stored in the core directory
+cleanup <- TRUE #by default is FASLE
+reFdog <- TRUE #by default is FALSE
+fdogDir <- "/path/to/the/folder/to/store/fdog/output" #Optional
+ppDir <- "/path/to/the/folder/to/store/the/phylogenetic/profile"
+
+checkCompleteness <- function(genome, fasAnno, coreDir, coreSet, extend, redo, scoreMode, priorityList, cpu, blastDir, weightDir, outDir, cleanup, reFdog, fdogDir, ppDir)
+
 ```
+
+### computeOriginal
 
 The function to compute the original phylogenetic profile, which will contains the phylogenetic profile of all core taxa of the core set. This phylogenetic profile can be used to assess the completeness of the core taxa and their'completeness will be reported together with the interested genome in the frequency table. It is optional, the tool can still check the completeness of a genome, even the orginal phylogenetic profile was not computed
 
@@ -74,13 +74,29 @@ The function to compute the original phylogenetic profile, which will contains t
 This funtion will append the orginal phylogenetic profile of the core taxa in to the existing phylogenetic profile in folder output by default or in folder phyloprofile, which was directed by the user with the argument ppDir
 
 ```
-fCAT::processCoreSet(coreDir, coreSet)
+coreDir <- "/path/to/the/core/directory"
+coreSet <- "name of the core set"
+scoreMode <- 2 #Choices: 1,2,3, "busco"
+cpu <- 4
+cleanup <- TRUE #by default is FASLE
+ppDir <- "/path/to/the/folder/to/store/the/phylogenetic/profile"
+
+fCAT::computeOriginal(coreDir, coreSet, scoreMode, cpu, cleanup, ppDir)
 ```
+
+### processCoreSet
 
 The function calculate all cutoff values for all mode in the set. For score mode 1 it will calculate the avarage of all vs all FAS scores between the training sequences in the core gene. For score mode 2 it will calculate the avarage of the FAS score between each sequence against all training sequences in the core gene. The scores will be writen in a table with a column is the ID of the sequences and a column is the corresponding value. For score mode 3, the function will calculate the avarage of 1 vs all FAS scores for each training sequence in the core gene. The avarages build a distribution, the function will calculate the confidence interval of this distribution and write the upper value and the lower value of the interval in a file in the core gene folder.
 
 * coreDir: The path to the core directory, where the core set is stored within weight_dir, blast_dir, etc.
 * coreSet: The name of the interested core set. The core directory can contains more than one core set and the user must specify the interested core set. The core set will be stored in the folder core_orthologs in subfolder, specify them by the name of the subfolder
+
+```
+coreDir <- "/path/to/the/core/directory"
+coreSet <- "name of the core set"
+
+fCAT::processCoreSet(coreDir, coreSet)
+```
 
 ## Examples
 
@@ -93,20 +109,56 @@ The folder weight_dir of the core set contains the the xml files, which can not 
 In all following examples, I assumed that I has a genome fasta file and its FAS annotation file, which named HUMAN@9606@3.fa and HUMAN@9606@3.json, the core folder named eukaryota_busco, the core set named eukaryota_busco and all this data is placed in the home folder. You can replace them by your corresponding path and names
 
 ```
-fCAT::checkCompleteness(genome = "/home/user/HUMAN@9606@3.fa", fasAnno = "/home/user/HUMAN@9606@3.json", coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco", extend = TRUE, priorityList = c("HOMSA@9606@2"), scoreMode = 1, cpu = 4)
+genome <- "/home/user/HUMAN@9606@3.fa"
+fasAnno <- "/home/user/HUMAN@9606@3.json"
+coreDir <- "/home/user/eukaryota_busco"
+coreSet <- "eukaryota_busco"
+extend <- TRUE
+priorityList <- c("HOMSA@9606@2")
+scoreMode <- 1
+cpu <- 4
+
+fCAT::checkCompleteness(genome = genome, fasAnno = fasAnno, coreDir = coreDir, coreSet = coreSet, extend = extend, priorityList = priorityList, scoreMode = scoreMode, cpu = cpu)
 ```
 
 The report will be storede by default in /home/user/eukaryota_busco/output/eukaryota_busco/1/report
 
 ```
-fCAT::computeOriginal(coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco", scoreMode = 1, cpu = 4)
+coreDir <- "/home/user/eukaryota_busco"
+coreSet <- "eukaryota_busco"
+scoreMode <- 1
+cpu <- 4
+
+fCAT::computeOriginal(coreDir = coreDir, coreSet = coreSet, scoreMode = scoreMode, cpu = cpu)
 ```
 
 The phylogenetic profile of all core taxa will be computed and be stored by default in /home/user/eukaryota_busco/output/eukaryota_busco/1
 
 ```
-fCAT::processCoreSet(coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco")
+coreDir <- "/home/user/eukaryota_busco"
+coreSet <- "eukaryota_busco"
+
+fCAT::processCoreSet(coreDir = coreDir, coreSet = coreSet)
 ```
 
 The function will calculate all cutoff values for all core genes in the set and write them in a text file, which will be stored in /home/user/eukaryota_busco/core_orthologs/eukaryota_busco/core_gene/fas_dir/score_dir
+
+## Depencies
+
+*fCAT* is depended on some tools.
+
+### fDOG
+
+> https://github.com/BIONF/fDOG
+
+### FAS
+
+> https://github.com/BIONF/FAS
+
+### Packages in R
+> R.utils
+
+> taxize
+
+> EnvStats
 
