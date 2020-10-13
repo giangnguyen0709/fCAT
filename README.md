@@ -4,15 +4,13 @@
 
 To install *fCAT*, open R in your terminal
 
-First, install devtools
-
-`install.packages("devtools")`
-
 Using *devtools* to install fCAT
 
-`if (!requireNamespace("devtools"))`
-`install.packages("devtools")`
-`devtools::install_github("giangnguyen0709/fCAT")`
+```
+if (!requireNamespace("devtools"))
+    install.packages("devtools")
+devtools::install_github("giangnguyen0709/fCAT")
+```
 
 ## Depencies
 
@@ -35,7 +33,9 @@ Using *devtools* to install fCAT
 
 ## Usage
 
-`checkCompleteness <- function(genome, fasAnno, coreDir, coreSet, extend, redo, scoreMode, priorityList, cpu, blastDir, weightDir, outDir, cleanup, reFdog, fdogDir, ppDir)`
+```
+checkCompleteness <- function(genome, fasAnno, coreDir, coreSet, extend, redo, scoreMode, priorityList, cpu, blastDir, weightDir, outDir, cleanup, reFdog, fdogDir, ppDir)
+```
 
 The function to check the completeness of an interested genome
 
@@ -58,7 +58,9 @@ The function to check the completeness of an interested genome
 
 The function returns two reports. A detailed report of the completeness of the interested genome and a frequency table of all taxa, which were checked completeness with fCAT with option extend = TRUE. The frequency table show how many core genes "similar", "dissimilar", "duplicated", "missing" and "ignored" in each taxon.
 
-`fCAT::computeOriginal(coreDir, coreSet, scoreMode, cpu, cleanup, ppDir)`
+```
+fCAT::computeOriginal(coreDir, coreSet, scoreMode, cpu, cleanup, ppDir)
+```
 
 The function to compute the original phylogenetic profile, which will contains the phylogenetic profile of all core taxa of the core set. This phylogenetic profile can be used to assess the completeness of the core taxa and their'completeness will be reported together with the interested genome in the frequency table. It is optional, the tool can still check the completeness of a genome, even the orginal phylogenetic profile was not computed
 
@@ -71,7 +73,9 @@ The function to compute the original phylogenetic profile, which will contains t
 
 This funtion will append the orginal phylogenetic profile of the core taxa in to the existing phylogenetic profile in folder output by default or in folder phyloprofile, which was directed by the user with the argument ppDir
 
-`fCAT::processCoreSet(coreDir, coreSet)`
+```
+fCAT::processCoreSet(coreDir, coreSet)
+```
 
 The function calculate all cutoff values for all mode in the set. For score mode 1 it will calculate the avarage of all vs all FAS scores between the training sequences in the core gene. For score mode 2 it will calculate the avarage of the FAS score between each sequence against all training sequences in the core gene. The scores will be writen in a table with a column is the ID of the sequences and a column is the corresponding value. For score mode 3, the function will calculate the avarage of 1 vs all FAS scores for each training sequence in the core gene. The avarages build a distribution, the function will calculate the confidence interval of this distribution and write the upper value and the lower value of the interval in a file in the core gene folder.
 
@@ -86,16 +90,21 @@ The core set folder has some conflicts with the input of fCAT, which must be rem
 
 In all following examples, I assumed that I has a genome fasta file and its FAS annotation file, which named HUMAN@9606@3.fa and HUMAN@9606@3.json, the core folder named eukaryota_busco, the core set named eukaryota_busco and all this data is placed in the home folder. You can replace them by your corresponding path and names
 
-`fCAT::checkCompleteness(genome = "/home/user/HUMAN@9606@3.fa", fasAnno = "/home/user/HUMAN@9606@3.json", coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco", extend = TRUE, priorityList = c("HOMSA@9606@2"), scoreMode = 1, cpu = 4)`
+```
+fCAT::checkCompleteness(genome = "/home/user/HUMAN@9606@3.fa", fasAnno = "/home/user/HUMAN@9606@3.json", coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco", extend = TRUE, priorityList = c("HOMSA@9606@2"), scoreMode = 1, cpu = 4)
+```
 
 The report will be storede by default in /home/user/eukaryota_busco/output/eukaryota_busco/1/report
 
-`fCAT::computeOriginal(coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco", scoreMode = 1, cpu = 4)`
+```
+fCAT::computeOriginal(coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco", scoreMode = 1, cpu = 4)
+```
 
 The phylogenetic profile of all core taxa will be computed and be stored by default in /home/user/eukaryota_busco/output/eukaryota_busco/1
 
-`fCAT::processCoreSet(coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco")`
+```
+fCAT::processCoreSet(coreDir = "/home/user/eukaryota_busco", coreSet = "eukaryota_busco")
+```
 
 The function will calculate all cutoff values for all core genes in the set and write them in a text file, which will be stored in /home/user/eukaryota_busco/core_orthologs/eukaryota_busco/core_gene/fas_dir/score_dir
 
-`
