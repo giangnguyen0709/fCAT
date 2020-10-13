@@ -1,12 +1,12 @@
-#' The function creates FAS annotation for the fasta file of a core gene in the
-#' core set. This annotation file will be saved in each core gene folder and
-#' be used then to calculate the cut off value for each score mode.
+#' The function creates FAS annotation for the fasta file of a core gene 
+#' in the core set. This annotation file will be saved in each core gene folder
+#' and be used then to calculate the cut off value for each score mode.
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #' @param coreGene The ID of the core gene in the set
 #' @return none
@@ -44,18 +44,18 @@ createAnnotation <- function(root, coreSet, coreGene) {
     }
 }
 
-#' The function run createAnnotation function in a loop to compute the FAS 
+#' The function run createAnnotation function in a loop to compute the FAS
 #' annotation file for all core genes in the core set
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return none
-#' @examples 
+#' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' createAllAnnotation(coreFolder, "test")
 #' @export
@@ -63,7 +63,8 @@ createAllAnnotation <- function(root, coreSet) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
-    lapply(list.dirs(paste(root, "core_orthologs", "/", coreSet, sep = ""),
+    lapply(
+        list.dirs(paste(root, "core_orthologs", "/", coreSet, sep = ""),
         recursive = FALSE, full.names = FALSE
     ),
     function(coreGene, root, coreSet) {
@@ -75,23 +76,23 @@ createAllAnnotation <- function(root, coreSet) {
     )
 }
 
-#' The function calculate all cutoff values for all mode of a specific core gene
-#' in the set. For score mode 1 it will calculate the avarage of all vs all FAS 
-#' scores between the training sequences in the core gene. For score mode 2 it 
-#' will calculate the avarage of the FAS score between each sequence against 
-#' all training sequences in the core gene. The scores will be writen in a table
-#' with a column is the ID of the sequences and a column is the corresponding
-#' value. For score mode 3, the function will calculate the avarage of 1 vs all
-#' FAS scores for each training sequence in the core gene. The avarages build a
-#' distribution, the function will calculate the confidence interval of this 
-#' distribution and write the upper value and the lower value of the interval
-#' in a file in the core gene folder.
+#' The function calculate all cutoff values for all mode of a specific core 
+#' gene in the set. For score mode 1 it will calculate the avarage of all vs 
+#' all FAS scores between the training sequences in the core gene. For score 
+#' mode 2 it will calculate the avarage of the FAS score between each sequence 
+#' against all training sequences in the core gene. The scores will be writen 
+#' in a table with a column is the ID of the sequences and a column is the 
+#' corresponding value. For score mode 3, the function will calculate the 
+#' avarage of 1 vs all FAS scores for each training sequence in the core gene. 
+#' The avarages build a distribution, the function will calculate the 
+#' confidence interval of this distribution and write the upper value and the 
+#' lower value of the interval in a file in the core gene folder.
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core gene in the set
 #'
@@ -104,7 +105,8 @@ calculateCutoff <- function(root, coreSet, coreGene) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
-    fastaFile <- paste(root, "core_orthologs", "/", coreSet, "/",
+    fastaFile <- paste(
+        root, "core_orthologs", "/", coreSet, "/",
         coreGene, "/", coreGene, ".fa",
         sep = ""
     )
@@ -143,7 +145,8 @@ calculateCutoff <- function(root, coreSet, coreGene) {
         }
     }
 
-    scoreSet <- lapply(querySet,
+    scoreSet <- lapply(
+        querySet,
         function(queryID, fastaFile, annoDir, root, coreSet) {
             refSpec <- strsplit(queryID, "|", fixed = TRUE)[[1]][2]
             refProteome <- paste(
@@ -152,7 +155,7 @@ calculateCutoff <- function(root, coreSet, coreGene) {
                 sep = ""
             )
             R.utils::createLink(
-                paste(annoDir, "/", refSpec, ".json", sep = ""), 
+                paste(annoDir, "/", refSpec, ".json", sep = ""),
                 refProteome,
                 overwrite = TRUE
             )
@@ -235,7 +238,8 @@ calculateCutoff <- function(root, coreSet, coreGene) {
 
     cutoffFile <- paste(scoreFolder, "/", "1", ".cutoff", sep = "")
     write.table(
-        cutoffTable, cutoffFile, sep = "\t", quote = FALSE, row.names = FALSE
+        cutoffTable, cutoffFile,
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
 
     # Table 2:
@@ -245,18 +249,19 @@ calculateCutoff <- function(root, coreSet, coreGene) {
     )
     cutoffFile <- paste(scoreFolder, "/", "2", ".cutoff", sep = "")
     write.table(
-        cutoffTable, cutoffFile, sep = "\t", quote = FALSE, row.names = FALSE
+        cutoffTable, cutoffFile,
+        sep = "\t", quote = FALSE, row.names = FALSE
     )
 }
 
-#' The function run calculateCutoff in a loop to calculate cutoff values for all
-#' core genes in the core set
+#' The function run calculateCutoff in a loop to calculate cutoff 
+#' values for all core genes in the core set
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return none
@@ -280,14 +285,14 @@ calculateAllCutoff <- function(root, coreSet) {
     )
 }
 
-#' The function run createAllAnnotation and calculateAllCufoff to process the
-#' core set
+#' The function run createAllAnnotation and calculateAllCufoff to process
+#' the core set
 #'
-#' @param coreDir The path to the core directory, where the core set is stored 
+#' @param coreDir The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return none

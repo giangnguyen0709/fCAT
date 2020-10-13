@@ -1,6 +1,6 @@
 Package: fCAT
 Title: fCAT
-Version: 0.5
+Version: 0.1.1
 Date: 2020-10-07
 Authors@R: 
     person(given = "Giang",

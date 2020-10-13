@@ -3,12 +3,12 @@
 \name{correctFasta}
 \alias{correctFasta}
 \title{For every with the tool checked genomes, fCAT will save the sequences
-of each genome into a extended fasta file in the phyloprofile folder, 
+of each genome into a extended fasta file in the phyloprofile folder,
 which by default is the output folder in core directory or can be the
-folder specified by the user with the argument ppDir in the function 
+folder specified by the user with the argument ppDir in the function
 checkCompleteness. When redo is on to recheck for a genome, whose pp exists
 already in the original pp, the tool must remove the lines of the
-genome from the original extended fasta file. That is the purpose of this 
+genome from the original extended fasta file. That is the purpose of this
 function}
 \usage{
 correctFasta(fasta, genome)
@@ -23,20 +23,22 @@ none
 }
 \description{
 For every with the tool checked genomes, fCAT will save the sequences
-of each genome into a extended fasta file in the phyloprofile folder, 
+of each genome into a extended fasta file in the phyloprofile folder,
 which by default is the output folder in core directory or can be the
-folder specified by the user with the argument ppDir in the function 
+folder specified by the user with the argument ppDir in the function
 checkCompleteness. When redo is on to recheck for a genome, whose pp exists
 already in the original pp, the tool must remove the lines of the
-genome from the original extended fasta file. That is the purpose of this 
+genome from the original extended fasta file. That is the purpose of this
 function
 }
 \examples{
 ## Create pseudo extended fasta file
-fasta <- c(">1001705at2759|HUMAN@9606@3|Q15291|1",
-"MNLELLESFGQNYPEEADGTLDCISMALTCTFNRWGT", 
-">1489230at2759|ARATH@3702@2|3702_0:005bc2|1",
-"MAGRATIPARNSALIAMIADEDTVVGFLMAGVGNVDIRRKTNYLIVDS")
+fasta <- c(
+    ">1001705at2759|HUMAN@9606@3|Q15291|1",
+    "MNLELLESFGQNYPEEADGTLDCISMALTCTFNRWGT",
+    ">1489230at2759|ARATH@3702@2|3702_0:005bc2|1",
+    "MAGRATIPARNSALIAMIADEDTVVGFLMAGVGNVDIRRKTNYLIVDS"
+)
 
 ## Write it in a file in the current working directory
 wd <- getwd()

@@ -2,8 +2,8 @@
 % Please edit documentation in R/getResult.R
 \name{assessStatus}
 \alias{assessStatus}
-\title{The function to classify a founded ortholog from its information like FAS 
-scores, the appearance frequence of the core gene in phylogenetic profile, 
+\title{The function to classify a founded ortholog from its information like FAS
+scores, the appearance frequence of the core gene in phylogenetic profile,
 etc.}
 \usage{
 assessStatus(fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList)
@@ -13,39 +13,40 @@ assessStatus(fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList)
 
 \item{fasB}{the backward fas score of the ortholog}
 
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{The name of the interested core set. The core directory can 
-contains more than one core set and the user must specify the interested 
-core set. The core set will be stored in the folder core_orthologs in 
+\item{coreSet}{The name of the interested core set. The core directory can
+contains more than one core set and the user must specify the interested
+core set. The core set will be stored in the folder core_orthologs in
 subfolder, specify them by the name of the subfolder}
 
 \item{coreGene}{the ID of the core group}
 
-\item{scoreMode}{the mode determines the method to scoring the founded 
+\item{scoreMode}{the mode determines the method to scoring the founded
 ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
-\item{f}{the appearance frequence of the core gene in the phylogenetic 
+\item{f}{the appearance frequence of the core gene in the phylogenetic
 profile}
 
 \item{priorityList}{A list contains one or many genome ID of the genomes,
-which were used to build the core set. The genome ID of this list will be 
+which were used to build the core set. The genome ID of this list will be
 stored with an priority order, the tool look at into the fasta file of each
 core group and determine with the priority order to determine the references
 species for each core group.}
 }
 \value{
-the status of the ortholog of the core gene. It can be "similar", 
+the status of the ortholog of the core gene. It can be "similar",
 "dissimilar", "duplicated, similar" or "duplicated, dissimilar"
-#' @examples 
+#' @examples
 coreFolder <- system.file("extdata", "sample", package = "fCAT")
-status <- assessStatus(0.7, 0.9, coreFolder, "test", "530670", scoreMode = 2,
-f = 1, priorityList = c("HUMAN@9606@1"))
+status <- assessStatus(
+    0.7, 0.9, coreFolder, "test", "530670", 
+    scoreMode = 2, f = 1, priorityList = c("HUMAN@9606@1"))
 print(status)
 }
 \description{
-The function to classify a founded ortholog from its information like FAS 
-scores, the appearance frequence of the core gene in phylogenetic profile, 
+The function to classify a founded ortholog from its information like FAS
+scores, the appearance frequence of the core gene in phylogenetic profile,
 etc.
 }

@@ -2,13 +2,13 @@
 % Please edit documentation in R/correctFiles.R
 \name{correctReport}
 \alias{correctReport}
-\title{For every with the tool checked genomes, fCAT will save the frequency table 
-of each genome into a file with ending .report in the phyloprofile folder, 
-which by default is the output folder in core directory or can be the
-folder specified by the user with the argument ppDir in the function 
+\title{For every with the tool checked genomes, fCAT will save the frequency 
+table of each genome into a file with ending .report in the phyloprofile 
+folder, which by default is the output folder in core directory or can be 
+the folder specified by the user with the argument ppDir in the function
 checkCompleteness. When redo is on to recheck for a genome, whose pp exists
 already in the original pp, the tool must remove the lines of the
-genome from the original frequency table. That is the purpose of this 
+genome from the original frequency table. That is the purpose of this
 function}
 \usage{
 correctReport(reportFile, genome)
@@ -24,13 +24,13 @@ the genomes, that were checked with the tool over the time.}
 none
 }
 \description{
-For every with the tool checked genomes, fCAT will save the frequency table 
-of each genome into a file with ending .report in the phyloprofile folder, 
-which by default is the output folder in core directory or can be the
-folder specified by the user with the argument ppDir in the function 
+For every with the tool checked genomes, fCAT will save the frequency 
+table of each genome into a file with ending .report in the phyloprofile 
+folder, which by default is the output folder in core directory or can be 
+the folder specified by the user with the argument ppDir in the function
 checkCompleteness. When redo is on to recheck for a genome, whose pp exists
 already in the original pp, the tool must remove the lines of the
-genome from the original frequency table. That is the purpose of this 
+genome from the original frequency table. That is the purpose of this
 function
 }
 \examples{
@@ -42,8 +42,10 @@ missing <- c(4, 11)
 duplicated <- c(1, 0)
 ignored <- c(8, 22)
 
-table <- data.frame(genomeID, similar, dissimilar, missing, duplicated, 
-ignored)
+table <- data.frame(
+    genomeID, similar, dissimilar, missing, duplicated,
+    ignored
+)
 
 ## Write the table in a file in the current working directory
 wd <- getwd()

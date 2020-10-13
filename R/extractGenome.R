@@ -6,12 +6,14 @@
 #' Exp: genome = HUMAN@9606@3
 #'
 #' @return The phylogenetic profile of the interested genome in data.frame
-#' @examples 
+#' @examples
 #' ## Create pseudo phylogenetic profile, which contains two different genomes
 #' geneID <- c("530670", "530730", "603043")
 #' ncbiID <- c("ncbi9606", "ncbi9606", "ncbi9606")
-#' orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1",
-#' "603043|HOMSA@9606@2|Q39233|1")
+#' orthoID <- c(
+#'     "530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1",
+#'     "603043|HOMSA@9606@2|Q39233|1"
+#' )
 #' FAS_F <- c(1, 1, 1)
 #' FAS_B <- c(1, 1, 1)
 #' pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)
@@ -30,8 +32,8 @@ extractPP <- function(pp, genome) {
     return(singlePP[1:(ncol(singlePP) - 1)])
 }
 
-#' A domains file can contains lines of many different genomes. This function
-#' extract the domains of a specific genome
+#' A domains file can contains lines of many different genomes. This 
+#' function extract the domains of a specific genome
 #'
 #' @param domains The domains in data.frame
 #' @param genome The genome ID of the genome, whose domains need to be extracted
@@ -41,10 +43,14 @@ extractPP <- function(pp, genome) {
 #' @return the domains of the interested genome in data.frame
 #' @examples
 #' ## Create a pseudo domains table
-#' V1 <- c("1001705at2759#1001705at2759|HUMAN@9606@3|Q15291|1",
-#' "551907at2759#551907at2759|AMPQU@400682@2|400682_0:001490|1")
-#' V2 <- c("1001705at2759|HOMSA@9606@2|9606_0:00004c", 
-#' "551907at2759|AMPQU@400682@2|400682_0:001490|1")
+#' V1 <- c(
+#'     "1001705at2759#1001705at2759|HUMAN@9606@3|Q15291|1",
+#'     "551907at2759#551907at2759|AMPQU@400682@2|400682_0:001490|1"
+#' )
+#' V2 <- c(
+#'     "1001705at2759|HOMSA@9606@2|9606_0:00004c",
+#'     "551907at2759|AMPQU@400682@2|400682_0:001490|1"
+#' )
 #' V3 <- c(538, 1087)
 #' V4 <- c("pfam_WD40", "flps_SINGLE_{G}")
 #' V5 <- c(17, 1030)
@@ -76,19 +82,21 @@ extractDomains <- function(domains, genome, reverse = FALSE) {
     return(domains)
 }
 
-#' This function extract the sequences of a specific genome from a mulitple 
+#' This function extract the sequences of a specific genome from a mulitple
 #' fasta file
 #'
 #' @param lines a vector that contains lines of an extended.fasta file
 #' @param genome the name of the genome, that should be extracted
 #' @return the vector, which contains the sequences of the interested genome
 #' @export
-#' @examples 
+#' @examples
 #' ## Create pseudo extended fasta file
-#' fasta <- c(">1001705at2759|HUMAN@9606@3|Q15291|1",
-#' "MNLELLESFGQNYPEEADGTLDCISMALTCTFNRWGT", 
-#' ">1489230at2759|ARATH@3702@2|3702_0:005bc2|1",
-#' "MAGRATIPARNSALIAMIADEDTVVGFLMAGVGNVDIRRKTNYLIVDS")
+#' fasta <- c(
+#'     ">1001705at2759|HUMAN@9606@3|Q15291|1",
+#'     "MNLELLESFGQNYPEEADGTLDCISMALTCTFNRWGT",
+#'     ">1489230at2759|ARATH@3702@2|3702_0:005bc2|1",
+#'     "MAGRATIPARNSALIAMIADEDTVVGFLMAGVGNVDIRRKTNYLIVDS"
+#' )
 #' ## Extract extended fasta of HUMAN@96063
 #' newFasta <- extractFasta(fasta, "HUMAN@9606@3")
 #' print(newFasta)

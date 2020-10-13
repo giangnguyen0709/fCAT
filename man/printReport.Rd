@@ -2,32 +2,32 @@
 % Please edit documentation in R/computeReport.R
 \name{printReport}
 \alias{printReport}
-\title{The function to append the frequency table of the completeness classification
-of the interested genome into the original frequency table of the core set.
-The original frequency table describe the frequencies of each classification
-for all genomes, which were checked the completeness with fCAT and the extend
-was set to TRUE while checking.(How many "complete", "fragmented", "missing",
-and "duplicated" for busco mode or how many "similar", "dissimilar", 
-"missing", and "duplicated" for the other modes)}
+\title{The function to append the frequency table of the completeness 
+classification of the interested genome into the original frequency table of 
+the core set. The original frequency table describe the frequencies of each 
+classification for all genomes, which were checked the completeness with 
+fCAT and the extend was set to TRUE while checking.(How many "complete", 
+"fragmented", "missing", and "duplicated" for busco mode or how many 
+"similar", "dissimilar", "missing", and "duplicated" for the other modes)}
 \usage{
 printReport(report, root, coreSet, scoreMode, ppDir)
 }
 \arguments{
-\item{report}{A data frame that contains the frequency table of the 
+\item{report}{A data frame that contains the frequency table of the
 interested genome}
 
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{The name of the interested core set. The core directory can 
-contains more than one core set and the user must specify the interested 
-core set. The core set will be stored in the folder core_orthologs in 
+\item{coreSet}{The name of the interested core set. The core directory can
+contains more than one core set and the user must specify the interested
+core set. The core set will be stored in the folder core_orthologs in
 subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode determines the method to scoring the founded 
+\item{scoreMode}{the mode determines the method to scoring the founded
 ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
-\item{ppDir}{The user can replace the default folder output in the core 
+\item{ppDir}{The user can replace the default folder output in the core
 directory, where the phylogenetic profiles are stored by his folder. The user
 can specify the path to his folder in this argument}
 }
@@ -35,13 +35,13 @@ can specify the path to his folder in this argument}
 none
 }
 \description{
-The function to append the frequency table of the completeness classification
-of the interested genome into the original frequency table of the core set.
-The original frequency table describe the frequencies of each classification
-for all genomes, which were checked the completeness with fCAT and the extend
-was set to TRUE while checking.(How many "complete", "fragmented", "missing",
-and "duplicated" for busco mode or how many "similar", "dissimilar", 
-"missing", and "duplicated" for the other modes)
+The function to append the frequency table of the completeness 
+classification of the interested genome into the original frequency table of 
+the core set. The original frequency table describe the frequencies of each 
+classification for all genomes, which were checked the completeness with 
+fCAT and the extend was set to TRUE while checking.(How many "complete", 
+"fragmented", "missing", and "duplicated" for busco mode or how many 
+"similar", "dissimilar", "missing", and "duplicated" for the other modes)
 }
 \examples{
 genomeID <- c("HUMAN@9606@3", "AMPQU@400682")
@@ -51,8 +51,10 @@ missing <- c(4, 11)
 duplicated <- c(1, 0)
 ignored <- c(8, 22)
 
-table <- data.frame(genomeID, similar, dissimilar, missing, duplicated, 
-ignored)
+table <- data.frame(
+    genomeID, similar, dissimilar, missing, duplicated,
+    ignored
+)
 
 coreFolder <- system.file("extdata", "sample", package = "fCAT")
 

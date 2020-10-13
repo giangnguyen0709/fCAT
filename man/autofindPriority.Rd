@@ -13,7 +13,7 @@ autofindPriority(query, refSet)
 \item{refSet}{the list of genome ID of the core genomes}
 }
 \value{
-The list of core genomes'ID with a priority order based on the 
+The list of core genomes'ID with a priority order based on the
 taxanomic distance
 }
 \description{

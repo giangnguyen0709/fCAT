@@ -2,27 +2,27 @@
 % Please edit documentation in R/getResult.R
 \name{reportSingle}
 \alias{reportSingle}
-\title{Create the report of the completeness of a genome based on its phylogenetic
-profile to the interested core set}
+\title{Create the report of the completeness of a genome based on its 
+phylogenetic profile to the interested core set}
 \usage{
 reportSingle(pp, root, coreSet, scoreMode, priorityList)
 }
 \arguments{
 \item{pp}{the phylogenetic profile of the genome in data.frame}
 
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{The name of the interested core set. The core directory can 
-contains more than one core set and the user must specify the interested 
-core set. The core set will be stored in the folder core_orthologs in 
+\item{coreSet}{The name of the interested core set. The core directory can
+contains more than one core set and the user must specify the interested
+core set. The core set will be stored in the folder core_orthologs in
 subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode determines the method to scoring the founded 
+\item{scoreMode}{the mode determines the method to scoring the founded
 ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
 \item{priorityList}{A list contains one or many genome ID of the genomes,
-which were used to build the core set. The genome ID of this list will be 
+which were used to build the core set. The genome ID of this list will be
 stored with an priority order, the tool look at into the fasta file of each
 core group and determine with the priority order to determine the references
 species for each core group.}
@@ -31,8 +31,8 @@ species for each core group.}
 the report in data frame
 }
 \description{
-Create the report of the completeness of a genome based on its phylogenetic
-profile to the interested core set
+Create the report of the completeness of a genome based on its 
+phylogenetic profile to the interested core set
 }
 \examples{
 ## Create a pseudo phylogenetic profile table

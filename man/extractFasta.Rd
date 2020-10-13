@@ -2,7 +2,7 @@
 % Please edit documentation in R/extractGenome.R
 \name{extractFasta}
 \alias{extractFasta}
-\title{This function extract the sequences of a specific genome from a mulitple 
+\title{This function extract the sequences of a specific genome from a mulitple
 fasta file}
 \usage{
 extractFasta(lines, genome)
@@ -16,15 +16,17 @@ extractFasta(lines, genome)
 the vector, which contains the sequences of the interested genome
 }
 \description{
-This function extract the sequences of a specific genome from a mulitple 
+This function extract the sequences of a specific genome from a mulitple
 fasta file
 }
 \examples{
 ## Create pseudo extended fasta file
-fasta <- c(">1001705at2759|HUMAN@9606@3|Q15291|1",
-"MNLELLESFGQNYPEEADGTLDCISMALTCTFNRWGT", 
-">1489230at2759|ARATH@3702@2|3702_0:005bc2|1",
-"MAGRATIPARNSALIAMIADEDTVVGFLMAGVGNVDIRRKTNYLIVDS")
+fasta <- c(
+    ">1001705at2759|HUMAN@9606@3|Q15291|1",
+    "MNLELLESFGQNYPEEADGTLDCISMALTCTFNRWGT",
+    ">1489230at2759|ARATH@3702@2|3702_0:005bc2|1",
+    "MAGRATIPARNSALIAMIADEDTVVGFLMAGVGNVDIRRKTNYLIVDS"
+)
 ## Extract extended fasta of HUMAN@96063
 newFasta <- extractFasta(fasta, "HUMAN@9606@3")
 print(newFasta)

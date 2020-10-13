@@ -2,19 +2,19 @@
 % Please edit documentation in R/getResult.R
 \name{calculateBuscoCutoff}
 \alias{calculateBuscoCutoff}
-\title{The function to calculate the cutoff value based on standard deviation of 
+\title{The function to calculate the cutoff value based on standard deviation of
 the length for each core group. This function will be used in score mode
 "busco"}
 \usage{
 calculateBuscoCutoff(root, coreSet, coreGene)
 }
 \arguments{
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{The name of the interested core set. The core directory can 
-contains more than one core set and the user must specify the interested 
-core set. The core set will be stored in the folder core_orthologs in 
+\item{coreSet}{The name of the interested core set. The core directory can
+contains more than one core set and the user must specify the interested
+core set. The core set will be stored in the folder core_orthologs in
 subfolder, specify them by the name of the subfolder}
 
 \item{coreGene}{the ID of the core gene}
@@ -24,7 +24,7 @@ a list that contains the mean length and the standard deviation of
 the length of the core gene
 }
 \description{
-The function to calculate the cutoff value based on standard deviation of 
+The function to calculate the cutoff value based on standard deviation of
 the length for each core group. This function will be used in score mode
 "busco"
 }

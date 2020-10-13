@@ -2,26 +2,14 @@
 % Please edit documentation in R/checkCompleteness.R
 \name{checkArguments}
 \alias{checkArguments}
-\title{The function to validate the input. If a input is not validated, it will 
+\title{The function to validate the input. If a input is not validated, it will
 return a message to the user}
 \usage{
 checkArguments(
-  genome,
-  fasAnno = NULL,
-  root,
-  coreSet,
-  extend = FALSE,
-  redo = FALSE,
-  scoreMode,
-  priorityList = NULL,
-  cpu = 4,
-  blastDir = NULL,
-  weightDir = NULL,
-  outDir = NULL,
-  cleanup = FALSE,
-  reFdog = FALSE,
-  fdogDir = NULL,
-  ppDir = NULL
+    genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE,
+    scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, 
+    weightDir = NULL, outDir = NULL, cleanup = FALSE, reFdog = FALSE, 
+    fdogDir = NULL, ppDir = NULL
 )
 }
 \arguments{
@@ -29,37 +17,37 @@ checkArguments(
 
 \item{fasAnno}{The path to the fas annotation file. It can equal NULL}
 
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{The name of the interested core set. The core directory can 
-contains more than one core set and the user must specify the interested 
-core set. The core set will be stored in the folder core_orthologs in 
+\item{coreSet}{The name of the interested core set. The core directory can
+contains more than one core set and the user must specify the interested
+core set. The core set will be stored in the folder core_orthologs in
 subfolder, specify them by the name of the subfolder}
 
-\item{extend}{The output of the function is a phylogenetic profile of the 
-interested genome. It contains 4 files, .phyloprofile, .extended.fa, 
-_reverse.domains and _forward.domains. If extend = TRUE, the files will be 
-appended into the old files in the folder output of the core directory or in 
-the inputed folder by the user with the argument ppDir. If there is no old 
-files in the folder, the output files of the function will be writen in the 
+\item{extend}{The output of the function is a phylogenetic profile of the
+interested genome. It contains 4 files, .phyloprofile, .extended.fa,
+_reverse.domains and _forward.domains. If extend = TRUE, the files will be
+appended into the old files in the folder output of the core directory or in
+the inputed folder by the user with the argument ppDir. If there is no old
+files in the folder, the output files of the function will be writen in the
 new files.}
 
-\item{redo}{If it exists already the genome ID of the interested genome in 
+\item{redo}{If it exists already the genome ID of the interested genome in
 the old phylogenetic profile. The tool will extract direct this pp to assess
 the completeness. If user don't want this happens, they can set redo to TRUE
 to get a new phylogenetic profile}
 
-\item{scoreMode}{the mode determines the method to scoring the founded 
+\item{scoreMode}{the mode determines the method to scoring the founded
 ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
 \item{priorityList}{A list contains one or many genome ID of the genomes,
-which were used to build the core set. The genome ID of this list will be 
+which were used to build the core set. The genome ID of this list will be
 stored with an priority order, the tool look at into the fasta file of each
 core group and determine with the priority order to determine the references
 species for each core group.}
 
-\item{cpu}{determines the cores that fDOG and fdogFAS will uses to be run 
+\item{cpu}{determines the cores that fDOG and fdogFAS will uses to be run
 parallel}
 
 \item{blastDir}{The user can replace the blast_dir folder in the core
@@ -74,27 +62,27 @@ to the folder in this argument}
 
 \item{cleanup}{The fDOG's output is a set of phylogenetic profile of each
 core group to the interested genome. The phylogenetic profile will be stored
-into a folder in the core set. The function will merge all the small 
-phylogenetic profile, calculate the FAS score or length to have the whole 
+into a folder in the core set. The function will merge all the small
+phylogenetic profile, calculate the FAS score or length to have the whole
 phylogenetic profile of the interested genome to the core set. This fDOG's
 output can be reused for all score modes. When cleanup is set to TRUE, the
 fDOG's output will not be stored to be reused but to be removed}
 
 \item{reFdog}{If it already exist a fDOG's output for a specific core group
-the tool will skip this core group and go to the next core group. If reFdog 
+the tool will skip this core group and go to the next core group. If reFdog
 is set to TRUE, the tool will remove all the existed fDOG's output and rerun
 fDOG for all core groups of the set}
 
-\item{fdogDir}{Normally the fDOG's output will be stored in the folder 
-fdogout in the core directory, but the user can specify the folder for 
-fDOG's output by specify the path to it in this argument. Notice here, is 
+\item{fdogDir}{Normally the fDOG's output will be stored in the folder
+fdogout in the core directory, but the user can specify the folder for
+fDOG's output by specify the path to it in this argument. Notice here, is
 the fDOG's output folder will contains the subfolder, equivalent to the name
-of the interested genome, for example, the folder can contain "HUMAN@9606@3" 
+of the interested genome, for example, the folder can contain "HUMAN@9606@3"
 and "AMPQU@400682@2", for a completeness checking on an interested genome,
-which has a subfolder in the fDOG's output folder with the same name, the 
+which has a subfolder in the fDOG's output folder with the same name, the
 function will look into the subfolder to find the existed fDOG's output}
 
-\item{ppDir}{The user can replace the default folder output in the core 
+\item{ppDir}{The user can replace the default folder output in the core
 directory, where the phylogenetic profiles are stored by his folder. The user
 can specify the path to his folder in this argument}
 }
@@ -102,7 +90,7 @@ can specify the path to his folder in this argument}
 A list that contains a logical value and the message to the error
 }
 \description{
-The function to validate the input. If a input is not validated, it will 
+The function to validate the input. If a input is not validated, it will
 return a message to the user
 }
 \examples{
@@ -110,6 +98,6 @@ coreFolder <- system.file("extdata", "sample", package = "fCAT")
 genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
 checkArguments(genome[1], fasAnno[1], coreFolder[1], "test",
-scoreMode = 2, priorityList = c("HUMAN@9606@1"))
-
+    scoreMode = 2, priorityList = c("HUMAN@9606@1")
+)
 }

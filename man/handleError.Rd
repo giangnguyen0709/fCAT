@@ -2,31 +2,31 @@
 % Please edit documentation in R/checkCompleteness.R
 \name{handleError}
 \alias{handleError}
-\title{A fail running of fCAT's checkCompleteness function will leave behind a copy
-of the fasta file and the symbolic link of the FAS annotaion of the 
-interested genome. This can cause some warning or crash while rerun the tool.
-This function will check if the query taxon is empty before the check, if not
-the function will delete the fasta file in the query taxon and its 
+\title{A fail running of fCAT's checkCompleteness function will leave behind a
+copy of the fasta file and the symbolic link of the FAS annotaion of the
+interested genome. This can cause some warning or crash while rerun the 
+tool. This function will check if the query taxon is empty before the check,
+if not the function will delete the fasta file in the query taxon and its 
 corresponding annotation file in weight_dir}
 \usage{
 handleError(root, weightDir = NULL)
 }
 \arguments{
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{weightDir}{The user can replace the weight_dir folder in the core 
+\item{weightDir}{The user can replace the weight_dir folder in the core
 directory by specifying the path to the replacing folder in this argument}
 }
 \value{
 none
 }
 \description{
-A fail running of fCAT's checkCompleteness function will leave behind a copy
-of the fasta file and the symbolic link of the FAS annotaion of the 
-interested genome. This can cause some warning or crash while rerun the tool.
-This function will check if the query taxon is empty before the check, if not
-the function will delete the fasta file in the query taxon and its 
+A fail running of fCAT's checkCompleteness function will leave behind a
+copy of the fasta file and the symbolic link of the FAS annotaion of the
+interested genome. This can cause some warning or crash while rerun the 
+tool. This function will check if the query taxon is empty before the check,
+if not the function will delete the fasta file in the query taxon and its 
 corresponding annotation file in weight_dir
 }
 \examples{

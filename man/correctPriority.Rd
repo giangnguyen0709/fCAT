@@ -5,8 +5,8 @@
 \title{If user choose the option to extend the phylogenetic profile of the
 interested genome into the original phylogenetic profile, the tool must save
 the priority list in a file text in the core directory, so that the tool can
-recall it to assess the completeness of the genome, which is appended in the 
-original phylogenetic profile. When the user want to redo the check, it can 
+recall it to assess the completeness of the genome, which is appended in the
+original phylogenetic profile. When the user want to redo the check, it can
 be that the user can change the priority list, because of that, anytime a
 redo is on, the tool must first remove the old priority list of the genome in
 the file.}
@@ -28,8 +28,8 @@ none
 If user choose the option to extend the phylogenetic profile of the
 interested genome into the original phylogenetic profile, the tool must save
 the priority list in a file text in the core directory, so that the tool can
-recall it to assess the completeness of the genome, which is appended in the 
-original phylogenetic profile. When the user want to redo the check, it can 
+recall it to assess the completeness of the genome, which is appended in the
+original phylogenetic profile. When the user want to redo the check, it can
 be that the user can change the priority list, because of that, anytime a
 redo is on, the tool must first remove the old priority list of the genome in
 the file.

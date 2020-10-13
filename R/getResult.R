@@ -1,43 +1,44 @@
-#' The function to classify a founded ortholog from its information like FAS 
-#' scores, the appearance frequence of the core gene in phylogenetic profile, 
+#' The function to classify a founded ortholog from its information like FAS
+#' scores, the appearance frequence of the core gene in phylogenetic profile,
 #' etc.
 #'
 #' @param fasF the forward fas score of the ortholog
 #' @param fasB the backward fas score of the ortholog
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core group
-#' @param scoreMode the mode determines the method to scoring the founded 
+#' @param scoreMode the mode determines the method to scoring the founded
 #' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
-#' @param f the appearance frequence of the core gene in the phylogenetic 
+#' @param f the appearance frequence of the core gene in the phylogenetic
 #' profile
 #' @param priorityList A list contains one or many genome ID of the genomes,
-#' which were used to build the core set. The genome ID of this list will be 
+#' which were used to build the core set. The genome ID of this list will be
 #' stored with an priority order, the tool look at into the fasta file of each
 #' core group and determine with the priority order to determine the references
 #' species for each core group.
-#' @return the status of the ortholog of the core gene. It can be "similar", 
+#' @return the status of the ortholog of the core gene. It can be "similar",
 #' "dissimilar", "duplicated, similar" or "duplicated, dissimilar"
-#' #' @examples 
+#' #' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
-#' status <- assessStatus(0.7, 0.9, coreFolder, "test", "530670", scoreMode = 2,
-#' f = 1, priorityList = c("HUMAN@9606@1"))
+#' status <- assessStatus(
+#'     0.7, 0.9, coreFolder, "test", "530670", 
+#'     scoreMode = 2, f = 1, priorityList = c("HUMAN@9606@1"))
 #' print(status)
 #' @export
 assessStatus <- function(
-    fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList
-) {
+    fasF, fasB, root, coreSet, coreGene, scoreMode, f, priorityList) {
     if (scoreMode == 1) {
         fas <- (fasF + fasB) / 2
         cutoff <- read.table(
             paste(
                 root, "core_orthologs", "/", coreSet, "/",
                 coreGene, "/", "fas_dir", "/", "score_dir", "/",
-                "1.cutoff", sep = ""
+                "1.cutoff",
+                sep = ""
             ),
             header = TRUE,
             sep = "\t"
@@ -56,8 +57,9 @@ assessStatus <- function(
         )
         cutoff <- read.table(
             paste(
-                root, "core_orthologs", "/", coreSet, "/", coreGene, "/", 
-                "fas_dir", "/", "score_dir", "/", "2.cutoff", sep = ""
+                root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+                "fas_dir", "/", "score_dir", "/", "2.cutoff",
+                sep = ""
             ),
             header = TRUE,
             sep = "\t"
@@ -77,8 +79,9 @@ assessStatus <- function(
         )
         meanTable <- read.table(
             paste(
-                root, "core_orthologs", "/", coreSet, "/", coreGene, "/", 
-                "fas_dir", "/", "score_dir", "/", "1.cutoff", sep = ""
+                root, "core_orthologs", "/", coreSet, "/", coreGene, "/",
+                "fas_dir", "/", "score_dir", "/", "1.cutoff",
+                sep = ""
             ),
             header = TRUE,
             sep = "\t"
@@ -107,21 +110,21 @@ assessStatus <- function(
     return(status)
 }
 
-#' The function to calculate the cutoff value based on standard deviation of 
+#' The function to calculate the cutoff value based on standard deviation of
 #' the length for each core group. This function will be used in score mode
 #' "busco"
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core gene
 #'
 #' @return a list that contains the mean length and the standard deviation of
 #' the length of the core gene
-#' @examples 
+#' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' cutoff <- calculateBuscoCutoff(coreFolder, "test", "530670")
 #' print(cutoff)
@@ -154,22 +157,22 @@ calculateBuscoCutoff <- function(root, coreSet, coreGene) {
     return(list(meanLength, standardDeviation))
 }
 
-#' The function to classify the founded ortholog based on its length 
+#' The function to classify the founded ortholog based on its length
 #'
 #' @param orthoLength the length of the ortholg sequence
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core gene
-#' @param f the appearance frequence of the core gene in the phylogenetic 
+#' @param f the appearance frequence of the core gene in the phylogenetic
 #' profile
 #'
 #' @return the status of the core gene, it can be "fragmented", "complete",
 #' "duplicated, complete" or "duplicated, fragmented"
-#' @examples 
+#' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' status <- assessBusco(600, coreFolder, "test", "530670", f = 1)
 #' print(status)
@@ -201,21 +204,21 @@ assessBusco <- function(orthoLength, root, coreSet, coreGene, f) {
 #' Determine if a core gene was ignored by the tool because of the unknown
 #' references species
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #' @param coreGene the ID of the core gene
 #' @param priorityList A list contains one or many genome ID of the genomes,
-#' which were used to build the core set. The genome ID of this list will be 
+#' which were used to build the core set. The genome ID of this list will be
 #' stored with an priority order, the tool look at into the fasta file of each
 #' core group and determine with the priority order to determine the references
 #' species for each core group.
 #'
 #' @return TRUE or FALSE
-#' @examples 
+#' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' check <- filterIgnore(coreFolder, "test", "530670", c("HUMAN@9606@1"))
 #' print(check)
@@ -236,20 +239,20 @@ filterIgnore <- function(root, coreSet, coreGene, priorityList) {
     }
 }
 
-#' Create the report of the completeness of a genome based on its phylogenetic
-#' profile to the interested core set
+#' Create the report of the completeness of a genome based on its 
+#' phylogenetic profile to the interested core set
 #'
 #' @param pp the phylogenetic profile of the genome in data.frame
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
-#' @param scoreMode the mode determines the method to scoring the founded 
+#' @param scoreMode the mode determines the method to scoring the founded
 #' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
 #' @param priorityList A list contains one or many genome ID of the genomes,
-#' which were used to build the core set. The genome ID of this list will be 
+#' which were used to build the core set. The genome ID of this list will be
 #' stored with an priority order, the tool look at into the fasta file of each
 #' core group and determine with the priority order to determine the references
 #' species for each core group.
@@ -281,7 +284,9 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
     frequency <- table(pp$geneID)
     if (scoreMode != "busco") {
         status <- unlist(lapply(1:nrow(pp),
-            function(i, frequency, pp, scoreMode, root, coreSet, priorityList) {
+            function(
+                i, frequency, pp, scoreMode, root, coreSet, priorityList
+            ) {
                 fasF <- pp[i, 4]
                 fasB <- pp[i, 5]
                 coreGene <- pp[i, 1]
@@ -328,7 +333,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
     if (length(missingGene) != 0) {
         missingStatus <- unlist(lapply(missingGene,
             function(gene, root, coreSet, priorityList) {
-                check <- filterIgnore( root, coreSet, gene, priorityList)
+                check <- filterIgnore(root, coreSet, gene, priorityList)
                 if (check == TRUE) {
                     return("ignored")
                 } else {
@@ -382,18 +387,18 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
     return(report)
 }
 
-#' Translate the report table into a frequence table, which tell the user, how
-#' many "dissimilar", "simillar", "missing", etc.
+#' Translate the report table into a frequence table, which tell the user, 
+#' how many "dissimilar", "simillar", "missing", etc.
 #'
 #' @param genomeID the genome ID of the interested genome
 #' @param report the report of the completeness of the interested genome based
 #' on its phylogenetic profile
-#' @param scoreMode the mode determines the method to scoring the founded 
+#' @param scoreMode the mode determines the method to scoring the founded
 #' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
 #'
-#' @return A frequency table of the completeness of the interested genome in 
+#' @return A frequency table of the completeness of the interested genome in
 #' data.frame
-#' @examples 
+#' @examples
 #' ## Create a pseudo phylogenetic profile table
 #' geneID <- c("530670", "530730")
 #' ncbiID <- c("ncbi9606", "ncbi9606")
@@ -430,7 +435,7 @@ translateReport <- function(genomeID, report, scoreMode) {
             ignored <- 0
         }
 
-        duplicated <- length(unique(report$geneID)) - 
+        duplicated <- length(unique(report$geneID)) -
             complete - fragmented - missing - ignored
         translated <- data.frame(
             genomeID = c(genomeID),

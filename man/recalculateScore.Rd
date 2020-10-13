@@ -2,22 +2,22 @@
 % Please edit documentation in R/runFdog.R
 \name{recalculateScore}
 \alias{recalculateScore}
-\title{The output of fdogFAS is a phylogenetic profile (pp). But this pp still can
-not be used to assess the completeneness of the interested genome. The pp
-will contains the ortholog sequence within the training sequence. The FAS
-score of each sequence is the FAS score between itself and the core group's
-ortholog sequence. Therefore the score must be recalculated, for score mode
-2 and 3 the score between the ortholog sequence and the score of the training
-sequence must be swaped. For score mode 1 the avarage score of the training 
-sequences must be calculated and updated into the line of the ortholog
-sequence. This function will be used as a modul in concanateFiles. The 
-function will remove all the line of the training sequences and return the pp
-of the interested genome.}
+\title{The output of fdogFAS is a phylogenetic profile (pp). But this pp still 
+can not be used to assess the completeneness of the interested genome. 
+The pp will contains the ortholog sequence within the training sequence. 
+The FAS score of each sequence is the FAS score between itself and the core 
+group's ortholog sequence. Therefore the score must be recalculated, for 
+score mode 2 and 3 the score between the ortholog sequence and the score 
+of the training sequence must be swaped. For score mode 1 the avarage score 
+of the training sequences must be calculated and updated into the line of 
+the ortholog sequence. This function will be used as a modul in 
+concanateFiles. The function will remove all the line of the training 
+sequences and return the pp of the interested genome.}
 \usage{
 recalculateScore(pp, genomeName)
 }
 \arguments{
-\item{pp}{The phylogenetic profile output from fdogFAS in form of a 
+\item{pp}{The phylogenetic profile output from fdogFAS in form of a
 data.frame}
 
 \item{genomeName}{The genome ID of the interested genome}
@@ -26,28 +26,30 @@ data.frame}
 The phylogenetic profile of the interested genome.
 }
 \description{
-The output of fdogFAS is a phylogenetic profile (pp). But this pp still can
-not be used to assess the completeneness of the interested genome. The pp
-will contains the ortholog sequence within the training sequence. The FAS
-score of each sequence is the FAS score between itself and the core group's
-ortholog sequence. Therefore the score must be recalculated, for score mode
-2 and 3 the score between the ortholog sequence and the score of the training
-sequence must be swaped. For score mode 1 the avarage score of the training 
-sequences must be calculated and updated into the line of the ortholog
-sequence. This function will be used as a modul in concanateFiles. The 
-function will remove all the line of the training sequences and return the pp
-of the interested genome.
+The output of fdogFAS is a phylogenetic profile (pp). But this pp still 
+can not be used to assess the completeneness of the interested genome. 
+The pp will contains the ortholog sequence within the training sequence. 
+The FAS score of each sequence is the FAS score between itself and the core 
+group's ortholog sequence. Therefore the score must be recalculated, for 
+score mode 2 and 3 the score between the ortholog sequence and the score 
+of the training sequence must be swaped. For score mode 1 the avarage score 
+of the training sequences must be calculated and updated into the line of 
+the ortholog sequence. This function will be used as a modul in 
+concanateFiles. The function will remove all the line of the training 
+sequences and return the pp of the interested genome.
 }
 \examples{
 ## Create pseudo phylogenetic profile data
 geneID <- c(
-"1426075at2759", "1426075at2759", "1426075at2759", "1426075at2759")
+    "1426075at2759", "1426075at2759", "1426075at2759", "1426075at2759"
+)
 ncbiID <- c("ncbi9606", "ncbi3055", "ncbi3702", "ncbi400682")
 orthoID <- c(
-"1426075at2759|HUMAN@9606@3|P0DI81|0",
-"1426075at2759|CHLRE@3055@2|3055_0:003348|1",
-"1426075at2759|ARATH@3702@2|3702_0:00057f|1",
-"1426075at2759|AMPQU@400682@2|400682_0:000143|1")
+    "1426075at2759|HUMAN@9606@3|P0DI81|0",
+    "1426075at2759|CHLRE@3055@2|3055_0:003348|1",
+    "1426075at2759|ARATH@3702@2|3702_0:00057f|1",
+    "1426075at2759|AMPQU@400682@2|400682_0:000143|1"
+)
 FAS_F <- c(1, 0.99766, 0.9975999, 0.996729)
 FAS_B <- c(1, 0.99766, 0.99759, 0.996729)
 pp <- data.frame(geneID, ncbiID, orthoID, FAS_F, FAS_B)

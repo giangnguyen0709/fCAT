@@ -2,7 +2,7 @@
 % Please edit documentation in R/checkCompleteness.R
 \name{checkExist}
 \alias{checkExist}
-\title{Check if ID of the interested genome exists already in the original 
+\title{Check if ID of the interested genome exists already in the original
 phylogenetic profile in the output folder of the core set or in the user's
 phyloprofile folder}
 \usage{
@@ -11,31 +11,30 @@ checkExist(genomeName, root, coreSet, scoreMode, ppDir)
 \arguments{
 \item{genomeName}{the ID of the genome}
 
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{The name of the interested core set. The core directory can 
-contains more than one core set and the user must specify the interested 
-core set. The core set will be stored in the folder core_orthologs in 
+\item{coreSet}{The name of the interested core set. The core directory can
+contains more than one core set and the user must specify the interested
+core set. The core set will be stored in the folder core_orthologs in
 subfolder, specify them by the name of the subfolder}
 
-\item{scoreMode}{the mode determines the method to scoring the founded 
+\item{scoreMode}{the mode determines the method to scoring the founded
 ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 
-\item{ppDir}{The user can replace the default folder output in the core 
-directory, where the phylogenetic profiles are stored by his folder. The user
-can specify the path to his folder in this argument}
+\item{ppDir}{The user can replace the default folder output in the core
+directory, where the phylogenetic profiles are stored by his folder. 
+The user can specify the path to his folder in this argument}
 }
 \value{
 TRUE or FALSE
 }
 \description{
-Check if ID of the interested genome exists already in the original 
+Check if ID of the interested genome exists already in the original
 phylogenetic profile in the output folder of the core set or in the user's
 phyloprofile folder
 }
 \examples{
 coreFolder <- system.file("extdata", "sample", package = "fCAT")
 checkExist("HUMAN@9606@3", coreFolder, "test", 2, NULL)
-
 }

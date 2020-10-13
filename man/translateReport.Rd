@@ -2,8 +2,8 @@
 % Please edit documentation in R/getResult.R
 \name{translateReport}
 \alias{translateReport}
-\title{Translate the report table into a frequence table, which tell the user, how
-many "dissimilar", "simillar", "missing", etc.}
+\title{Translate the report table into a frequence table, which tell the user, 
+how many "dissimilar", "simillar", "missing", etc.}
 \usage{
 translateReport(genomeID, report, scoreMode)
 }
@@ -13,16 +13,16 @@ translateReport(genomeID, report, scoreMode)
 \item{report}{the report of the completeness of the interested genome based
 on its phylogenetic profile}
 
-\item{scoreMode}{the mode determines the method to scoring the founded 
+\item{scoreMode}{the mode determines the method to scoring the founded
 ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 }
 \value{
-A frequency table of the completeness of the interested genome in 
+A frequency table of the completeness of the interested genome in
 data.frame
 }
 \description{
-Translate the report table into a frequence table, which tell the user, how
-many "dissimilar", "simillar", "missing", etc.
+Translate the report table into a frequence table, which tell the user, 
+how many "dissimilar", "simillar", "missing", etc.
 }
 \examples{
 ## Create a pseudo phylogenetic profile table

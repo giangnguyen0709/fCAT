@@ -2,8 +2,8 @@
 % Please edit documentation in R/extractGenome.R
 \name{extractDomains}
 \alias{extractDomains}
-\title{A domains file can contains lines of many different genomes. This function
-extract the domains of a specific genome}
+\title{A domains file can contains lines of many different genomes. This 
+function extract the domains of a specific genome}
 \usage{
 extractDomains(domains, genome, reverse = FALSE)
 }
@@ -19,15 +19,19 @@ of the genome but remove it}
 the domains of the interested genome in data.frame
 }
 \description{
-A domains file can contains lines of many different genomes. This function
-extract the domains of a specific genome
+A domains file can contains lines of many different genomes. This 
+function extract the domains of a specific genome
 }
 \examples{
 ## Create a pseudo domains table
-V1 <- c("1001705at2759#1001705at2759|HUMAN@9606@3|Q15291|1",
-"551907at2759#551907at2759|AMPQU@400682@2|400682_0:001490|1")
-V2 <- c("1001705at2759|HOMSA@9606@2|9606_0:00004c", 
-"551907at2759|AMPQU@400682@2|400682_0:001490|1")
+V1 <- c(
+    "1001705at2759#1001705at2759|HUMAN@9606@3|Q15291|1",
+    "551907at2759#551907at2759|AMPQU@400682@2|400682_0:001490|1"
+)
+V2 <- c(
+    "1001705at2759|HOMSA@9606@2|9606_0:00004c",
+    "551907at2759|AMPQU@400682@2|400682_0:001490|1"
+)
 V3 <- c(538, 1087)
 V4 <- c("pfam_WD40", "flps_SINGLE_{G}")
 V5 <- c(17, 1030)

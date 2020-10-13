@@ -2,27 +2,27 @@
 % Please edit documentation in R/processCoreSet.R
 \name{calculateCutoff}
 \alias{calculateCutoff}
-\title{The function calculate all cutoff values for all mode of a specific core gene
-in the set. For score mode 1 it will calculate the avarage of all vs all FAS 
-scores between the training sequences in the core gene. For score mode 2 it 
-will calculate the avarage of the FAS score between each sequence against 
-all training sequences in the core gene. The scores will be writen in a table
-with a column is the ID of the sequences and a column is the corresponding
-value. For score mode 3, the function will calculate the avarage of 1 vs all
-FAS scores for each training sequence in the core gene. The avarages build a
-distribution, the function will calculate the confidence interval of this 
-distribution and write the upper value and the lower value of the interval
-in a file in the core gene folder.}
+\title{The function calculate all cutoff values for all mode of a specific core 
+gene in the set. For score mode 1 it will calculate the avarage of all vs 
+all FAS scores between the training sequences in the core gene. For score 
+mode 2 it will calculate the avarage of the FAS score between each sequence 
+against all training sequences in the core gene. The scores will be writen 
+in a table with a column is the ID of the sequences and a column is the 
+corresponding value. For score mode 3, the function will calculate the 
+avarage of 1 vs all FAS scores for each training sequence in the core gene. 
+The avarages build a distribution, the function will calculate the 
+confidence interval of this distribution and write the upper value and the 
+lower value of the interval in a file in the core gene folder.}
 \usage{
 calculateCutoff(root, coreSet, coreGene)
 }
 \arguments{
-\item{root}{The path to the core directory, where the core set is stored 
+\item{root}{The path to the core directory, where the core set is stored
 within weight_dir, blast_dir, etc.}
 
-\item{coreSet}{The name of the interested core set. The core directory can 
-contains more than one core set and the user must specify the interested 
-core set. The core set will be stored in the folder core_orthologs in 
+\item{coreSet}{The name of the interested core set. The core directory can
+contains more than one core set and the user must specify the interested
+core set. The core set will be stored in the folder core_orthologs in
 subfolder, specify them by the name of the subfolder}
 
 \item{coreGene}{the ID of the core gene in the set}
@@ -31,17 +31,17 @@ subfolder, specify them by the name of the subfolder}
 none
 }
 \description{
-The function calculate all cutoff values for all mode of a specific core gene
-in the set. For score mode 1 it will calculate the avarage of all vs all FAS 
-scores between the training sequences in the core gene. For score mode 2 it 
-will calculate the avarage of the FAS score between each sequence against 
-all training sequences in the core gene. The scores will be writen in a table
-with a column is the ID of the sequences and a column is the corresponding
-value. For score mode 3, the function will calculate the avarage of 1 vs all
-FAS scores for each training sequence in the core gene. The avarages build a
-distribution, the function will calculate the confidence interval of this 
-distribution and write the upper value and the lower value of the interval
-in a file in the core gene folder.
+The function calculate all cutoff values for all mode of a specific core 
+gene in the set. For score mode 1 it will calculate the avarage of all vs 
+all FAS scores between the training sequences in the core gene. For score 
+mode 2 it will calculate the avarage of the FAS score between each sequence 
+against all training sequences in the core gene. The scores will be writen 
+in a table with a column is the ID of the sequences and a column is the 
+corresponding value. For score mode 3, the function will calculate the 
+avarage of 1 vs all FAS scores for each training sequence in the core gene. 
+The avarages build a distribution, the function will calculate the 
+confidence interval of this distribution and write the upper value and the 
+lower value of the interval in a file in the core gene folder.
 }
 \examples{
 coreFolder <- system.file("extdata", "sample", package = "fCAT")

@@ -2,9 +2,9 @@
 % Please edit documentation in R/correctFiles.R
 \name{correctFiles}
 \alias{correctFiles}
-\title{This function run correctPP, correctFasta, correctDomains, correctPriority 
-and correctReport in a loop to correct all phyloprofile, extended fasta, 
-domains, prioritylist and report file in a folder}
+\title{This function run correctPP, correctFasta, correctDomains, 
+correctPriority and correctReport in a loop to correct all phyloprofile, 
+extended fasta, domains, prioritylist and report file in a folder}
 \usage{
 correctFiles(directory, genome)
 }
@@ -17,9 +17,9 @@ correctFiles(directory, genome)
 none
 }
 \description{
-This function run correctPP, correctFasta, correctDomains, correctPriority 
-and correctReport in a loop to correct all phyloprofile, extended fasta, 
-domains, prioritylist and report file in a folder
+This function run correctPP, correctFasta, correctDomains, 
+correctPriority and correctReport in a loop to correct all phyloprofile, 
+extended fasta, domains, prioritylist and report file in a folder
 }
 \examples{
 ## Create some pseudo data
@@ -34,8 +34,10 @@ missing <- c(4, 11)
 duplicated <- c(1, 0)
 ignored <- c(8, 22)
 
-table2 <- data.frame(genomeID, similar, dissimilar, missing, duplicated, 
-ignored)
+table2 <- data.frame(
+    genomeID, similar, dissimilar, missing, duplicated,
+    ignored
+)
 
 ## Write them in files in a subfolder in the current working directory
 wd <- getwd()

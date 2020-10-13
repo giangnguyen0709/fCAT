@@ -2,19 +2,20 @@
 % Please edit documentation in R/busco.R
 \name{updateLength}
 \alias{updateLength}
-\title{In the score mode "busco" the tool must calculate the length of the founded
-ortholog sequence to classify it into "complete" or "fragmented". The
-function will take the phylogenetic profile and the extended fasta file of
-the interested genome as the input. Based on the common ID of the sequence
-in each file, the function will calculate the length of the sequence in the
-fasta file and update it into the phylogenetic profile as a new column.}
+\title{In the score mode "busco" the tool must calculate the length of the 
+founded ortholog sequence to classify it into "complete" or "fragmented". 
+The function will take the phylogenetic profile and the extended fasta file 
+of the interested genome as the input. Based on the common ID of the 
+sequence in each file, the function will calculate the length of the 
+sequence in the fasta file and update it into the phylogenetic profile as 
+a new column.}
 \usage{
 updateLength(pp, exFasta)
 }
 \arguments{
 \item{pp}{the phylogenetic profile of the interested genome in data.frame}
 
-\item{exFasta}{the extended fasta file in form  of a vector, with each 
+\item{exFasta}{the extended fasta file in form  of a vector, with each
 element is a line of the file}
 }
 \value{
@@ -22,12 +23,13 @@ the phylogenetic profile of the interested genome with updated
 length for each ortholog (or for each line)
 }
 \description{
-In the score mode "busco" the tool must calculate the length of the founded
-ortholog sequence to classify it into "complete" or "fragmented". The
-function will take the phylogenetic profile and the extended fasta file of
-the interested genome as the input. Based on the common ID of the sequence
-in each file, the function will calculate the length of the sequence in the
-fasta file and update it into the phylogenetic profile as a new column.
+In the score mode "busco" the tool must calculate the length of the 
+founded ortholog sequence to classify it into "complete" or "fragmented". 
+The function will take the phylogenetic profile and the extended fasta file 
+of the interested genome as the input. Based on the common ID of the 
+sequence in each file, the function will calculate the length of the 
+sequence in the fasta file and update it into the phylogenetic profile as 
+a new column.
 }
 \examples{
 ## Create pseudo data
@@ -37,10 +39,11 @@ orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1")
 pp <- data.frame(geneID, ncbiID, orthoID)
 
 fasta <- c(
-">530670|HUMAN@9606@3|Q16526|1",
-"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-">530730|HUMAN@9606@3|P05091|1",
-"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    ">530670|HUMAN@9606@3|Q16526|1",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    ">530730|HUMAN@9606@3|P05091|1",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+)
 
 ## Updating length
 updatedPP <- updateLength(pp, fasta)

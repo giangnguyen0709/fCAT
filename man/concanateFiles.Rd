@@ -2,7 +2,7 @@
 % Please edit documentation in R/runFdog.R
 \name{concanateFiles}
 \alias{concanateFiles}
-\title{After fdogFAS is finished. It will leave in a temporary folder the 
+\title{After fdogFAS is finished. It will leave in a temporary folder the
 phylogenetic profiles (pp). The pps can not be used direct to assess the
 completeness of the interested genome. This function processes the pp files
 in a folder and merged them.}
@@ -14,16 +14,16 @@ concanateFiles(directory, genomeName, scoreMode)
 
 \item{genomeName}{the genomeID of the interested genome}
 
-\item{scoreMode}{the mode determines the method to scoring the founded 
+\item{scoreMode}{the mode determines the method to scoring the founded
 ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
 }
 \value{
-a list which contains the pp of the interested genome in data.frame, 
+a list which contains the pp of the interested genome in data.frame,
 the extended fasta file of the interested genome in form of a vector, which
 contains the lines of the file and 2 domains file in form of data.frame
 }
 \description{
-After fdogFAS is finished. It will leave in a temporary folder the 
+After fdogFAS is finished. It will leave in a temporary folder the
 phylogenetic profiles (pp). The pps can not be used direct to assess the
 completeness of the interested genome. This function processes the pp files
 in a folder and merged them.

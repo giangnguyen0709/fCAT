@@ -1,12 +1,12 @@
-#' A fail running of fCAT's checkCompleteness function will leave behind a copy
-#' of the fasta file and the symbolic link of the FAS annotaion of the 
-#' interested genome. This can cause some warning or crash while rerun the tool.
-#' This function will check if the query taxon is empty before the check, if not
-#' the function will delete the fasta file in the query taxon and its 
+#' A fail running of fCAT's checkCompleteness function will leave behind a
+#' copy of the fasta file and the symbolic link of the FAS annotaion of the
+#' interested genome. This can cause some warning or crash while rerun the 
+#' tool. This function will check if the query taxon is empty before the check,
+#' if not the function will delete the fasta file in the query taxon and its 
 #' corresponding annotation file in weight_dir
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param weightDir The user can replace the weight_dir folder in the core 
+#' @param weightDir The user can replace the weight_dir folder in the core
 #' directory by specifying the path to the replacing folder in this argument
 #'
 #' @return none
@@ -26,22 +26,26 @@ handleError <- function(root, weightDir = NULL) {
 
     if (
         length(
-            list.dirs(genomeDir, full.names = FALSE, recursive = FALSE
-            )
+            list.dirs(genomeDir, full.names = FALSE, recursive = FALSE)
         ) != 0
     ) {
         for (
             directory in list.dirs(
-                genomeDir, full.names = FALSE, recursive = FALSE
+                genomeDir,
+                full.names = FALSE, recursive = FALSE
             )
         ) {
-            unlink(paste(genomeDir, "/", directory, sep = ""), recursive = TRUE)
+            unlink(
+                paste(genomeDir, "/", directory, sep = ""), recursive = TRUE
+            )
             if (
                 file.exists(
                     paste(weightDir, "/", directory, ".json", sep = "")
                 )
             ) {
-                file.remove(paste(weightDir, "/", directory, ".json", sep = ""))
+                file.remove(
+                    paste(weightDir, "/", directory, ".json", sep = "")
+                )
             }
         }
     }
@@ -49,11 +53,11 @@ handleError <- function(root, weightDir = NULL) {
 
 #' Check if the core set was processed with the function processCoreSet()
 #'
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
 #'
 #' @return TRUE or FALSE
@@ -65,8 +69,8 @@ checkPreProcess <- function(root, coreSet) {
     check <- 0
     for (
         coreGene in list.dirs(
-            paste(root, "core_orthologs", "/", coreSet, sep = ""), 
-            recursive = FALSE, 
+            paste(root, "core_orthologs", "/", coreSet, sep = ""),
+            recursive = FALSE,
             full.names = TRUE
         )
     ) {
@@ -85,34 +89,34 @@ checkPreProcess <- function(root, coreSet) {
     }
 }
 
-#' Check if ID of the interested genome exists already in the original 
+#' Check if ID of the interested genome exists already in the original
 #' phylogenetic profile in the output folder of the core set or in the user's
 #' phyloprofile folder
 #'
 #' @param genomeName the ID of the genome
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
-#' @param scoreMode the mode determines the method to scoring the founded 
+#' @param scoreMode the mode determines the method to scoring the founded
 #' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
-#' @param ppDir The user can replace the default folder output in the core 
-#' directory, where the phylogenetic profiles are stored by his folder. The user
-#' can specify the path to his folder in this argument
-#' @examples 
+#' @param ppDir The user can replace the default folder output in the core
+#' directory, where the phylogenetic profiles are stored by his folder. 
+#' The user can specify the path to his folder in this argument
+#' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' checkExist("HUMAN@9606@3", coreFolder, "test", 2, NULL)
-#'
 #' @return TRUE or FALSE
 #' @export
 checkExist <- function(genomeName, root, coreSet, scoreMode, ppDir) {
     setName <- coreSet
-    
+
     if (!is.null(ppDir)) {
         reportFile <- paste(
-            ppDir, setName, ".report", sep = ""
+            ppDir, setName, ".report",
+            sep = ""
         )
     } else {
         reportFile <- paste(
@@ -121,7 +125,7 @@ checkExist <- function(genomeName, root, coreSet, scoreMode, ppDir) {
             sep = ""
         )
     }
-    
+
     if (!file.exists(reportFile)) {
         return(FALSE)
     }
@@ -136,36 +140,44 @@ checkExist <- function(genomeName, root, coreSet, scoreMode, ppDir) {
     }
 }
 
-#' The function to validate the input. If a input is not validated, it will 
+#' The function to validate the input. If a input is not validated, it will
 #' return a message to the user
+#' 
+#' @usage 
+#' checkArguments(
+#'     genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE,
+#'     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, 
+#'     weightDir = NULL, outDir = NULL, cleanup = FALSE, reFdog = FALSE, 
+#'     fdogDir = NULL, ppDir = NULL
+#' )
 #'
 #' @param genome The path to the genome fasta file
 #' @param fasAnno The path to the fas annotation file. It can equal NULL
-#' @param root The path to the core directory, where the core set is stored 
+#' @param root The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
-#' @param extend The output of the function is a phylogenetic profile of the 
-#' interested genome. It contains 4 files, .phyloprofile, .extended.fa, 
-#' _reverse.domains and _forward.domains. If extend = TRUE, the files will be 
-#' appended into the old files in the folder output of the core directory or in 
-#' the inputed folder by the user with the argument ppDir. If there is no old 
-#' files in the folder, the output files of the function will be writen in the 
+#' @param extend The output of the function is a phylogenetic profile of the
+#' interested genome. It contains 4 files, .phyloprofile, .extended.fa,
+#' _reverse.domains and _forward.domains. If extend = TRUE, the files will be
+#' appended into the old files in the folder output of the core directory or in
+#' the inputed folder by the user with the argument ppDir. If there is no old
+#' files in the folder, the output files of the function will be writen in the
 #' new files.
-#' @param redo If it exists already the genome ID of the interested genome in 
+#' @param redo If it exists already the genome ID of the interested genome in
 #' the old phylogenetic profile. The tool will extract direct this pp to assess
 #' the completeness. If user don't want this happens, they can set redo to TRUE
 #' to get a new phylogenetic profile
-#' @param scoreMode the mode determines the method to scoring the founded 
+#' @param scoreMode the mode determines the method to scoring the founded
 #' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
 #' @param priorityList A list contains one or many genome ID of the genomes,
-#' which were used to build the core set. The genome ID of this list will be 
+#' which were used to build the core set. The genome ID of this list will be
 #' stored with an priority order, the tool look at into the fasta file of each
 #' core group and determine with the priority order to determine the references
 #' species for each core group.
-#' @param cpu determines the cores that fDOG and fdogFAS will uses to be run 
+#' @param cpu determines the cores that fDOG and fdogFAS will uses to be run
 #' parallel
 #' @param blastDir The user can replace the blast_dir folder in the core
 #' directory by specifying it in this argument
@@ -176,41 +188,40 @@ checkExist <- function(genomeName, root, coreSet, scoreMode, ppDir) {
 #' to the folder in this argument
 #' @param cleanup The fDOG's output is a set of phylogenetic profile of each
 #' core group to the interested genome. The phylogenetic profile will be stored
-#' into a folder in the core set. The function will merge all the small 
-#' phylogenetic profile, calculate the FAS score or length to have the whole 
+#' into a folder in the core set. The function will merge all the small
+#' phylogenetic profile, calculate the FAS score or length to have the whole
 #' phylogenetic profile of the interested genome to the core set. This fDOG's
 #' output can be reused for all score modes. When cleanup is set to TRUE, the
 #' fDOG's output will not be stored to be reused but to be removed
 #' @param reFdog If it already exist a fDOG's output for a specific core group
-#' the tool will skip this core group and go to the next core group. If reFdog 
+#' the tool will skip this core group and go to the next core group. If reFdog
 #' is set to TRUE, the tool will remove all the existed fDOG's output and rerun
 #' fDOG for all core groups of the set
-#' @param fdogDir Normally the fDOG's output will be stored in the folder 
-#' fdogout in the core directory, but the user can specify the folder for 
-#' fDOG's output by specify the path to it in this argument. Notice here, is 
+#' @param fdogDir Normally the fDOG's output will be stored in the folder
+#' fdogout in the core directory, but the user can specify the folder for
+#' fDOG's output by specify the path to it in this argument. Notice here, is
 #' the fDOG's output folder will contains the subfolder, equivalent to the name
-#' of the interested genome, for example, the folder can contain "HUMAN@9606@3" 
+#' of the interested genome, for example, the folder can contain "HUMAN@9606@3"
 #' and "AMPQU@400682@2", for a completeness checking on an interested genome,
-#' which has a subfolder in the fDOG's output folder with the same name, the 
+#' which has a subfolder in the fDOG's output folder with the same name, the
 #' function will look into the subfolder to find the existed fDOG's output
-#' @param ppDir The user can replace the default folder output in the core 
+#' @param ppDir The user can replace the default folder output in the core
 #' directory, where the phylogenetic profiles are stored by his folder. The user
 #' can specify the path to his folder in this argument
-#' @examples 
+#' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 #' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
 #' checkArguments(genome[1], fasAnno[1], coreFolder[1], "test",
-#' scoreMode = 2, priorityList = c("HUMAN@9606@1"))
-#'
+#'     scoreMode = 2, priorityList = c("HUMAN@9606@1")
+#' )
 #' @return A list that contains a logical value and the message to the error
 #' @export
 checkArguments <- function(
-    genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE, 
+    genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE,
     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, weightDir = NULL,
     outDir = NULL, cleanup = FALSE, reFdog = FALSE, fdogDir = NULL,
-    ppDir = NULL
-) {
+    ppDir = NULL) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
@@ -242,7 +253,7 @@ checkArguments <- function(
                 status <- "blast_dir is missing"
                 return(list(check, status))
             }
-            
+
             if (length(list.dirs(blastDir)) == 0) {
                 check <- FALSE
                 status <- "blast_dir is empty"
@@ -254,14 +265,14 @@ checkArguments <- function(
                 check <- FALSE
                 return(list(check, status))
             }
-            
+
             if (length(list.dirs(blastDir)) == 0) {
                 check <- FALSE
                 status <- "blast_dir is empty"
                 return(list(check, status))
             }
         }
-        
+
         if (is.null(weightDir)) {
             weightDir <- paste(root, "weight_dir", sep = "")
             if (!dir.exists(weightDir)) {
@@ -269,7 +280,7 @@ checkArguments <- function(
                 status <- "weight_dir is missing"
                 return(list(check, status))
             }
-            
+
             if (length(list.dirs(weightDir)) == 0) {
                 check <- FALSE
                 status <- "blast_dir is empty"
@@ -281,14 +292,14 @@ checkArguments <- function(
                 status <- "weight_dir is missing"
                 return(list(check, status))
             }
-            
+
             if (length(list.dirs(weightDir)) == 0) {
                 check <- FALSE
                 status <- "blast_dir is empty"
                 return(list(check, status))
             }
         }
-        
+
         orthoDir <- paste(root, "core_orthologs", "/", coreSet, sep = "")
         if (!dir.exists(orthoDir)) {
             check <- FALSE
@@ -301,7 +312,6 @@ checkArguments <- function(
                 return(list(check, status))
             }
         }
-        
     }
 
 
@@ -326,8 +336,8 @@ checkArguments <- function(
         for (taxa in priorityList) {
             if (!(taxa %in% coreTaxa)) {
                 check <- FALSE
-                status <- 
-                    "A taxa in the priority list doesn't belong to the core set"
+                status <-
+                    "taxa in the priority list don't belong to the core set"
                 return(list(check, status))
             }
         }
@@ -338,34 +348,42 @@ checkArguments <- function(
 
 #' The function to check completeness of a interested genome based on an
 #' interested core set.
+#' 
+#' @usage 
+#' checkCompleteness(
+#'     genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE,
+#'     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, 
+#'     weightDir = NULL, outDir = NULL, cleanup = FALSE, reFdog = FALSE, 
+#'     fdogDir = NULL, ppDir = NULL
+#' )
 #'
 #' @param genome The path to the genome fasta file
 #' @param fasAnno The path to the fas annotation file. It can equal NULL
-#' @param coreDir The path to the core directory, where the core set is stored 
+#' @param coreDir The path to the core directory, where the core set is stored
 #' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can 
-#' contains more than one core set and the user must specify the interested 
-#' core set. The core set will be stored in the folder core_orthologs in 
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
 #' subfolder, specify them by the name of the subfolder
-#' @param extend The output of the function is a phylogenetic profile of the 
-#' interested genome. It contains 4 files, .phyloprofile, .extended.fa, 
-#' _reverse.domains and _forward.domains. If extend = TRUE, the files will be 
-#' appended into the old files in the folder output of the core directory or in 
-#' the inputed folder by the user with the argument ppDir. If there is no old 
-#' files in the folder, the output files of the function will be writen in the 
+#' @param extend The output of the function is a phylogenetic profile of the
+#' interested genome. It contains 4 files, .phyloprofile, .extended.fa,
+#' _reverse.domains and _forward.domains. If extend = TRUE, the files will be
+#' appended into the old files in the folder output of the core directory or in
+#' the inputed folder by the user with the argument ppDir. If there is no old
+#' files in the folder, the output files of the function will be writen in the
 #' new files.
-#' @param redo If it exists already the genome ID of the interested genome in 
+#' @param redo If it exists already the genome ID of the interested genome in
 #' the old phylogenetic profile. The tool will extract direct this pp to assess
 #' the completeness. If user don't want this happens, they can set redo to TRUE
 #' to get a new phylogenetic profile
-#' @param scoreMode the mode determines the method to scoring the founded 
+#' @param scoreMode the mode determines the method to scoring the founded
 #' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
 #' @param priorityList A list contains one or many genome ID of the genomes,
-#' which were used to build the core set. The genome ID of this list will be 
+#' which were used to build the core set. The genome ID of this list will be
 #' stored with an priority order, the tool look at into the fasta file of each
 #' core group and determine with the priority order to determine the references
 #' species for each core group.
-#' @param cpu determines the cores that fDOG and fdogFAS will uses to be run 
+#' @param cpu determines the cores that fDOG and fdogFAS will uses to be run
 #' parallel
 #' @param blastDir The user can replace the blast_dir folder in the core
 #' directory by specifying it in this argument. By default is NULL
@@ -376,43 +394,45 @@ checkArguments <- function(
 #' to the folder in this argument. By default is NULL
 #' @param cleanup The fDOG's output is a set of phylogenetic profile of each
 #' core group to the interested genome. The phylogenetic profile will be stored
-#' into a folder in the core set. The function will merge all the small 
-#' phylogenetic profile, calculate the FAS score or length to have the whole 
+#' into a folder in the core set. The function will merge all the small
+#' phylogenetic profile, calculate the FAS score or length to have the whole
 #' phylogenetic profile of the interested genome to the core set. This fDOG's
 #' output can be reused for all score modes. When cleanup is set to TRUE, the
 #' fDOG's output will not be stored to be reused but to be removed
 #' @param reFdog If it already exist a fDOG's output for a specific core group
-#' the tool will skip this core group and go to the next core group. If reFdog 
+#' the tool will skip this core group and go to the next core group. If reFdog
 #' is set to TRUE, the tool will remove all the existed fDOG's output and rerun
 #' fDOG for all core groups of the set
-#' @param fdogDir Normally the fDOG's output will be stored in the folder 
-#' fdogout in the core directory, but the user can specify the folder for 
-#' fDOG's output by specify the path to it in this argument. Notice here, is 
+#' @param fdogDir Normally the fDOG's output will be stored in the folder
+#' fdogout in the core directory, but the user can specify the folder for
+#' fDOG's output by specify the path to it in this argument. Notice here, is
 #' the fDOG's output folder will contains the subfolder, equivalent to the name
-#' of the interested genome, for example, the folder can contain "HUMAN@9606@3" 
+#' of the interested genome, for example, the folder can contain "HUMAN@9606@3"
 #' and "AMPQU@400682@2", for a completeness checking on an interested genome,
-#' which has a subfolder in the fDOG's output folder with the same name, the 
+#' which has a subfolder in the fDOG's output folder with the same name, the
 #' function will look into the subfolder to find the existed fDOG's output
-#' @param ppDir The user can replace the default folder output in the core 
-#' directory, where the phylogenetic profiles are stored by his folder. The user
-#' can specify the path to his folder in this argument. By default is NULL
+#' @param ppDir The user can replace the default folder output in the core
+#' directory, where the phylogenetic profiles are stored by his folder. The 
+#' user can specify the path to his folder in this argument. By default is NULL
 #'
-#' @return A list which contains 2 data.frame. The first table is the 
+#' @return A list which contains 2 data.frame. The first table is the
 #' completeness report of the interested genome with details information about
 #' the classification of the founded ortholog and which gene is missing. The
-#' second table is the frequency table of the interested genome within the other
-#' genomes, which are present in the old phylogenetic profile. The frequency
-#' table give an general sight about how many "dissimilar", "similar", 
-#' "duplicated" and "missing" genes founded in the interested genome.
+#' second table is the frequency table of the interested genome within the 
+#' other genomes, which are present in the old phylogenetic profile. The 
+#' frequency table give an general sight about how many "dissimilar", 
+#' "similar", "duplicated" and "missing" genes founded in the interested 
+#' genome.
 #' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 #' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
 #' checkCompleteness(genome[1], fasAnno[1], coreFolder[1], "test",
-#' scoreMode = 2, priorityList = c("HUMAN@9606@1"), extend = TRUE)
+#'     scoreMode = 2, priorityList = c("HUMAN@9606@1"), extend = TRUE
+#' )
 #' @export
 checkCompleteness <- function(
-    genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE, 
+    genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE,
     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, weightDir = NULL,
     outDir = NULL, cleanup = FALSE, reFdog = FALSE, fdogDir = NULL,
     ppDir = NULL
@@ -432,7 +452,7 @@ checkCompleteness <- function(
     if (!is.null(weightDir)) {
         if (!endsWith(weightDir, "/")) {
             weightDir <- paste(weightDir, "/", sep = "")
-        }   
+        }
     }
     if (!is.null(blastDir)) {
         if (!endsWith(blastDir, "/")) {
@@ -454,7 +474,7 @@ checkCompleteness <- function(
             ppDir <- paste(ppDir, "/", sep = "")
         }
     }
-    
+
     if (!checkPreProcess(coreDir, coreSet)) {
         processCoreSet(coreDir, coreSet)
     }
@@ -494,11 +514,11 @@ checkCompleteness <- function(
     if (compute == TRUE) {
         singleReport <- computeReport(
             genome, fasAnno, coreDir, coreSet, extend,
-            scoreMode, priorityList, cpu, FALSE, 
+            scoreMode, priorityList, cpu, FALSE,
             blastDir, weightDir, cleanup, reFdog, fdogDir, ppDir
         )
         translated <- translateReport(genomeName, singleReport, scoreMode)
-        
+
         if (!is.null(ppDir)) {
             reportFile <- paste(ppDir, setName, ".report", sep = "")
         } else {
@@ -524,9 +544,10 @@ checkCompleteness <- function(
             ppPath <- paste(ppDir, setName, ".phyloprofile", sep = "")
         } else {
             ppPath <- paste(
-                coreDir, "output", "/", coreSet, "/", 
-                as.character(scoreMode), "/", setName, 
-                ".phyloprofile", sep = ""
+                coreDir, "output", "/", coreSet, "/",
+                as.character(scoreMode), "/", setName,
+                ".phyloprofile",
+                sep = ""
             )
         }
         phyloprofile <- read.table(
@@ -539,11 +560,12 @@ checkCompleteness <- function(
             prioPath <- paste(ppDir, setName, ".prioritylist", sep = "")
         } else {
             prioPath <- paste(
-                coreDir, "output", "/", coreSet, "/", 
-                as.character(scoreMode), "/", setName, ".prioritylist", sep = ""
+                coreDir, "output", "/", coreSet, "/",
+                as.character(scoreMode), "/", setName, ".prioritylist",
+                sep = ""
             )
         }
-        
+
         priorityTable <- read.table(
             prioPath,
             header = TRUE,
@@ -551,13 +573,14 @@ checkCompleteness <- function(
         )
         priorityTable <- subset(priorityTable, genomeID == genomeName)
         priorityList <- strsplit(
-            priorityTable[1, 2], ",", fixed = TRUE
+            priorityTable[1, 2], ",",
+            fixed = TRUE
         )[[1]]
         singleReport <- reportSingle(
             phyloprofile, coreDir, coreSet, scoreMode,
             priorityList
         )
-        
+
         if (!is.null(ppDir)) {
             reportFile <- paste(ppDir, setName, ".report", sep = "")
         } else {
@@ -574,7 +597,7 @@ checkCompleteness <- function(
             sep = "\t"
         )
     }
-    
+
     if (!is.null(outDir)) {
         write.table(
             singleReport,
@@ -592,23 +615,29 @@ checkCompleteness <- function(
         )
     } else {
         rpDir <- paste(
-            coreDir, "output", "/", coreSet, "/", as.character(scoreMode), 
-            "/", "report", sep = "")
+            coreDir, "output", "/", coreSet, "/", as.character(scoreMode),
+            "/", "report",
+            sep = ""
+        )
         if (!dir.exists(rpDir)) {
             dir.create(rpDir)
         }
         write.table(
             singleReport,
-            paste(coreDir, "output", "/", coreSet, "/", as.character(scoreMode), 
-                  "/", "report", "/", setName, "_details.report", sep = ""),
+            paste(coreDir, "output", "/", coreSet, "/", as.character(scoreMode),
+                "/", "report", "/", setName, "_details.report",
+                sep = ""
+            ),
             row.names = FALSE,
             quote = FALSE,
             sep = "\t"
         )
         write.table(
             allReport,
-            paste(coreDir, "output", "/", coreSet, "/", as.character(scoreMode), 
-                  "/", "report", "/", setName, ".report", sep = ""),
+            paste(coreDir, "output", "/", coreSet, "/", as.character(scoreMode),
+                "/", "report", "/", setName, ".report",
+                sep = ""
+            ),
             row.names = FALSE,
             quote = FALSE,
             sep = "\t"
