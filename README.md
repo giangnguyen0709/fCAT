@@ -10,11 +10,9 @@ First, install devtools
 
 Using *devtools* to install fCAT
 
-`if (!requireNamespace("devtools"))
-
-	install.packages("devtools")
-
-devtools::install_github("giangnguyen0709/fCAT")`
+`if (!requireNamespace("devtools"))`
+`install.packages("devtools")`
+`devtools::install_github("giangnguyen0709/fCAT")`
 
 ## Depencies
 
