@@ -327,7 +327,7 @@ correctFasta <- function(fasta, genome) {
 #' unlink(testFolder, recursive = TRUE)
 #' @export
 correctFiles <- function(directory, genome) {
-    files <- list.files(directory, full.names = TRUE, recursive = TRUE)
+    files <- list.files(directory, full.names = TRUE)
 
     for (file in files) {
         if (endsWith(file, ".phyloprofile")) {
