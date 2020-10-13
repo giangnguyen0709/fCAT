@@ -16,9 +16,9 @@ devtools::install_github("giangnguyen0709/fCAT")
 
 *fCAT* is depended on some tools.
 
-### HaMStR-oneSeq (h1s)
+### fDOG
 
-> https://github.com/BIONF/HaMStR
+> https://github.com/BIONF/fDOG
 
 ### FAS
 
