@@ -646,5 +646,5 @@ checkCompleteness <- function(
 
     end <- Sys.time()
     print(paste("Running time is", as.character(end - start)))
-    return(list(singleReport, allReport))
+    return(allReport)
 }
