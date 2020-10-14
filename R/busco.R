@@ -230,14 +230,14 @@ runFdogBusco <- function(
             }
             if (file.exists(
                 paste(
-                    outPath, "/", coreGene, "/", "hamstrsearch.log",
-                    sep = ""
+                    outPath, "/",refSpec, "/", coreGene, "/", 
+                    "hamstrsearch.log", sep = ""
                 )
             )) {
                 if (
                     file.exists(
                         paste(
-                            outPath, "/", coreGene, "/", coreGene,
+                            outPath, "/", refSpec, "/", coreGene, "/", coreGene,
                             ".phyloprofile",
                             sep = ""
                         )
@@ -245,7 +245,7 @@ runFdogBusco <- function(
                 ) {
                     pp <- read.table(
                         paste(
-                            outPath, "/", coreGene, "/", coreGene,
+                            outPath, "/", refSpec, "/", coreGene, "/", coreGene,
                             ".phyloprofile",
                             sep = ""
                         ),
@@ -254,7 +254,7 @@ runFdogBusco <- function(
                     )
                     exFasta <- readLines(
                         paste(
-                            outPath, "/", coreGene, "/", coreGene,
+                            outPath, "/", refSpec, "/", coreGene, "/", coreGene,
                             ".extended.fa",
                             sep = ""
                         )
@@ -275,7 +275,7 @@ runFdogBusco <- function(
                 "--seqName", coreGene,
                 "--refspec", refSpec,
                 "--hmmpath", hmmPath,
-                "--outpath", outPath,
+                "--outpath", paste(outPath, "/", refSpec, sep = ""),
                 "--blastpath", blastPath,
                 "--weightpath", weightPath,
                 "--searchpath", searchPath,
@@ -295,8 +295,8 @@ runFdogBusco <- function(
             if (
                 !file.exists(
                     paste(
-                        outPath, "/", coreGene, "/", coreGene, ".phyloprofile",
-                        sep = ""
+                        outPath, "/", refSpec, "/", coreGene, "/", coreGene, 
+                        ".phyloprofile", sep = ""
                     )
                 )
             ) {
@@ -304,15 +304,15 @@ runFdogBusco <- function(
             } else {
                 exFasta <- readLines(
                     paste(
-                        outPath, "/", coreGene, "/", coreGene,
+                        outPath, "/", refSpec, "/", coreGene, "/", coreGene,
                         ".extended.fa",
                         sep = ""
                     )
                 )
                 pp <- read.table(
                     paste(
-                        outPath, "/", coreGene, "/", coreGene, ".phyloprofile",
-                        sep = ""
+                        outPath, "/", refSpec, "/", coreGene, "/", 
+                        coreGene, ".phyloprofile", sep = ""
                     ),
                     sep = "\t",
                     header = TRUE
