@@ -282,7 +282,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
         full.names = FALSE
     )
     frequency <- table(pp$geneID)
-    if (scoreMode != "busco") {
+    if (scoreMode != "len") {
         status <- unlist(lapply(1:nrow(pp),
             function(
                 i, frequency, pp, scoreMode, root, coreSet, priorityList
@@ -344,7 +344,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
             coreSet = coreSet,
             priorityList = priorityList
         ))
-        if (scoreMode != "busco") {
+        if (scoreMode != "len") {
             report <- data.frame(
                 geneID = pp$geneID, orthoID = pp$orthoID, status,
                 FAS_F = pp$FAS_F, FAS_B = pp$FAS_B
@@ -370,7 +370,8 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
             report <- rbind(report, missingTable)
         }
     } else {
-        if (scoreMode != "busco") {
+        missingTable <- NULL
+        if (scoreMode != "len") {
             report <- data.frame(
                 geneID = pp$geneID, orthoID = pp$orthoID, status,
                 FAS_F = pp$FAS_F, FAS_B = pp$FAS_B
@@ -384,7 +385,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
             )
         }
     }
-    return(report)
+    return(list(report, missingTable))
 }
 
 #' Translate the report table into a frequence table, which tell the user, 
@@ -414,7 +415,7 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
 #' print.data.frame(frequencyTable)
 #' @export
 translateReport <- function(genomeID, report, scoreMode) {
-    if (scoreMode == "busco") {
+    if (scoreMode == "len") {
         frequency <- table(report$status)
 
         complete <- frequency["complete"]

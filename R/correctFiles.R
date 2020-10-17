@@ -1,107 +1,3 @@
-#' If user choose the option to extend the phylogenetic profile of the
-#' interested genome into the original phylogenetic profile, the tool must save
-#' the priority list in a file text in the core directory, so that the tool can
-#' recall it to assess the completeness of the genome, which is appended in the
-#' original phylogenetic profile. When the user want to redo the check, it can
-#' be that the user can change the priority list, because of that, anytime a
-#' redo is on, the tool must first remove the old priority list of the genome in
-#' the file.
-#'
-#' @param priorityFile The path to the prioritylist file, which contains the
-#' priority lists, which were used for the completeness checking of the genomes,
-#' that were checked with the tool over the time.
-#' @param genome The genome ID of the genome, that need to be removed from the
-#' prioritylist file
-#'
-#' @return none
-#' @examples
-#' ## Create a pseudo priority file with 2 genomes
-#' genomeID <- c("HUMAN@9606@3", "AMPQU@400682@2")
-#' priority_list <- c("HUMAN@9606@3", "AMPQU@400682@2")
-#' table <- data.frame(genomeID, priority_list)
-#'
-#' ## write it in a file in the current working directory
-#' wd <- getwd()
-#' filePath <- paste(wd, "/fCAT_functiontest.prioritylist", sep = "")
-#' write.table(table, filePath, sep = "\t", row.names = FALSE, quote = FALSE)
-#'
-#' ## Correcting
-#' correctPriority(filePath, "HUMAN@9606@3")
-#'
-#' ## Check if HUMAN@9606@3 line is removed from the file
-#' table <- read.table(filePath, sep = "\t", header = TRUE)
-#' print.data.frame(table)
-#'
-#' ## delete the file
-#' file.remove(filePath)
-#' @export
-correctPriority <- function(priorityFile, genome) {
-    priorityTable <- read.table(priorityFile, header = TRUE, sep = "\t")
-    priorityTable <- subset(priorityTable, genomeID != genome)
-    write.table(priorityTable,
-        priorityFile,
-        sep = "\t",
-        row.names = FALSE,
-        quote = FALSE
-    )
-}
-
-#' For every with the tool checked genomes, fCAT will save the frequency 
-#' table of each genome into a file with ending .report in the phyloprofile 
-#' folder, which by default is the output folder in core directory or can be 
-#' the folder specified by the user with the argument ppDir in the function
-#' checkCompleteness. When redo is on to recheck for a genome, whose pp exists
-#' already in the original pp, the tool must remove the lines of the
-#' genome from the original frequency table. That is the purpose of this
-#' function
-#'
-#' @param reportFile The path to the reprot file (or the frequency table), which
-#' contains the priority lists, which were used for the completeness checking of
-#' the genomes, that were checked with the tool over the time.
-#' @param genome the genome ID that need to be removed
-#'
-#' @return none
-#' @examples
-#' ## Create pseudo frequency table file
-#' genomeID <- c("HUMAN@9606@3", "AMPQU@400682")
-#' similar <- c(330, 313)
-#' dissimilar <- c(3, 0)
-#' missing <- c(4, 11)
-#' duplicated <- c(1, 0)
-#' ignored <- c(8, 22)
-#'
-#' table <- data.frame(
-#'     genomeID, similar, dissimilar, missing, duplicated,
-#'     ignored
-#' )
-#'
-#' ## Write the table in a file in the current working directory
-#' wd <- getwd()
-#' filePath <- paste(wd, "/fCAT_functiontest.report", sep = "")
-#' write.table(table, filePath, sep = "\t", row.names = FALSE, quote = FALSE)
-#'
-#' correctReport(filePath, "HUMAN@9606@3")
-#' ## Check if the file  is corrected
-#' read.table(filePath, sep = "\t", header = TRUE)
-#'
-#' ## Delete the file
-#' file.remove(filePath)
-#' @export
-correctReport <- function(reportFile, genome) {
-    reportTable <- read.table(
-        reportFile,
-        header = TRUE,
-        sep = "\t"
-    )
-    reportTable <- subset(reportTable, genomeID != genome)
-    write.table(reportTable,
-        reportFile,
-        sep = "\t",
-        row.names = FALSE,
-        quote = FALSE
-    )
-}
-
 #' For all with the tool checked genomes, fCAT will save the domains
 #' of each genome into a domains file in the phyloprofile folder,
 #' which by default is the output folder in core directory or can be the
@@ -164,11 +60,15 @@ correctDomains <- function(domainsFile, genome) {
     domains <- cbind(domains, genomeName)
     domains <- subset(domains, genomeName != genome)
     domains <- domains[c("V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8")]
-    write.table(
-        domains, domainsFile,
-        quote = FALSE, sep = "\t",
-        row.names = FALSE, col.names = FALSE
-    )
+    if (nrow(domains) == 0) {
+        file.remove(domainsFile)
+    } else {
+        write.table(
+            domains, domainsFile,
+            quote = FALSE, sep = "\t",
+            row.names = FALSE, col.names = FALSE
+        )
+    }
 }
 
 ##' For every with the tool checked genomes, fCAT will save the phylogenetic
@@ -221,7 +121,11 @@ correctPP <- function(PPFile, genome) {
     PP <- cbind(PP, genomeName)
     PP <- subset(PP, genomeName != genome)
     PP <- PP[1:(ncol(PP) - 1)]
-    write.table(PP, PPFile, row.names = FALSE, quote = FALSE, sep = "\t")
+    if (nrow(PP) == 0) {
+        file.remove(PPFile)
+    } else {
+        write.table(PP, PPFile, row.names = FALSE, quote = FALSE, sep = "\t")
+    }
 }
 
 #' For every with the tool checked genomes, fCAT will save the sequences
@@ -340,14 +244,6 @@ correctFiles <- function(directory, genome) {
 
         if (endsWith(file, ".domains")) {
             correctDomains(file, genome)
-        }
-
-        if (endsWith(file, ".prioritylist")) {
-            correctPriority(file, genome)
-        }
-
-        if (endsWith(file, ".report") && !endsWith(file, "_details.report")) {
-            correctReport(file, genome)
         }
     }
 }

@@ -159,6 +159,8 @@ calculateCutoff <- function(root, coreSet, coreGene) {
                 refProteome,
                 overwrite = TRUE
             )
+            refProteome <- paste(
+                root, "genome_dir", "/", refSpec, "/", refSpec, ".fa", sep = "")
             command <- paste(
                 "calcFAS",
                 "-q", fastaFile,
@@ -174,7 +176,9 @@ calculateCutoff <- function(root, coreSet, coreGene) {
                 "-t", "10",
                 "--raw"
             )
+            
             lines <- system(command, intern = TRUE)
+
             scores <- list()
             for (line in lines) {
                 if (startsWith(line, "#")) {
@@ -197,6 +201,7 @@ calculateCutoff <- function(root, coreSet, coreGene) {
         root = root,
         coreSet
     )
+    
     for (level1 in scoreSet) {
         for (score in level1) {
             if (score[[1]] != score[[2]]) {
@@ -216,9 +221,9 @@ calculateCutoff <- function(root, coreSet, coreGene) {
     }
     scoreDist <- unlist(scoreDist) / 2
     genomeScores <- unlist(genomeScores) / ((length(genomeSet) - 1) * 2)
-
+    
     avaMean <- mean(genomeScores)
-
+    
     features <- EnvStats::eexp(scoreDist, ci = TRUE)
     lcl <- 1 / (features$interval$limits[[2]])
     ucl <- 1 / (features$interval$limits[[1]])

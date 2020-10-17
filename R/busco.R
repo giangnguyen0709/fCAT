@@ -152,11 +152,14 @@ updateLength <- function(pp, exFasta) {
 #' @export
 runFdogBusco <- function(
     root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu,
-    blastDir = NULL, weightDir = NULL, cleanup = FALSE,
-    reFdog = FALSE, fdogDir = NULL, ppDir = NULL) {
+    blastDir = NULL, weightDir = NULL, redoFdog = FALSE, output) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
+    if (!endsWith(output, "/")) {
+        output <- paste(output, "/", sep = "")
+    }
+    outDir <- paste(output, "fcat_output", "/", coreSet, "/", sep = "")
 
     setName <- coreSet
 
@@ -177,16 +180,10 @@ runFdogBusco <- function(
     } else {
         weightPath <- paste(root, "weight_dir", sep = "")
     }
-    if (!is.null(fdogDir)) {
-        if (!endsWith(fdogDir, "/")) {
-            fdogDir <- paste(fdogDir, "/", sep = "")
-        }
-        outPath <- paste(fdogDir, genomeName, sep = "")
-    } else {
-        outPath <- paste(
-            root, "fdogout", "/", genomeName,
-            sep = ""
-        )
+    
+    outPath <- paste(outDir, "fdog_output", "/", genomeName, sep = "")
+    if (!dir.exists(outPath)) {
+        dir.create(outPath, recursive = TRUE)
     }
     ### - check Data - ###
     command <- paste(
@@ -200,7 +197,7 @@ runFdogBusco <- function(
         dir.create(outPath, recursive = TRUE)
     }
 
-    if (reFdog == TRUE) {
+    if (redoFdog == TRUE) {
         for (
             folder in list.dirs(
                 outPath,
@@ -230,8 +227,9 @@ runFdogBusco <- function(
             }
             if (file.exists(
                 paste(
-                    outPath, "/",refSpec, "/", coreGene, "/", 
-                    "hamstrsearch.log", sep = ""
+                    outPath, "/", refSpec, "/", coreGene, "/",
+                    "hamstrsearch.log",
+                    sep = ""
                 )
             )) {
                 if (
@@ -354,63 +352,173 @@ runFdogBusco <- function(
 
     pp <- updateLength(pp, exFasta)
 
-    if (!is.null(ppDir)) {
-        outDir <- ppDir
-    } else {
-        outDir <- paste(
-            root, "output", "/",  setName, "/", as.character(scoreMode), "/",
-            sep = ""
-        )
-    }
+    ppDir <- paste(outDir, "phyloprofile_output", "/", sep = "")
 
-    if (!dir.exists(outDir)) {
-        dir.create(outDir, recursive = TRUE)
+    if (!dir.exists(ppDir)) {
+        dir.create(ppDir, recursive = TRUE)
     }
-
-    if (cleanup == TRUE) {
-        unlink(outPath, recursive = TRUE)
+    
+    ## Printing
+    subPPDir <- paste(
+        ppDir, "/", "mode_len", "/", genomeName, sep = ""
+    )
+    if (!dir.exists(subPPDir)) {
+        dir.create(subPPDir, recursive = TRUE)
     }
+    write.table(
+        pp, 
+        paste(subPPDir, "/", genomeName, ".phyloprofile", sep = ""),
+        sep = "\t",
+        row.names = FALSE,
+        quote = FALSE
+    )
+    writeLines(
+        exFasta, 
+        paste(subPPDir, "/", genomeName, ".fa", sep = "")
+    )
 
     if (extend == TRUE) {
+        genomeExist <- 0
         if (
             file.exists(
-                paste(outDir, setName, ".phyloprofile", sep = "")
+                paste(
+                    ppDir, folder, "/", setName, "_len.phyloprofile", sep = ""
+                )
             )
         ) {
             oriPP <- read.table(
-                paste(outDir, setName, ".phyloprofile", sep = ""),
+                paste(
+                    ppDir, folder, "/", setName, "_len.phyloprofile", sep = ""
+                ),
                 sep = "\t",
                 header = TRUE
             )
-            oriPP <- rbind(oriPP, pp)
-        } else {
-            oriPP <- pp
+            genomeID <- unlist(lapply(
+                oriPP$orthoID,
+                function(orthoID) {
+                    return(strsplit(orthoID, "|", fixed = TRUE)[[1]][2])
+                }
+            ))
+            if (genomeName %in% genomeID) {
+                genomeExist <- 1
+            }
+            if (genomeExist == 1) {
+                while(TRUE) {
+                    removeCheck <- readline(
+                        prompt = "It already exists a phylogenetic profile of
+                        the genome in the original phylogenetic profile.
+                        Do you want to remove the old one to 
+                        append the new? [y/n]:"
+                    )
+                    if (removeCheck == "y" || removeCheck == "n") {
+                        break
+                    }
+                }
+                if (removeCheck == "y") {
+                    correctFiles(
+                        paste(
+                            ppDir, folder, sep = ""
+                        ),
+                        genomeName
+                    )
+                    genomeExist <- 0
+                }
+            }
         }
-
-        if (
-            file.exists(
-                paste(outDir, setName, ".extended.fa", sep = "")
+        
+        if (genomeExist == 0) {
+            folder <- "mode_len"
+            if (
+                file.exists(
+                    paste(
+                        ppDir, folder, "/", setName, "_len.phyloprofile", 
+                        sep = ""
+                    )
+                )
+            ) {
+                oriPP <- read.table(
+                    paste(
+                        ppDir, folder, "/", setName, "_len.phyloprofile", 
+                        sep = ""
+                    ),
+                    sep = "\t",
+                    header = TRUE
+                )
+                oriPP <- rbind(oriPP, pp)
+            } else {
+                oriPP <- pp
+            }
+            
+            if (
+                file.exists(
+                    paste(
+                        ppDir, folder, "/", setName, "_len.extended.fa", 
+                        sep = ""
+                    )
+                )
+            ) {
+                oriFasta <- readLines(
+                    paste(
+                        ppDir, folder, "/", setName, "_len.extended.fa", 
+                        sep = ""
+                    )
+                )
+                oriFasta <- c(oriFasta, exFasta)
+            } else {
+                oriFasta <- exFasta
+            }
+            
+            write.table(
+                oriPP,
+                paste(
+                    ppDir, folder, "/", setName, "_len.phyloprofile", 
+                    sep = ""
+                ),
+                sep = "\t",
+                row.names = FALSE,
+                quote = FALSE
             )
-        ) {
-            oriFasta <- readLines(
-                paste(outDir, setName, ".extended.fa", sep = "")
+            writeLines(
+                oriFasta,
+                paste(
+                    ppDir, folder, "/´", setName, "_len.extended.fa", 
+                    sep = ""
+                )
             )
-            oriFasta <- c(oriFasta, exFasta)
-        } else {
-            oriFasta <- exFasta
         }
-
-        write.table(
-            oriPP,
-            paste(outDir, setName, ".phyloprofile", sep = ""),
-            sep = "\t",
-            row.names = FALSE,
-            quote = FALSE
-        )
-        writeLines(
-            oriFasta,
-            paste(outDir, setName, ".extended.fa", sep = "")
-        )
     }
+    
+    ## Printing priority list
+    
+    table <- data.frame(
+        genomeID = c(genomeName),
+        ref_spec_list = c(paste(priorityList, collapse = ","))
+    )
+    
+    priorityFile <- paste(outDir, setName, "_refspec_list", sep = "")
+    
+    if (!file.exists(priorityFile)) {
+        write.table(
+            table,
+            priorityFile,
+            row.names = FALSE,
+            quote = FALSE,
+            sep = "\t"
+        )
+    } else {
+        priorityTable <- read.table(priorityFile, header = TRUE, sep = "\t")
+        if (!(genomeName %in% priorityTable$genomeID)) {
+            write.table(
+                table,
+                priorityFile,
+                row.names = FALSE,
+                col.names = FALSE,
+                append = TRUE,
+                quote = FALSE,
+                sep = "\t"
+            )
+        }
+    }
+    
     return(pp)
 }

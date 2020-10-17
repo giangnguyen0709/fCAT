@@ -1,172 +1,3 @@
-#' The function to append the frequency table of the completeness 
-#' classification of the interested genome into the original frequency table of 
-#' the core set. The original frequency table describe the frequencies of each 
-#' classification for all genomes, which were checked the completeness with 
-#' fCAT and the extend was set to TRUE while checking.(How many "complete", 
-#' "fragmented", "missing", and "duplicated" for busco mode or how many 
-#' "similar", "dissimilar", "missing", and "duplicated" for the other modes)
-#'
-#' @param report A data frame that contains the frequency table of the
-#' interested genome
-#' @param root The path to the core directory, where the core set is stored
-#' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can
-#' contains more than one core set and the user must specify the interested
-#' core set. The core set will be stored in the folder core_orthologs in
-#' subfolder, specify them by the name of the subfolder
-#' @param scoreMode the mode determines the method to scoring the founded
-#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
-#' @param ppDir The user can replace the default folder output in the core
-#' directory, where the phylogenetic profiles are stored by his folder. The user
-#' can specify the path to his folder in this argument
-#' @return none
-#' @examples
-#' genomeID <- c("HUMAN@9606@3", "AMPQU@400682")
-#' similar <- c(330, 313)
-#' dissimilar <- c(3, 0)
-#' missing <- c(4, 11)
-#' duplicated <- c(1, 0)
-#' ignored <- c(8, 22)
-#'
-#' table <- data.frame(
-#'     genomeID, similar, dissimilar, missing, duplicated,
-#'     ignored
-#' )
-#'
-#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
-#'
-#' ppDir <- getwd()
-#' filePath <- paste(ppDir, "/test.report", sep = "")
-#'
-#' printReport(table, coreFolder, "test", 2, ppDir)
-#'
-#' ## Check if the report table was printed
-#' read <- read.table(filePath, header = TRUE, sep = "\t")
-#' print.data.frame(read)
-#'
-#' ## Delete the added line
-#' file.remove(filePath)
-#' @export
-printReport <- function(report, root, coreSet, scoreMode, ppDir) {
-    if (!endsWith(root, "/")) {
-        root <- paste(root, "/", sep = "")
-    }
-    setName <- coreSet
-
-    if (!is.null(ppDir)) {
-        if (!endsWith(ppDir, "/")) {
-            ppDir <- paste(ppDir, "/", sep = "")
-        }
-        reportFile <- paste(ppDir, setName, ".report", sep = "")
-    } else {
-        reportFile <- paste(root, "output", "/", coreSet, "/",
-            as.character(scoreMode), "/", setName, ".report",
-            sep = ""
-        )
-    }
-
-    if (!file.exists(reportFile)) {
-        write.table(report,
-            reportFile,
-            row.names = FALSE,
-            quote = FALSE,
-            sep = "\t"
-        )
-    } else {
-        write.table(report,
-            reportFile,
-            row.names = FALSE,
-            col.names = FALSE,
-            append = TRUE,
-            quote = FALSE,
-            sep = "\t"
-        )
-    }
-}
-
-#' Add the priority list of the interested genome to the priority file. 
-#' If the file doesnt exist it will be created
-#'
-#' @param genomeID the genome ID of the interested genome
-#' @param priorityList A list contains one or many genome ID of the genomes,
-#' which were used to build the core set. The genome ID of this list will be
-#' stored with an priority order, the tool look at into the fasta file of each
-#' core group and determine with the priority order to determine the references
-#' species for each core group.
-#' @param root The path to the core directory, where the core set is stored
-#' within weight_dir, blast_dir, etc.
-#' @param coreSet The name of the interested core set. The core directory can
-#' contains more than one core set and the user must specify the interested
-#' core set. The core set will be stored in the folder core_orthologs in
-#' subfolder, specify them by the name of the subfolder
-#' @param scoreMode the mode determines the method to scoring the founded
-#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
-#' @param ppDir The user can replace the default folder output in the core
-#' directory, where the phylogenetic profiles are stored by his folder. The user
-#' can specify the path to his folder in this argument
-#'
-#' @return none
-#' @examples
-#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
-#' ppDir <- getwd()
-#' filePath <- paste(ppDir, "/test.prioritylist", sep = "")
-#'
-#' printPriority(
-#'     "HUMAN@9606@3", c("HUMAN@9606@1"), coreFolder, "test", 2,
-#'     ppDir
-#' )
-#'
-#' ## Check if the report table was printed
-#' read <- read.table(filePath, header = TRUE, sep = "\t")
-#' print.data.frame(read)
-#'
-#' ## Delete the printed report file
-#' file.remove(filePath)
-#' @export
-printPriority <- function(
-    genomeID, priorityList, root, coreSet, scoreMode, ppDir) {
-    if (!endsWith(root, "/")) {
-        root <- paste(root, "/", sep = "")
-    }
-    table <- data.frame(
-        genomeID = c(genomeID),
-        priority_list = c(paste(priorityList, collapse = ","))
-    )
-
-    if (!is.null(ppDir)) {
-        if (!endsWith(ppDir, "/")) {
-            ppDir <- paste(ppDir, "/", sep = "")
-        }
-        priorityFile <- paste(ppDir, coreSet, ".prioritylist", sep = "")
-    } else {
-        priorityFile <- paste(root, "output", "/", coreSet, "/",
-            as.character(scoreMode), "/", coreSet,
-            ".prioritylist",
-            sep = ""
-        )
-    }
-
-    if (!file.exists(priorityFile)) {
-        write.table(
-            table,
-            priorityFile,
-            row.names = FALSE,
-            quote = FALSE,
-            sep = "\t"
-        )
-    } else {
-        write.table(
-            table,
-            priorityFile,
-            row.names = FALSE,
-            col.names = FALSE,
-            append = TRUE,
-            quote = FALSE,
-            sep = "\t"
-        )
-    }
-}
-
 #' The function take a path to a genome fasta file and its FAS annotation
 #' file (if the annotation file is not provided, the funtion will compute it) 
 #' and compute the detailed report of the completeness of the genome
@@ -248,83 +79,136 @@ printPriority <- function(
 computeReport <- function(
     genome, fasAnno, root, coreSet, extend = FALSE,
     scoreMode, priorityList = NULL, cpu, computeOri = FALSE,
-    blastDir = NULL, weightDir = NULL, cleanup = FALSE,
-    reFdog = FALSE, fdogDir = NULL, ppDir = NULL
+    blastDir = NULL, weightDir = NULL, redoFdog = FALSE, output
 ) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
-
-    if (!is.null(ppDir)) {
-        modeFolder <- ppDir
+    if (!endsWith(output, "/")) {
+        output <- paste(output, "/", sep = "")
     }
-    modeFolder <- paste(root, "output", "/", coreSet, "/",
-        as.character(scoreMode),
-        sep = ""
-    )
-
-    if (!dir.exists(modeFolder)) {
-        dir.create(modeFolder, recursive = TRUE)
-    }
+    outDir <- paste(output, "fcat_output", "/", coreSet, "/", sep = "")
 
     splited <- strsplit(genome, "/", fixed = TRUE)[[1]]
     splited <- splited[length(splited)]
     genomeName <- strsplit(splited, ".", fixed = TRUE)[[1]][1]
-
-
-    placeSeed(genome, fasAnno, root, computeOri, weightDir)
-
-    if (is.null(priorityList)) {
-        query <- list.dirs(paste(root, "query_taxon", sep = ""),
-            recursive = FALSE,
-            full.names = FALSE
-        )[1]
-        refSet <- list.dirs(paste(root, "blast_dir", sep = ""),
-            recursive = FALSE,
-            full.names = FALSE
-        )
-        priorityList <- autofindPriority(query, refSet)
-    }
-
-    if (extend == TRUE) {
-        printPriority(genomeName, priorityList, root, coreSet, scoreMode, ppDir)
-    }
-
-    if (scoreMode == "busco") {
-        pp <- runFdogBusco(
-            root, coreSet, extend, scoreMode, priorityList, cpu,
-            blastDir, weightDir, cleanup, reFdog, fdogDir, ppDir
+    
+    if (scoreMode == 1) {
+        ppPath <- paste(
+            outDir, "phyloprofile_output", "/", "mode_1", "/", genomeName, "/", 
+            genomeName, ".phyloprofile", sep = ""
         )
     } else {
-        pp <- runFdog(
-            root, coreSet, extend, scoreMode, priorityList, cpu,
-            blastDir, weightDir, cleanup, reFdog, fdogDir, ppDir
-        )
-    }
-
-    report <- reportSingle(pp, root, coreSet, scoreMode, priorityList)
-    if (extend == TRUE) {
-        translated <- translateReport(genomeName, report, scoreMode)
-        printReport(translated, root, coreSet, scoreMode, ppDir)
-    }
-
-    unlink(
-        paste(root, "query_taxon", "/", genomeName, sep = ""),
-        recursive = TRUE
-    )
-    if (computeOri == FALSE) {
-        if (!is.null(weightDir)) {
-            if (!endsWith(weightDir, "/")) {
-                weightDir <- paste(weightDir, "/", sep = "")
-            }
-            file.remove(
-                paste(weightDir, genomeName, ".json", sep = "")
-            )
+        if (scoreMode == "len") {
+            ppPath <- paste(
+                outDir, "phyloprofile_output", "/", "mode_len", "/", 
+                genomeName, "/", 
+                genomeName, ".phyloprofile", sep = "")
         } else {
-            file.remove(
-                paste(root, "weight_dir", "/", genomeName, ".json", sep = "")
+            ppPath <- paste(
+                outDir, "phyloprofile_output", "/", "other", "/", 
+                genomeName, "/", 
+                genomeName, ".phyloprofile", sep = ""
             )
         }
     }
-    return(report)
+    
+    if (file.exists(ppPath)) {
+        placeSeedCheck <- 0
+        pp <- read.table(ppPath, sep = "\t", header = TRUE)
+    } else {
+        placeSeedCheck <- 1
+        placeSeed(genome, fasAnno, root, computeOri, weightDir)
+        if (scoreMode == "len") {
+            pp <- runFdogBusco(
+                root, coreSet, extend, scoreMode, priorityList, cpu,
+                blastDir, weightDir, redoFdog, output
+            )
+        } else {
+            pp <- runFdog(
+                root, coreSet, extend, scoreMode, priorityList, cpu,
+                blastDir, weightDir, redoFdog, output
+            )
+        }
+    }
+
+    ## Printing report -----------------------------------------------
+    reports <- reportSingle(pp, root, coreSet, scoreMode, priorityList)
+    statTable <- translateReport(genomeName, reports[[1]], scoreMode)
+    
+    reportFolder <- paste(
+        outDir, "mode_", as.character(scoreMode), "/", genomeName, sep = ""
+    )
+    if (!dir.exists(reportFolder)) {
+        dir.create(reportFolder, recursive = TRUE)
+    }
+    write.table(
+        reports[[1]],
+        paste(
+            reportFolder, "/", "full_table", sep = ""
+        ),
+        sep = "\t",
+        row.names = FALSE,
+        quote = FALSE
+    )
+    if (!is.null(reports[[2]])) {
+        write.table(
+            reports[[2]],
+            paste(
+                reportFolder, "/", "missing_table", sep = ""
+            ),
+            sep = "\t",
+            row.names = FALSE,
+            quote = FALSE
+        )
+    }
+    summaryFile <- paste(
+        outDir, "mode_", as.character(scoreMode), "/", coreSet, ".summary", 
+        sep = "")
+    
+    if (!file.exists(summaryFile)) {
+        write.table(
+            statTable,
+            summaryFile,
+            row.names = FALSE,
+            quote = FALSE,
+            sep = "\t"
+        )
+    } else {
+        check <- read.table(summaryFile, header = TRUE, sep = "\t")
+        if (!(genomeName %in% check$genomeID)) {
+            write.table(
+                statTable,
+                summaryFile,
+                row.names = FALSE,
+                col.names = FALSE,
+                append = TRUE,
+                quote = FALSE,
+                sep = "\t"
+            )
+        }
+    }
+    ## -----------------------------------------------------------
+    
+    if (placeSeedCheck == 1) {
+        unlink(
+            paste(root, "query_taxon", "/", genomeName, sep = ""),
+            recursive = TRUE
+        )
+        
+        if (computeOri == FALSE) {
+            if (!is.null(weightDir)) {
+                if (!endsWith(weightDir, "/")) {
+                    weightDir <- paste(weightDir, "/", sep = "")
+                }
+                file.remove(
+                    paste(weightDir, genomeName, ".json", sep = "")
+                )
+            } else {
+                file.remove(
+                    paste(root, "weight_dir", "/", genomeName, ".json", sep = "")
+                )
+            }
+        }
+    }
 }
