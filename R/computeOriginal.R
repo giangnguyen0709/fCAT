@@ -47,7 +47,7 @@ computeOriginal <- function(
     if (!endsWith(output, "/")) {
         output <- paste(output, "/", sep = "")
     }
-    outDir <- paste(output, "fcat_output", "/", coreSet, "/", sep = "")
+    outDir <- paste(output, "fcatOutput", "/", coreSet, "/", sep = "")
 
     genomeDir <- paste(coreDir, "genome_dir", sep = "")
     weightDir <- paste(coreDir, "weight_dir", sep = "")
@@ -55,10 +55,17 @@ computeOriginal <- function(
     for (
         genome in list.dirs(genomeDir, full.names = FALSE, recursive = FALSE)
     ) {
+        if (scoreMode == "len") {
+            pathPrefix <- paste(outDir, genomeName, "/", "mode_len", sep = "")
+        } else {
+            pathPrefix <- paste(
+                outDir, genomeName, "/", "mode", as.character(scoreMode),
+                sep = ""
+            )
+        }
         if (!file.exists(
             paste(
-                outDir, "mode_", as.character(scoreMode), "/", genome, "/",
-                "full_table", sep = ""
+                pathPrefix, "/", "full_table.txt", sep = ""
             )
         )) {
             genomeFasta <- paste(
