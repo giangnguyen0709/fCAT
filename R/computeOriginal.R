@@ -37,14 +37,17 @@
 #' )
 #' @export
 computeOriginal <- function(
-    coreDir, coreSet, scoreMode, cpu = 4, cleanup = FALSE,
-    ppDir = NULL) {
+    coreDir, coreSet, scoreMode, cpu = 4, blastDir = NULL, weightDir = NULL) {
     if (!endsWith(coreDir, "/")) {
         coreDir <- paste(coreDir, "/", sep = "")
     }
     if (!checkPreProcess(coreDir, coreSet)) {
         processCoreSet(coreDir, coreSet)
     }
+    if (!endsWith(output, "/")) {
+        output <- paste(output, "/", sep = "")
+    }
+    outDir <- paste(output, "fcat_output", "/", coreSet, "/", sep = "")
 
     genomeDir <- paste(coreDir, "genome_dir", sep = "")
     weightDir <- paste(coreDir, "weight_dir", sep = "")
@@ -52,7 +55,12 @@ computeOriginal <- function(
     for (
         genome in list.dirs(genomeDir, full.names = FALSE, recursive = FALSE)
     ) {
-        if (!checkExist(genome, coreDir, coreSet, scoreMode, ppDir)) {
+        if (!file.exists(
+            paste(
+                outDir, "mode_", as.character(scoreMode), "/", genome, "/",
+                "full_table", sep = ""
+            )
+        )) {
             genomeFasta <- paste(
                 genomeDir, "/", genome, "/", genome, ".fa",
                 sep = ""
@@ -60,9 +68,8 @@ computeOriginal <- function(
             fasAnno <- paste(weightDir, "/", genome, ".json", sep = "")
             computeReport(genomeFasta, fasAnno, coreDir, coreSet,
                 extend = TRUE, scoreMode,
-                priorityList = c(genome), cpu, computeOri = TRUE,
-                cleanup = cleanup,
-                ppDir = ppDir
+                priorityList = c(genome), cpu, computeOri = TRUE, 
+                blastDir, weightDir, output = output
             )
         }
     }

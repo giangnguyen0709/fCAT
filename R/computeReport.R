@@ -1,3 +1,77 @@
+#' This function arrange the completeness output of the interested 
+#' genome into the corresponding folder in the output folder
+#' 
+#' @param completenessOuput a list contains the completeness output. The full
+#' table, missing table and the ignored table
+#' @param output The directory which contains the output directory
+#' @param coreSet The name of the interested core set. The core directory can
+#' contains more than one core set and the user must specify the interested
+#' core set. The core set will be stored in the folder core_orthologs in
+#' subfolder, specify them by the name of the subfolder
+#' @param genomeName the name of the interested genome
+#' @param scoreMode the mode determines the method to scoring the founded
+#' ortholog and how to classify them. Choices: 1, 2, 3, "len"
+#' @export
+
+arrangeCompletenessOutput <- function(
+    completenessOutput, output, coreSet, genomeName, scoreMode
+) {
+    if (!endsWith(output, "/")) {
+        output <- paste(output, "/", sep = "")
+    }
+    outDir <- paste(
+        output, "fcatOutput", "/", coreSet, "/", genomeName, sep = ""
+    )
+    if (scoreMode == "len") {
+        subScoreModeDir <- paste(outDir, "/", "mode_len", sep = "")
+    } else {
+        subScoreModeDir <- paste(
+            outDir, "/", "mode", as.character(scoreMode), sep = "")
+    }
+
+    if (!dir.exists(subScoreModeDir)) {
+        dir.create(subScoreModeDir, recursive = TRUE)
+    }
+    
+    ## Printing summary text
+    summaryTable <- translateReport(
+        genomeName, completenessOutput[[1]], scoreMode
+    )
+    summaryFile <- paste(subScoreModeDir, "/", "summary.txt", sep = "")
+    
+    write.table(
+        summaryTable,
+        summaryFile,
+        row.names = FALSE,
+        quote = FALSE,
+        sep = "\t"
+    )
+    
+    write.table(
+        completenessOutput[[1]],
+        paste(subScoreModeDir, "/", "full_table.txt", sep = ""),
+        sep = "\t",
+        row.names = FALSE,
+        quote = FALSE
+    )
+    
+    write.table(
+        completenessOutput[[2]],
+        paste(outDir, "/", "missing.txt", sep = ""),
+        sep = "\t",
+        row.names = FALSE,
+        quote = FALSE
+    )
+    
+    write.table(
+        completenessOutput[[3]],
+        paste(outDir, "/", "ignored.txt", sep = ""),
+        sep = "\t",
+        row.names = FALSE,
+        quote = FALSE
+    )
+}
+
 #' The function take a path to a genome fasta file and its FAS annotation
 #' file (if the annotation file is not provided, the funtion will compute it) 
 #' and compute the detailed report of the completeness of the genome
@@ -48,21 +122,7 @@
 #' phylogenetic profile of the interested genome to the core set. This fDOG's
 #' output can be reused for all score modes. When cleanup is set to TRUE, the
 #' fDOG's output will not be stored to be reused but to be removed
-#' @param reFdog If it already exist a fDOG's output for a specific core group
-#' the tool will skip this core group and go to the next core group. If reFdog
-#' is set to TRUE, the tool will remove all the existed fDOG's output and rerun
-#' fDOG for all core groups of the set
-#' @param fdogDir Normally the fDOG's output will be stored in the folder
-#' fdogout in the core directory, but the user can specify the folder for
-#' fDOG's output by specify the path to it in this argument. Notice here, is
-#' the fDOG's output folder will contains the subfolder, equivalent to the name
-#' of the interested genome, for example, the folder can contain "HUMAN@9606@3"
-#' and "AMPQU@400682@2", for a completeness checking on an interested genome,
-#' which has a subfolder in the fDOG's output folder with the same name, the
-#' function will look into the subfolder to find the existed fDOG's output
-#' @param ppDir The user can replace the default folder output in the core
-#' directory, where the phylogenetic profiles are stored by his folder. The user
-#' can specify the path to his folder in this argument. By default is NULL
+#' @param output The directory which contains the output directory
 #'
 #' @return a report of the completeness of the interested genome with detailed
 #' information of every core genes in the core set. Which core gene is "similar"
@@ -72,22 +132,24 @@
 #' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 #' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
 #' report <- computeReport(genome, fasAnno, coreFolder, "test",
-#'     scoreMode = 2, priorityList = c("HUMAN@9606@1"), cpu = 4
+#'     scoreMode = 2, priorityList = c("HUMAN@9606@1"), cpu = 4,
+#'     output = getwd()
 #' )
 #' print.data.frame(report)
 #' @export
 computeReport <- function(
     genome, fasAnno, root, coreSet, extend = FALSE,
     scoreMode, priorityList = NULL, cpu, computeOri = FALSE,
-    blastDir = NULL, weightDir = NULL, redoFdog = FALSE, output
+    blastDir = NULL, weightDir = NULL, output
 ) {
+    startTime <- Sys.time()
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
     if (!endsWith(output, "/")) {
         output <- paste(output, "/", sep = "")
     }
-    outDir <- paste(output, "fcat_output", "/", coreSet, "/", sep = "")
+    outDir <- paste(output, "fcatOutput", "/", coreSet, "/", sep = "")
 
     splited <- strsplit(genome, "/", fixed = TRUE)[[1]]
     splited <- splited[length(splited)]
@@ -95,21 +157,17 @@ computeReport <- function(
     
     if (scoreMode == 1) {
         ppPath <- paste(
-            outDir, "phyloprofile_output", "/", "mode_1", "/", genomeName, "/", 
-            genomeName, ".phyloprofile", sep = ""
-        )
+            outDir, genomeName, "/", "phyloprofileOutput", "/", "mode1", 
+            ".phyloprofile", sep = "")
     } else {
         if (scoreMode == "len") {
             ppPath <- paste(
-                outDir, "phyloprofile_output", "/", "mode_len", "/", 
-                genomeName, "/", 
-                genomeName, ".phyloprofile", sep = "")
+                outDir, genomeName, "/", "phyloprofileOutput", "/", "len", 
+                ".phyloprofile", sep = "")
         } else {
             ppPath <- paste(
-                outDir, "phyloprofile_output", "/", "other", "/", 
-                genomeName, "/", 
-                genomeName, ".phyloprofile", sep = ""
-            )
+                outDir, genomeName, "/", "phyloprofileOutput", "/", "other", 
+                ".phyloprofile", sep = "")
         }
     }
     
@@ -122,73 +180,22 @@ computeReport <- function(
         if (scoreMode == "len") {
             pp <- runFdogBusco(
                 root, coreSet, extend, scoreMode, priorityList, cpu,
-                blastDir, weightDir, redoFdog, output
+                blastDir, weightDir, output
             )
         } else {
             pp <- runFdog(
                 root, coreSet, extend, scoreMode, priorityList, cpu,
-                blastDir, weightDir, redoFdog, output
+                blastDir, weightDir, output
             )
         }
     }
-
-    ## Printing report -----------------------------------------------
-    reports <- reportSingle(pp, root, coreSet, scoreMode, priorityList)
-    statTable <- translateReport(genomeName, reports[[1]], scoreMode)
-    
-    reportFolder <- paste(
-        outDir, "mode_", as.character(scoreMode), "/", genomeName, sep = ""
+    completenessOutput <- reportSingle(
+        pp, root, coreSet, scoreMode, priorityList
     )
-    if (!dir.exists(reportFolder)) {
-        dir.create(reportFolder, recursive = TRUE)
-    }
-    write.table(
-        reports[[1]],
-        paste(
-            reportFolder, "/", "full_table", sep = ""
-        ),
-        sep = "\t",
-        row.names = FALSE,
-        quote = FALSE
-    )
-    if (!is.null(reports[[2]])) {
-        write.table(
-            reports[[2]],
-            paste(
-                reportFolder, "/", "missing_table", sep = ""
-            ),
-            sep = "\t",
-            row.names = FALSE,
-            quote = FALSE
-        )
-    }
-    summaryFile <- paste(
-        outDir, "mode_", as.character(scoreMode), "/", coreSet, ".summary", 
-        sep = "")
     
-    if (!file.exists(summaryFile)) {
-        write.table(
-            statTable,
-            summaryFile,
-            row.names = FALSE,
-            quote = FALSE,
-            sep = "\t"
-        )
-    } else {
-        check <- read.table(summaryFile, header = TRUE, sep = "\t")
-        if (!(genomeName %in% check$genomeID)) {
-            write.table(
-                statTable,
-                summaryFile,
-                row.names = FALSE,
-                col.names = FALSE,
-                append = TRUE,
-                quote = FALSE,
-                sep = "\t"
-            )
-        }
-    }
-    ## -----------------------------------------------------------
+    arrangeCompletenessOutput(
+        completenessOutput, output, coreSet, genomeName, scoreMode
+    )
     
     if (placeSeedCheck == 1) {
         unlink(
@@ -206,9 +213,14 @@ computeReport <- function(
                 )
             } else {
                 file.remove(
-                    paste(root, "weight_dir", "/", genomeName, ".json", sep = "")
+                    paste(
+                        root, "weight_dir", "/", genomeName, ".json", sep = ""
+                    )
                 )
             }
         }
     }
+    endTime <- Sys.time()
+    print("Running time:")
+    print(endTime - startTime)
 }

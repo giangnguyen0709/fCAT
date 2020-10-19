@@ -6,7 +6,7 @@
 correctPriority and correctReport in a loop to correct all phyloprofile, 
 extended fasta, domains, prioritylist and report file in a folder}
 \usage{
-correctFiles(directory, genome)
+correctFiles(directory, genome, scoreMode)
 }
 \arguments{
 \item{directory}{the path to the directory, that contains the files}

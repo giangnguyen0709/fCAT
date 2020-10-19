@@ -306,10 +306,14 @@ calculateAllCutoff <- function(root, coreSet) {
 #' processCoreSet(coreFolder, "test")
 #' @export
 processCoreSet <- function(coreDir, coreSet) {
+    startTime <- Sys.time()
     if (!endsWith(coreDir, "/")) {
         coreDir <- paste(coreDir, "/", sep = "")
     }
 
     createAllAnnotation(coreDir, coreSet)
     calculateAllCutoff(coreDir, coreSet)
+    endTime <- Sys.time()
+    print("Running time:")
+    print(endTime - startTime)
 }

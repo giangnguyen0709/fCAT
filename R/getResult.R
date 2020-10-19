@@ -385,7 +385,10 @@ reportSingle <- function(pp, root, coreSet, scoreMode, priorityList) {
             )
         }
     }
-    return(list(report, missingTable))
+    
+    ignoredTable <- subset(missingTable, status == "ignored")
+    missingTable <- subset(missingTable, status == "missing")
+    return(list(report, missingTable, ignoredTable))
 }
 
 #' Translate the report table into a frequence table, which tell the user, 

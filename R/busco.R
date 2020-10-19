@@ -125,6 +125,7 @@ updateLength <- function(pp, exFasta) {
 #' @param ppDir The user can replace the default folder output in the core
 #' directory, where the phylogenetic profiles are stored by his folder. The user
 #' can specify the path to his folder in this argument
+#' @param output The directory which contains the output directory
 #'
 #' @return phylogenetic profile of the genome in data.frame
 #' @examples
@@ -139,7 +140,7 @@ updateLength <- function(pp, exFasta) {
 #' ## Test runFdogBusco
 #' pp <- runFdogBusco(coreFolder, "test",
 #'     extend = FALSE, scoreMode = "busco",
-#'     priorityList = c("HUMAN@9606@1"), cpu = 4
+#'     priorityList = c("HUMAN@9606@1"), cpu = 4, output = getwd()
 #' )
 #'
 #' print.data.frame(pp)
@@ -152,14 +153,15 @@ updateLength <- function(pp, exFasta) {
 #' @export
 runFdogBusco <- function(
     root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu,
-    blastDir = NULL, weightDir = NULL, redoFdog = FALSE, output) {
+    blastDir = NULL, weightDir = NULL, output) {
+    startTime <- Sys.time()
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
     if (!endsWith(output, "/")) {
         output <- paste(output, "/", sep = "")
     }
-    outDir <- paste(output, "fcat_output", "/", coreSet, "/", sep = "")
+    outDir <- paste(output, "fcatOutput", "/", coreSet, "/", sep = "")
 
     setName <- coreSet
 
@@ -181,7 +183,7 @@ runFdogBusco <- function(
         weightPath <- paste(root, "weight_dir", sep = "")
     }
     
-    outPath <- paste(outDir, "fdog_output", "/", genomeName, sep = "")
+    outPath <- paste(outDir, genomeName, "/", "fdogOutput", sep = "")
     if (!dir.exists(outPath)) {
         dir.create(outPath, recursive = TRUE)
     }
@@ -195,17 +197,6 @@ runFdogBusco <- function(
     system(command)
     if (!dir.exists(outPath)) {
         dir.create(outPath, recursive = TRUE)
-    }
-
-    if (redoFdog == TRUE) {
-        for (
-            folder in list.dirs(
-                outPath,
-                recursive = TRUE, full.names = TRUE
-            )
-        ) {
-            unlink(folder, recursive = TRUE)
-        }
     }
 
     outputSet <- lapply(
@@ -334,16 +325,16 @@ runFdogBusco <- function(
 
     pp <- NULL
     exFasta <- NULL
-    for (output in outputSet) {
+    for (outputList in outputSet) {
         if (is.null(pp)) {
-            pp <- output[[1]]
+            pp <- outputList[[1]]
         } else {
-            pp <- rbind(pp, output[[1]])
+            pp <- rbind(pp, outputList[[1]])
         }
         if (is.null(exFasta)) {
-            exFasta <- output[[2]]
+            exFasta <- outputList[[2]]
         } else {
-            exFasta <- c(exFasta, output[[2]])
+            exFasta <- c(exFasta, outputList[[2]])
         }
     }
 
@@ -351,174 +342,14 @@ runFdogBusco <- function(
     exFasta <- extractFasta(exFasta, genomeName)
 
     pp <- updateLength(pp, exFasta)
-
-    ppDir <- paste(outDir, "phyloprofile_output", "/", sep = "")
-
-    if (!dir.exists(ppDir)) {
-        dir.create(ppDir, recursive = TRUE)
-    }
     
-    ## Printing
-    subPPDir <- paste(
-        ppDir, "/", "mode_len", "/", genomeName, sep = ""
+    outputList <- list(pp, exFasta, NULL, NULL)
+    arrangePPOutput(
+        outputList, priorityList, output, coreSet, 
+        genomeName, scoreMode, extend
     )
-    if (!dir.exists(subPPDir)) {
-        dir.create(subPPDir, recursive = TRUE)
-    }
-    write.table(
-        pp, 
-        paste(subPPDir, "/", genomeName, ".phyloprofile", sep = ""),
-        sep = "\t",
-        row.names = FALSE,
-        quote = FALSE
-    )
-    writeLines(
-        exFasta, 
-        paste(subPPDir, "/", genomeName, ".fa", sep = "")
-    )
-
-    if (extend == TRUE) {
-        genomeExist <- 0
-        if (
-            file.exists(
-                paste(
-                    ppDir, folder, "/", setName, "_len.phyloprofile", sep = ""
-                )
-            )
-        ) {
-            oriPP <- read.table(
-                paste(
-                    ppDir, folder, "/", setName, "_len.phyloprofile", sep = ""
-                ),
-                sep = "\t",
-                header = TRUE
-            )
-            genomeID <- unlist(lapply(
-                oriPP$orthoID,
-                function(orthoID) {
-                    return(strsplit(orthoID, "|", fixed = TRUE)[[1]][2])
-                }
-            ))
-            if (genomeName %in% genomeID) {
-                genomeExist <- 1
-            }
-            if (genomeExist == 1) {
-                while(TRUE) {
-                    removeCheck <- readline(
-                        prompt = "It already exists a phylogenetic profile of
-                        the genome in the original phylogenetic profile.
-                        Do you want to remove the old one to 
-                        append the new? [y/n]:"
-                    )
-                    if (removeCheck == "y" || removeCheck == "n") {
-                        break
-                    }
-                }
-                if (removeCheck == "y") {
-                    correctFiles(
-                        paste(
-                            ppDir, folder, sep = ""
-                        ),
-                        genomeName
-                    )
-                    genomeExist <- 0
-                }
-            }
-        }
-        
-        if (genomeExist == 0) {
-            folder <- "mode_len"
-            if (
-                file.exists(
-                    paste(
-                        ppDir, folder, "/", setName, "_len.phyloprofile", 
-                        sep = ""
-                    )
-                )
-            ) {
-                oriPP <- read.table(
-                    paste(
-                        ppDir, folder, "/", setName, "_len.phyloprofile", 
-                        sep = ""
-                    ),
-                    sep = "\t",
-                    header = TRUE
-                )
-                oriPP <- rbind(oriPP, pp)
-            } else {
-                oriPP <- pp
-            }
-            
-            if (
-                file.exists(
-                    paste(
-                        ppDir, folder, "/", setName, "_len.extended.fa", 
-                        sep = ""
-                    )
-                )
-            ) {
-                oriFasta <- readLines(
-                    paste(
-                        ppDir, folder, "/", setName, "_len.extended.fa", 
-                        sep = ""
-                    )
-                )
-                oriFasta <- c(oriFasta, exFasta)
-            } else {
-                oriFasta <- exFasta
-            }
-            
-            write.table(
-                oriPP,
-                paste(
-                    ppDir, folder, "/", setName, "_len.phyloprofile", 
-                    sep = ""
-                ),
-                sep = "\t",
-                row.names = FALSE,
-                quote = FALSE
-            )
-            writeLines(
-                oriFasta,
-                paste(
-                    ppDir, folder, "/´", setName, "_len.extended.fa", 
-                    sep = ""
-                )
-            )
-        }
-    }
-    
-    ## Printing priority list
-    
-    table <- data.frame(
-        genomeID = c(genomeName),
-        ref_spec_list = c(paste(priorityList, collapse = ","))
-    )
-    
-    priorityFile <- paste(outDir, setName, "_refspec_list", sep = "")
-    
-    if (!file.exists(priorityFile)) {
-        write.table(
-            table,
-            priorityFile,
-            row.names = FALSE,
-            quote = FALSE,
-            sep = "\t"
-        )
-    } else {
-        priorityTable <- read.table(priorityFile, header = TRUE, sep = "\t")
-        if (!(genomeName %in% priorityTable$genomeID)) {
-            write.table(
-                table,
-                priorityFile,
-                row.names = FALSE,
-                col.names = FALSE,
-                append = TRUE,
-                quote = FALSE,
-                sep = "\t"
-            )
-        }
-    }
-    
+    endTime <- Sys.time()
+    print("Running time:")
+    print(endTime - startTime)
     return(pp)
 }

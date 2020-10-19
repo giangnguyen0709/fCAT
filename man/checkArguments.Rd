@@ -6,10 +6,9 @@
 return a message to the user}
 \usage{
 checkArguments(
-    genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE,
-    scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, 
-    weightDir = NULL, outDir = NULL, cleanup = FALSE, reFdog = FALSE, 
-    fdogDir = NULL, ppDir = NULL
+    genome, fasAnno = NULL, root, coreSet, extend = FALSE,
+    scoreMode, refSpecList = NULL, cpu = 4, blastDir = NULL, 
+    weightDir = NULL, output = NULL, cleanup = FALSE, redo = FALSE
 )
 }
 \arguments{
@@ -33,19 +32,8 @@ the inputed folder by the user with the argument ppDir. If there is no old
 files in the folder, the output files of the function will be writen in the
 new files.}
 
-\item{redo}{If it exists already the genome ID of the interested genome in
-the old phylogenetic profile. The tool will extract direct this pp to assess
-the completeness. If user don't want this happens, they can set redo to TRUE
-to get a new phylogenetic profile}
-
 \item{scoreMode}{the mode determines the method to scoring the founded
-ortholog and how to classify them. Choices: 1, 2, 3, "busco"}
-
-\item{priorityList}{A list contains one or many genome ID of the genomes,
-which were used to build the core set. The genome ID of this list will be
-stored with an priority order, the tool look at into the fasta file of each
-core group and determine with the priority order to determine the references
-species for each core group.}
+ortholog and how to classify them. Choices: 1, 2, 3, "len"}
 
 \item{cpu}{determines the cores that fDOG and fdogFAS will uses to be run
 parallel}
@@ -56,9 +44,8 @@ directory by specifying it in this argument}
 \item{weightDir}{The user can replace the weight_dir folder in the core
 directory by specifying it in this argument}
 
-\item{outDir}{The user can specify the directory to save the output report
-file of the completeness of the interested genome by specifying the path
-to the folder in this argument}
+\item{output}{The directory which contains the output directory. It it is 
+equal to NULL output will be set to working directory}
 
 \item{cleanup}{The fDOG's output is a set of phylogenetic profile of each
 core group to the interested genome. The phylogenetic profile will be stored
@@ -67,6 +54,20 @@ phylogenetic profile, calculate the FAS score or length to have the whole
 phylogenetic profile of the interested genome to the core set. This fDOG's
 output can be reused for all score modes. When cleanup is set to TRUE, the
 fDOG's output will not be stored to be reused but to be removed}
+
+\item{redo}{when redo is set to TRUE, all old data of the interested genome 
+include fdogOutput, phyloprofileOutput, completenessOutput and the extended
+phyloprofile will be removed and fCAT will recheck for this interested genome}
+
+\item{priorityList}{A list contains one or many genome ID of the genomes,
+which were used to build the core set. The genome ID of this list will be
+stored with an priority order, the tool look at into the fasta file of each
+core group and determine with the priority order to determine the references
+species for each core group.}
+
+\item{outDir}{The user can specify the directory to save the output report
+file of the completeness of the interested genome by specifying the path
+to the folder in this argument}
 
 \item{reFdog}{If it already exist a fDOG's output for a specific core group
 the tool will skip this core group and go to the next core group. If reFdog
@@ -97,7 +98,8 @@ return a message to the user
 coreFolder <- system.file("extdata", "sample", package = "fCAT")
 genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
-checkArguments(genome[1], fasAnno[1], coreFolder[1], "test",
+checkArguments(
+    genome[1], fasAnno[1], coreFolder[1], "test",
     scoreMode = 2, priorityList = c("HUMAN@9606@1")
 )
 }

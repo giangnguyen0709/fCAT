@@ -52,6 +52,12 @@ directory by specifying it in this argument. By default is NULL}
 \item{weightDir}{The user can replace the weight_dir folder in the core
 directory by specifying it in this argument. By default is NULL}
 
+\item{output}{The directory which contains the output directory}
+
+\item{outDir}{The user can specify the directory to save the output report
+file of the completeness of the interested genome by specifying the path
+to the folder in this argument. By default is NULL}
+
 \item{cleanup}{The fDOG's output is a set of phylogenetic profile of each
 core group to the interested genome. The phylogenetic profile will be stored
 into a folder in the core set. The function will merge all the small
@@ -59,28 +65,6 @@ phylogenetic profile, calculate the FAS score or length to have the whole
 phylogenetic profile of the interested genome to the core set. This fDOG's
 output can be reused for all score modes. When cleanup is set to TRUE, the
 fDOG's output will not be stored to be reused but to be removed}
-
-\item{reFdog}{If it already exist a fDOG's output for a specific core group
-the tool will skip this core group and go to the next core group. If reFdog
-is set to TRUE, the tool will remove all the existed fDOG's output and rerun
-fDOG for all core groups of the set}
-
-\item{fdogDir}{Normally the fDOG's output will be stored in the folder
-fdogout in the core directory, but the user can specify the folder for
-fDOG's output by specify the path to it in this argument. Notice here, is
-the fDOG's output folder will contains the subfolder, equivalent to the name
-of the interested genome, for example, the folder can contain "HUMAN@9606@3"
-and "AMPQU@400682@2", for a completeness checking on an interested genome,
-which has a subfolder in the fDOG's output folder with the same name, the
-function will look into the subfolder to find the existed fDOG's output}
-
-\item{ppDir}{The user can replace the default folder output in the core
-directory, where the phylogenetic profiles are stored by his folder. The user
-can specify the path to his folder in this argument. By default is NULL}
-
-\item{outDir}{The user can specify the directory to save the output report
-file of the completeness of the interested genome by specifying the path
-to the folder in this argument. By default is NULL}
 }
 \value{
 a report of the completeness of the interested genome with detailed
@@ -97,7 +81,8 @@ coreFolder <- system.file("extdata", "sample", package = "fCAT")
 genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
 report <- computeReport(genome, fasAnno, coreFolder, "test",
-    scoreMode = 2, priorityList = c("HUMAN@9606@1"), cpu = 4
+    scoreMode = 2, priorityList = c("HUMAN@9606@1"), cpu = 4,
+    output = getwd()
 )
 print.data.frame(report)
 }

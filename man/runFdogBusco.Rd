@@ -61,6 +61,8 @@ directory by specifying it in this argument}
 \item{weightDir}{The user can replace the weight_dir folder in the core
 directory by specifying it in this argument}
 
+\item{output}{The directory which contains the output directory}
+
 \item{cleanup}{The fDOG's output is a set of phylogenetic profile of each
 core group to the interested genome. The phylogenetic profile will be stored
 into a folder in the core set. The function will merge all the small
@@ -122,7 +124,7 @@ placeSeed(genome, fasAnno, coreFolder)
 ## Test runFdogBusco
 pp <- runFdogBusco(coreFolder, "test",
     extend = FALSE, scoreMode = "busco",
-    priorityList = c("HUMAN@9606@1"), cpu = 4
+    priorityList = c("HUMAN@9606@1"), cpu = 4, output = getwd()
 )
 
 print.data.frame(pp)

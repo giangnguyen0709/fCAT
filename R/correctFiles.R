@@ -230,19 +230,32 @@ correctFasta <- function(fasta, genome) {
 #' ## Delete the folder
 #' unlink(testFolder, recursive = TRUE)
 #' @export
-correctFiles <- function(directory, genome) {
+correctFiles <- function(directory, genome, scoreMode) {
     files <- list.files(directory, full.names = TRUE)
+    
+    if (scoreMode == 1) {
+        suffix <- "_mode1"
+    }
+    if (scoreMode == 2 || scoreMode == 3) {
+        suffix <- "_other"
+    }
+    if (scoreMode == "len") {
+        suffix <- "_len"
+    }
 
     for (file in files) {
-        if (endsWith(file, ".phyloprofile")) {
+        if (endsWith(file, paste(suffix, ".phyloprofile", sep = ""))) {
             correctPP(file, genome)
         }
 
-        if (endsWith(file, ".extended.fa")) {
+        if (endsWith(file, paste(suffix, ".extended.fa", sep = ""))) {
             correctFasta(file, genome)
         }
 
-        if (endsWith(file, ".domains")) {
+        if (endsWith(file, paste(suffix, "_reverse.domains", sep = ""))) {
+            correctDomains(file, genome)
+        }
+        if (endsWith(file, paste(suffix, "_forward.domains", sep = ""))) {
             correctDomains(file, genome)
         }
     }

@@ -94,10 +94,9 @@ checkPreProcess <- function(root, coreSet) {
 #' 
 #' @usage 
 #' checkArguments(
-#'     genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE,
-#'     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, 
-#'     weightDir = NULL, outDir = NULL, cleanup = FALSE, reFdog = FALSE, 
-#'     fdogDir = NULL, ppDir = NULL
+#'     genome, fasAnno = NULL, root, coreSet, extend = FALSE,
+#'     scoreMode, refSpecList = NULL, cpu = 4, blastDir = NULL, 
+#'     weightDir = NULL, output = NULL, cleanup = FALSE, redo = FALSE
 #' )
 #'
 #' @param genome The path to the genome fasta file
@@ -115,12 +114,11 @@ checkPreProcess <- function(root, coreSet) {
 #' the inputed folder by the user with the argument ppDir. If there is no old
 #' files in the folder, the output files of the function will be writen in the
 #' new files.
-#' @param redo If it exists already the genome ID of the interested genome in
-#' the old phylogenetic profile. The tool will extract direct this pp to assess
-#' the completeness. If user don't want this happens, they can set redo to TRUE
-#' to get a new phylogenetic profile
+#' @param redo when redo is set to TRUE, all old data of the interested genome 
+#' include fdogOutput, phyloprofileOutput, completenessOutput and the extended
+#' phyloprofile will be removed and fCAT will recheck for this interested genome
 #' @param scoreMode the mode determines the method to scoring the founded
-#' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
+#' ortholog and how to classify them. Choices: 1, 2, 3, "len"
 #' @param priorityList A list contains one or many genome ID of the genomes,
 #' which were used to build the core set. The genome ID of this list will be
 #' stored with an priority order, the tool look at into the fasta file of each
@@ -157,20 +155,22 @@ checkPreProcess <- function(root, coreSet) {
 #' @param ppDir The user can replace the default folder output in the core
 #' directory, where the phylogenetic profiles are stored by his folder. The user
 #' can specify the path to his folder in this argument
+#' @param output The directory which contains the output directory. It it is 
+#' equal to NULL output will be set to working directory
 #' @examples
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 #' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
-#' checkArguments(genome[1], fasAnno[1], coreFolder[1], "test",
+#' checkArguments(
+#'     genome[1], fasAnno[1], coreFolder[1], "test",
 #'     scoreMode = 2, priorityList = c("HUMAN@9606@1")
 #' )
 #' @return A list that contains a logical value and the message to the error
 #' @export
 checkArguments <- function(
-    genome, fasAnno = NULL, root, coreSet, extend = FALSE, redo = FALSE,
-    scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, weightDir = NULL,
-    outDir = NULL, cleanup = FALSE, reFdog = FALSE, fdogDir = NULL,
-    ppDir = NULL) {
+    genome, fasAnno = NULL, root, coreSet, extend = FALSE,
+    scoreMode, refSpecList = NULL, cpu = 4, blastDir = NULL, weightDir = NULL,
+    output = NULL, cleanup = FALSE, redo = FALSE) {
     if (!endsWith(root, "/")) {
         root <- paste(root, "/", sep = "")
     }
@@ -264,25 +264,34 @@ checkArguments <- function(
     }
 
 
-    modeList <- list(1, 2, 3, "busco")
+    modeList <- list(1, 2, 3, "len")
     if (!(scoreMode %in% modeList)) {
         check <- FALSE
         status <- "score mode is not available"
         return(list(check, status))
     }
 
-    if (!is.null(priorityList)) {
-        if (!is.vector(priorityList)) {
+    if (!is.null(refSpecList)) {
+        if (!is.vector(refSpecList)) {
             check <- FALSE
-            status <- "priority list must be a list"
+            status <- "references species list must be a vector"
             return(list(check, status))
         }
-        coreTaxa <- list.dirs(
-            paste(root, "blast_dir", sep = ""),
-            recursive = FALSE,
-            full.names = FALSE
-        )
-        for (taxa in priorityList) {
+        
+        if (is.null(blastDir)) {
+            coreTaxa <- list.dirs(
+                paste(root, "blast_dir", sep = ""),
+                recursive = FALSE,
+                full.names = FALSE
+            )
+        } else {
+            coreTaxa <- list.dirs(
+                blastDir,
+                recursive = FALSE,
+                full.names = FALSE
+            )
+        }
+        for (taxa in refSpecList) {
             if (!(taxa %in% coreTaxa)) {
                 check <- FALSE
                 status <-
@@ -300,10 +309,9 @@ checkArguments <- function(
 #' 
 #' @usage 
 #' checkCompleteness(
-#'     genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, redo = FALSE,
-#'     scoreMode, priorityList = NULL, cpu = 4, blastDir = NULL, 
-#'     weightDir = NULL, outDir = NULL, cleanup = FALSE, reFdog = FALSE, 
-#'     fdogDir = NULL, ppDir = NULL
+#'         genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE, 
+#'         scoreMode, refSpecList = NULL, cpu = 4, blastDir = NULL, 
+#'         weightDir = NULL, output = NULL, cleanup = FALSE, redo = FALSE
 #' )
 #'
 #' @param genome The path to the genome fasta file
@@ -321,13 +329,12 @@ checkArguments <- function(
 #' the inputed folder by the user with the argument ppDir. If there is no old
 #' files in the folder, the output files of the function will be writen in the
 #' new files.
-#' @param redo If it exists already the genome ID of the interested genome in
-#' the old phylogenetic profile. The tool will extract direct this pp to assess
-#' the completeness. If user don't want this happens, they can set redo to TRUE
-#' to get a new phylogenetic profile
+#' @param redo when redo is set to TRUE, all old data of the interested genome 
+#' include fdogOutput, phyloprofileOutput, completenessOutput and the extended
+#' phyloprofile will be removed and fCAT will recheck for this interested genome
 #' @param scoreMode the mode determines the method to scoring the founded
 #' ortholog and how to classify them. Choices: 1, 2, 3, "busco"
-#' @param priorityList A list contains one or many genome ID of the genomes,
+#' @param refSpecList A list contains one or many genome ID of the genomes,
 #' which were used to build the core set. The genome ID of this list will be
 #' stored with an priority order, the tool look at into the fasta file of each
 #' core group and determine with the priority order to determine the references
@@ -348,21 +355,6 @@ checkArguments <- function(
 #' phylogenetic profile of the interested genome to the core set. This fDOG's
 #' output can be reused for all score modes. When cleanup is set to TRUE, the
 #' fDOG's output will not be stored to be reused but to be removed
-#' @param reFdog If it already exist a fDOG's output for a specific core group
-#' the tool will skip this core group and go to the next core group. If reFdog
-#' is set to TRUE, the tool will remove all the existed fDOG's output and rerun
-#' fDOG for all core groups of the set
-#' @param fdogDir Normally the fDOG's output will be stored in the folder
-#' fdogout in the core directory, but the user can specify the folder for
-#' fDOG's output by specify the path to it in this argument. Notice here, is
-#' the fDOG's output folder will contains the subfolder, equivalent to the name
-#' of the interested genome, for example, the folder can contain "HUMAN@9606@3"
-#' and "AMPQU@400682@2", for a completeness checking on an interested genome,
-#' which has a subfolder in the fDOG's output folder with the same name, the
-#' function will look into the subfolder to find the existed fDOG's output
-#' @param ppDir The user can replace the default folder output in the core
-#' directory, where the phylogenetic profiles are stored by his folder. The 
-#' user can specify the path to his folder in this argument. By default is NULL
 #'
 #' @return A list which contains 2 data.frame. The first table is the
 #' completeness report of the interested genome with details information about
@@ -376,15 +368,25 @@ checkArguments <- function(
 #' coreFolder <- system.file("extdata", "sample", package = "fCAT")
 #' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
 #' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
-#' checkCompleteness(genome[1], fasAnno[1], coreFolder[1], "test",
-#'     scoreMode = 2, priorityList = c("HUMAN@9606@1"), extend = TRUE
+#' checkCompleteness(
+#'     genome[1], fasAnno[1], coreFolder[1], "test",
+#'     scoreMode = 2, priorityList = c("HUMAN@9606@1"), extend = TRUE,
+#'
 #' )
 #' @export
 checkCompleteness <- function(
     genome, fasAnno = NULL, coreDir, coreSet, extend = FALSE,
     scoreMode, refSpecList = NULL, cpu = 4, blastDir = NULL, weightDir = NULL,
-    output = NULL, cleanup = FALSE, redoFdog = FALSE
+    output = NULL, cleanup = FALSE, redo = FALSE
 ) {
+    argumentCheck <- checkArguments(
+        genome, fasAnno, coreDir, coreSet, extend,
+        scoreMode, refSpecList, cpu, blastDir, weightDir,
+        output, cleanup, redo
+    )
+    if (argumentCheck[[1]] == FALSE) {
+        return(argumentCheck[[2]])
+    }
     start <- Sys.time()
     if (!endsWith(coreDir, "/")) {
         coreDir <- paste(coreDir, "/", sep = "")
@@ -395,7 +397,7 @@ checkCompleteness <- function(
     if (!endsWith(output, "/")) {
         output <- paste(output, "/", sep = "")
     }
-    outDir <- paste(output, "fcat_output", "/", coreSet, "/", sep = "")
+    outDir <- paste(output, "fcatOutput", "/", coreSet, "/", sep = "")
     
     if (is.null(refSpecList)) {
         query <- list.dirs(paste(coreDir, "query_taxon", sep = ""),
@@ -432,27 +434,39 @@ checkCompleteness <- function(
     splited <- splited[length(splited)]
     genomeName <- strsplit(splited, ".", fixed = TRUE)[[1]][1]
     
-    refListCheck <- 0
-    refSpecListFile <- paste(outDir, coreSet, "_refspec_list", sep = "")
+    redoCheck <- 0
+    refSpecListCheck <- 0
+    refSpecListFile <- paste(outDir, genomeName, "/", "refspec.list", sep = "")
     if (file.exists(refSpecListFile)) {
-        refSpecTable <- read.table(refSpecListFile, header = TRUE, sep = "\t")
-        if (genomeName %in% refSpecTable$genomeID) {
-            subRefTable <- subset(refSpecTable, genomeID == genomeName)
-            oriRefSpecList <- strsplit(
-                subRefTable[1,2], ",", fixed = TRUE
-            )[[1]]
-            if (refSpecList != oriRefSpecList) {
-                refListCheck <- 1
+        if (redo == "TRUE") {
+            redoCheck <- 1
+        } else {
+            oriRefSpecList <- readLines(refSpecListFile)
+            if (oriRefSpecList != refSpecList) {
+                refSpecListCheck <- 1
             }
         }
     }
     
-    if (refListCheck == 1) {
-        message <- paste(
-        "It already exist data of", genomeName, "with a different references 
-        species list. Do you want to clean all data of this genome in the output 
-        directory. If yes, make sure that you saved your interested data in a 
-        safe location [y/n]:")
+    if (refSpecListCheck == 1 || redoCheck == 1) {
+        if (refSpecListCheck == 1) {
+            message <- paste(
+                "It already exist data of", genomeName, 
+                "with a different references", 
+                "species list. Do you want to clean all", 
+                "data of this genome in the", 
+                "output directory. If yes, make sure",
+                "that you saved your interested", 
+                "data in a safe location [y/n]:")
+        }
+        if (redoCheck == 1) {
+            message <- paste(
+                "redo is set to TRUE.", "Do you want to clean all data",
+                "of this genome in the", 
+                "output directory. If yes, make sure", 
+                "that you saved your interested", 
+                "data in a safe location [y/n]:")
+        }
         while (TRUE) {
             cleanCheck <- readline(prompt = message)
             if (cleanCheck == "y" || cleanCheck == "n") {
@@ -461,71 +475,73 @@ checkCompleteness <- function(
         }
         
         if (cleanCheck == "y") {
-            fdogFolder <- paste(
-                outDir, "fdog_output", "/", genomeName, sep = ""
-            )
-            if (dir.exists(fdogFolder)) {
-                unlink(fdogFolder, recursive = TRUE)
-            }
-            
-            folderList <- c("mode_1", "other", "mode_len")
-            for (folder in folderList) {
-                ppFolder <- paste(
-                    outDir, "phyloprofile_output", "/", folder, "/", 
-                    genomeName, sep = ""
+            unlink(paste(outDir, genomeName, sep = ""), recursive = TRUE)
+            scoreModeList <- list(1, 2, "len")
+            for (mode in scoreModeList) {
+                correctFiles(
+                    paste(outDir, "phyloprofile", sep = ""),
+                    genomeName,
+                    mode
                 )
-                if (dir.exists(ppFolder)) {
-                    unlink(ppFolder, recursive = TRUE)
-                } 
-            }
-            
-            folderList <- c("mode_1", "mode_2", "mode_3", "mode_len")
-            for (folder in folderList) {
-                rpFolder <- paste(
-                    outDir, folder, "/", genomeName, sep = ""
-                )
-                if (dir.exists(rpFolder)) {
-                    unlink(rpFolder, recursive = TRUE)
-                }
-                summaryFile <- paste(
-                    outDir, folder, "/", coreSet, ".summary",
-                    sep = "")
-                if (file.exists(summaryFile)) {
-                    statTable <- read.table(
-                        summaryFile,
-                        header = TRUE,
-                        sep = "\t"
-                    )
-                    statTable <- subset(statTable, genomeID != genome)
-                    write.table(statTable,
-                                summaryFile,
-                                sep = "\t",
-                                row.names = FALSE,
-                                quote = FALSE
-                    )
-                }
             }
         }
     }
     
-    reportFile <- paste(
-        outDir, "mode_", as.character(scoreMode), "/", genomeName, "/", 
-        "full_table" ,sep = "")
+    if (scoreMode == "len") {
+        reportFile <- paste(
+            outDir, genomeName, "/", "mode_len", "/", "full_text.txt", sep = ""
+        )
+        summaryFile <- paste(
+            outDir, genomeName, "/", "mode_len", "/", "summary.txt", sep = ""
+        )
+    } else {
+        reportFile <- paste(
+            outDir, genomeName, "/", "mode", as.character(scoreMode), 
+            "/", "full_text.txt", sep = ""
+        )
+        summaryFile <- paste(
+            outDir, genomeName, "/", "mode", as.character(scoreMode), 
+            "/", "summary.txt", sep = ""
+        )
+    }
     if (!file.exists(reportFile)) {
         computeReport(
             genome, fasAnno, coreDir, coreSet, extend, scoreMode, refSpecList,
-            cpu, FALSE, blastDir, weightDir, redoFdog, output)
+            cpu, FALSE, blastDir, weightDir, output)
     }
-    statTable <- read.table(
-        paste(
-            outDir, "mode_", as.character(scoreMode), "/", coreSet, 
-            ".summary", sep = ""
-        ),
+    summaryTable <- read.table(
+        summaryFile,
         header = TRUE,
         sep = "\t"
     )
+    
+    if (cleanup == TRUE) {
+        fdogFolder <- paste(
+            outDir, genomeName, "/", "fdogOutput", "/", genomeName, sep = ""
+        )
+        if (scoreMode == 1) {
+            file <- "mode1"
+        }
+        if (scoreMode == 2 || scoreMode == 3) {
+            file <- "other"
+        }
+        if (scoreMode == "len") {
+            file <- "len"
+        }
+        pathPrefix <- paste(
+            outDir, genomeName, "/", "phyloprofileOutput", "/", file, 
+            sep = ""
+        )
+        suffixList <- c(
+            ".phyloprofile", "_reverse.domains", "_forward.domains")
+        for (suffix in suffixList) {
+            if (file.exists(paste(pathPrefix, suffix, sep = ""))) {
+                file.remove(paste(pathPrefix, suffix, sep = ""))
+            }
+        }
+    }
 
     end <- Sys.time()
     print(paste("Running time is", as.character(end - start)))
-    return(statTable)
+    return(summaryTable)
 }
