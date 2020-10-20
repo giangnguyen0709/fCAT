@@ -621,28 +621,6 @@ concanateFiles <- function(directory, genomeName, scoreMode) {
 #' @param output The directory which contains the output directory
 #'
 #' @return phylogenetic profile of the genome in data.frame
-#' @examples
-#' ## Take the demo data
-#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
-#' genome <- system.file("extdata", "HUMAN@9606@3.fa", package = "fCAT")
-#' fasAnno <- system.file("extdata", "HUMAN@9606@3.json", package = "fCAT")
-#'
-#' ## Place seed
-#' placeSeed(genome, fasAnno, coreFolder)
-#'
-#' ## Test runFdog
-#' pp <- runFdog(coreFolder, "test",
-#'     extend = FALSE, scoreMode = 2,
-#'     priorityList = c("HUMAN@9606@1"), cpu = 4, output = getwd()
-#' )
-#'
-#' print.data.frame(pp)
-#'
-#' ## Delete seed
-#' fastaFolder <- paste(coreFolder, "/query_taxon/HUMAN@9606@3", sep = "")
-#' annoPath <- paste(coreFolder, "/weight_dir/HUMAN@9606@3.json", sep = "")
-#' unlink(fastaFolder, recursive = TRUE)
-#' file.remove(annoPath)
 #' @export
 runFdog <- function(
     root, coreSet, extend = FALSE, scoreMode, priorityList = NULL, cpu,

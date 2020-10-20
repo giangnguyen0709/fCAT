@@ -44,10 +44,3 @@ none
 The function compute the initial original phylogenetic profile of all the
 taxa in the score set
 }
-\examples{
-coreFolder <- system.file("extdata", "sample", package = "fCAT")
-computeOriginal(coreFolder, "test",
-    scoreMode = 2, cleanup = TRUE,
-    ppDir = NULL
-)
-}

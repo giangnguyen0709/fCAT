@@ -10,9 +10,6 @@
 #' directory by specifying the path to the replacing folder in this argument
 #'
 #' @return none
-#' @examples
-#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
-#' handleError(coreFolder)
 #' @export
 handleError <- function(root, weightDir = NULL) {
     genomeDir <- paste(root, "query_taxon", sep = "")

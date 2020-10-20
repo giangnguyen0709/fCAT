@@ -31,21 +31,3 @@ sequence in each file, the function will calculate the length of the
 sequence in the fasta file and update it into the phylogenetic profile as 
 a new column.
 }
-\examples{
-## Create pseudo data
-geneID <- c("530670", "530730")
-ncbiID <- c("ncbi9606", "ncbi9606")
-orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1")
-pp <- data.frame(geneID, ncbiID, orthoID)
-
-fasta <- c(
-    ">530670|HUMAN@9606@3|Q16526|1",
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    ">530730|HUMAN@9606@3|P05091|1",
-    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-)
-
-## Updating length
-updatedPP <- updateLength(pp, fasta)
-print.data.frame(updatedPP)
-}

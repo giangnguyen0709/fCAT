@@ -12,23 +12,6 @@
 #'
 #' @return the phylogenetic profile of the interested genome with updated
 #' length for each ortholog (or for each line)
-#' @examples
-#' ## Create pseudo data
-#' geneID <- c("530670", "530730")
-#' ncbiID <- c("ncbi9606", "ncbi9606")
-#' orthoID <- c("530670|HUMAN@9606@3|Q16526|1", "530730|HUMAN@9606@3|P05091|1")
-#' pp <- data.frame(geneID, ncbiID, orthoID)
-#'
-#' fasta <- c(
-#'     ">530670|HUMAN@9606@3|Q16526|1",
-#'     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-#'     ">530730|HUMAN@9606@3|P05091|1",
-#'     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-#' )
-#'
-#' ## Updating length
-#' updatedPP <- updateLength(pp, fasta)
-#' print.data.frame(updatedPP)
 #' @export
 updateLength <- function(pp, exFasta) {
     i <- (1:nrow(pp))

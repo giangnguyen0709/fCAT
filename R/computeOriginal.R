@@ -29,12 +29,6 @@
 #' can specify the path to his folder in this argument
 #'
 #' @return none
-#' @examples
-#' coreFolder <- system.file("extdata", "sample", package = "fCAT")
-#' computeOriginal(coreFolder, "test",
-#'     scoreMode = 2, cleanup = TRUE,
-#'     ppDir = NULL
-#' )
 #' @export
 computeOriginal <- function(
     coreDir, coreSet, scoreMode, cpu = 4, blastDir = NULL, weightDir = NULL) {
