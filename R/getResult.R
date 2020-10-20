@@ -88,7 +88,7 @@ assessStatus <- function(
         )
         lcl <- meanTable[2, 2]
         ucl <- meanTable[3, 2]
-        if (fas < lcl || fas > ucl) {
+        if (fas < lcl) {
             status <- "dissimilar"
         } else {
             status <- "similar"
