@@ -189,6 +189,7 @@ computeReport <- function(
             )
         }
     }
+    pp <- extractPP(pp, genomeName)
     completenessOutput <- reportSingle(
         pp, root, coreSet, scoreMode, priorityList
     )

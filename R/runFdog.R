@@ -424,7 +424,9 @@ recalculateScore <- function(pp, genomeName) {
         queryPP[i, 4] <- fasF[[as.character(queryPP[i, 1])]]
         queryPP[i, 5] <- fasB[[as.character(queryPP[i, 1])]]
     }
-    return(queryPP)
+    singlePP <- singlePP[1:(ncol(singlePP) - 1)]
+    pp <- rbind(queryPP, singlePP)
+    return(pp)
 }
 
 #' After fdogFAS is finished. It will leave in a temporary folder the
@@ -527,9 +529,6 @@ concanateFiles <- function(directory, genomeName, scoreMode) {
                 pp <- rbind(pp, singlePP)
             }
         }
-    }
-    if (!is.null(pp)) {
-        pp <- extractPP(pp, genomeName)
     }
     if (!is.null(exFasta)) {
         exFasta <- extractFasta(exFasta, genomeName)
