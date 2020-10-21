@@ -664,7 +664,7 @@ runFdog <- function(
 
     ### - check Data - ###
     command <- paste(
-        "checkData1s",
+        "fdog.checkData",
         "-g", searchPath,
         "-b", blastPath,
         "-w", weightPath
@@ -750,6 +750,7 @@ runFdog <- function(
                 "--countercheck",
                 "--fasoff"
             )
+            print(command) 
             system(command)
 
             if (file.exists(paste(coreGene, ".fa", sep = ""))) {

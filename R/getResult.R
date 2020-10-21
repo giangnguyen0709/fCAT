@@ -181,7 +181,7 @@ assessBusco <- function(orthoLength, root, coreSet, coreGene, f) {
     cutoff <- calculateBuscoCutoff(root, coreSet, coreGene)
     if (cutoff[[2]] != 0) {
         score <- (orthoLength - cutoff[[1]]) / cutoff[[2]]
-        if (score > 2 || score < (-2)) {
+        if (score > 1 || score < (-1)) {
             status <- "fragmented"
         } else {
             status <- "complete"
