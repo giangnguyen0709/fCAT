@@ -1,5 +1,7 @@
 # fCAT
 
+fCAT is a feature-aware completeness assessment tool, which provide a solution to assess the completeness of a genome assembly or a newly sequenced genome, based on the ortholog prediction with reciprocity criterion and the feature architecture similarity between the ortholog sequences of the interested genome and the training sequences.
+
 ## Installation
 
 To install *fCAT*, open R in your terminal
@@ -22,15 +24,14 @@ The function to check the completeness of an interested genome
 * **fasAnno**: The path to the fas annotation file (must has the same name as the genome fasta file). It can equal NULL. If fasAnno equal NULL, fCAT will compute the FAS annotation for the genome fasta file.
 * **coreDir**: The path to the core directory, where the core set is stored within weight_dir, blast_dir, etc.
 * **coreSet**: The name of the interested core set. The core directory can contains more than one core set and the user must specify the interested core set. The core set will be stored in the folder core_orthologs in subfolder, specify them by the name of the subfolder
-* **extend**: Optional, by default is FALSE. The output of the function is a phylogenetic profile of the interested genome. It contains 4 files, .phyloprofile, .extended.fa, _reverse.domains and _forward.domains. If extend = TRUE, the files will be appended into the old files in the folder output of the core directory or in the inputed folder by the user with the argument ppDir. If there is no old files in the folder, the output files of the function will be writen in the new files.
-* **redo**: Optional, by default is FALSE. If it exists already the genome ID of the interested genome in the old phylogenetic profile. The tool will extract direct this pp to assess the completeness. If user don't want this happens, they can set redo to TRUE to get a new phylogenetic profile
-* **scoreMode**: the mode determines the method to scoring the founded ortholog and how to classify them. Choices: 1, 2, 3, "busco"
-* **priorityList**: A list contains one or many genome ID of the genomes, which were used to build the core set. The genome ID of this list will be stored with an priority order, the tool look at into the fasta file of each core group and uses the priority order to determine the references species for each core group. 
+* **extend**: The output folder will contain a folder named phyloprofile. The folder will contains the phyloprofiles with the name corresponding to each score mode. If extend is set to TRUE, the phylogenetic profile of the interested genome will be append to the phyloprofile file in this folder. If it exists already a genome with the same name as the interested one, fCAT will print a message to user to ask if they really want to clear the old phylogenetic profile of the genome to append the new one.
+* **redo**: The score modes of fCAT reuse the fDOG's output and score mode 2 and 3 even reuses the phyloprofile output of each other to create the assessment report of an interested genome. For some reasons, the user can want to remove the old data, and recheck the completeness of the genome from the beginning step (from the ortholog prediction step). To avoid the conflict data of the old data with the new one, fCAT must remove all the old data of the genome, not only the data of the current runing score mode but the interested genome's data of all 4 modes in fCAT and also the phylogenetic profile of the genome must be removed from the extended phyloprofile file. To do this, user can set redo = TRUE. A message will be printed to make sure that the user really want to clean the old data.
+* **scoreMode**: the mode determines the method to scoring the founded ortholog and how to classify them. Choices: 1, 2, 3, "len"
+* **refSpecList**: A list contains one or many genome ID of the genomes, which were used to build the core set. The genome ID of this list will be stored with an priority order, the tool look at into the fasta file of each core group and uses the priority order to determine the references species for each core group. 
 * **cpu**: Optional, by default is 4. determines the cores that fDOG and fdogFAS will uses to be run parallel
 * **blastDir**: Optional. The user can replace the blast_dir folder in the core directory by specifying it in this argument. By default is NULL
 * **weightDir**: Optional. The user can replace the weight_dir folder in the core directory by specifying it in this argument. By default is NULL
-* **outDir**: Optional. The user can specify the directory to save the output report file of the completeness of the interested genome by specifying the path to the folder in this argument. By default is NULL
-* **cleanup**: Optional, by default is FALSE. The fDOG's output is a set of phylogenetic profile of each core group to the interested genome. The phylogenetic profile will be stored into a folder in the core set. The function will merge all the small phylogenetic profile, calculate the FAS score or length to have the whole phylogenetic profile of the interested genome to the core set. This fDOG's output can be reused for all score modes. When cleanup is set to TRUE, the fDOG's output will not be stored to be reused but to be removed
+* **cleanup**: Optional, if cleanup is set to TRUE, the fDOG output and the phyloprofile output will be removed
 * **output** The path to the location, where the output directory will be stored. By default it is the working directory.
 
 The function returns two reports. A detailed report of the completeness of the interested genome and a frequency table of all taxa, which were checked completeness with fCAT with option extend = TRUE. The frequency table show how many core genes "similar", "dissimilar", "duplicated", "missing" and "ignored" in each taxon.
@@ -43,18 +44,15 @@ coreDir <- "/path/to/the/core/directory"
 coreSet <- "name of the core set"
 extend <- TRUE #by default is FALSE
 redo <- TRUE #by default is FALSE
-scoreMode <- 2 #Choices: 1,2,3, "busco"
+scoreMode <- 2 #Choices: 1,2,3, "len"
 priorityList <- c("HUMAN@9606@1", "ECOLI@511145@1") 
 cpu <- 4
 blastDir <- "/path/to/blast_dir" #Optional
 weightDir <- "/path/to/weight_dir" #Optional
-outDir <- "/path/to/the/output/folder" #By default the report files will be stored in the core directory
 cleanup <- TRUE #by default is FASLE
-reFdog <- TRUE #by default is FALSE
-fdogDir <- "/path/to/the/folder/to/store/fdog/output" #Optional
-ppDir <- "/path/to/the/folder/to/store/the/phylogenetic/profile"
+output <- "path/to/location/to/save/output"
 
-checkCompleteness <- function(genome, fasAnno, coreDir, coreSet, extend, redo, scoreMode, priorityList, cpu, blastDir, weightDir, outDir, cleanup, reFdog, fdogDir, ppDir)
+checkCompleteness <- function(genome, fasAnno, coreDir, coreSet, extend, redo, scoreMode, refSpecList, cpu, blastDir, weightDir, cleanup, output)
 
 ```
 
@@ -66,20 +64,18 @@ The function to compute the original phylogenetic profile, which will contains t
 * **coreSet**: The name of the interested core set. The core directory can contains more than one core set and the user must specify the interested core set. The core set will be stored in the folder core_orthologs in subfolder, specify them by the name of the subfolder
 * **scoreMode**: the mode determines the method to scoring the founded ortholog and how to classify them. Choices: 1, 2, 3, "busco"
 * **cpu**: Optional, by default is 4. Determines the cores that fDOG and fdogFAS will uses to be run parallel
-* **cleanup**: Optional, by default is FALSE. The fDOG's output is a set of phylogenetic profile of each core group to the interested genome. The phylogenetic profile will be stored into a folder in the core set. The function will merge all the small phylogenetic profile, calculate the FAS score or length to have the whole phylogenetic profile of the interested genome to the core set. This fDOG's output can be reused for all score modes. When cleanup is set to TRUE, the fDOG's output will not be stored to be reused but to be removed
-* **ppDir**: Optional, by default is NULL. The user can replace the default folder output in the core directory, where the phylogenetic profiles are stored by his folder. The user can specify the path to his folder in this argument
+* **blastDir**: Optional. The user can replace the blast_dir folder in the core directory by specifying it in this argument. By default is NULL
+* **weightDir**: Optional. The user can replace the weight_dir folder in the core directory by specifying it in this argument. By default is NULL
 
-This funtion will append the orginal phylogenetic profile of the core taxa in to the existing phylogenetic profile in folder output by default or in folder phyloprofile, which was directed by the user with the argument ppDir
+This function will check completeness for all core genomes in the core set and store the output in the output's folder
 
 ```
 coreDir <- "/path/to/the/core/directory"
 coreSet <- "name of the core set"
 scoreMode <- 2 #Choices: 1,2,3, "busco"
 cpu <- 4
-cleanup <- TRUE #by default is FASLE
-ppDir <- "/path/to/the/folder/to/store/the/phylogenetic/profile"
 
-fCAT::computeOriginal(coreDir, coreSet, scoreMode, cpu, cleanup, ppDir)
+fCAT::computeOriginal(coreDir, coreSet, scoreMode, cpu)
 ```
 
 ### processCoreSet
@@ -112,11 +108,11 @@ fasAnno <- "/home/user/HUMAN@9606@3.json"
 coreDir <- "/home/user/eukaryota_busco"
 coreSet <- "eukaryota_busco"
 extend <- TRUE
-priorityList <- c("HOMSA@9606@2")
+refSpecList <- c("HOMSA@9606@2")
 scoreMode <- 1
 cpu <- 4
 
-fCAT::checkCompleteness(genome = genome, fasAnno = fasAnno, coreDir = coreDir, coreSet = coreSet, extend = extend, priorityList = priorityList, scoreMode = scoreMode, cpu = cpu)
+fCAT::checkCompleteness(genome = genome, fasAnno = fasAnno, coreDir = coreDir, coreSet = coreSet, extend = extend, refSpecList = refSpecList, scoreMode = scoreMode, cpu = cpu)
 ```
 
 The report will be storede by default in /home/user/eukaryota_busco/output/eukaryota_busco/1/report
@@ -160,3 +156,10 @@ The function will calculate all cutoff values for all core genes in the set and 
 
 > EnvStats
 
+## Bugs
+
+Any bug reports or comments, suggestions are highly appreciated. Please open an issue on GitHub or be in touch via email.
+
+## Contact
+
+Thanh-Giang Nguyen > giangnguyen0709@gmail.com
