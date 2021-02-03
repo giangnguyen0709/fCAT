@@ -251,7 +251,6 @@ runFdogBusco <- function(
                 "--blastpath", blastPath,
                 "--weightpath", weightPath,
                 "--searchpath", searchPath,
-                "--cleanup",
                 "--cpu", cpu,
                 "--reuseCore",
                 "--checkCoorthologsRef",

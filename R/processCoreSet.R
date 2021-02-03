@@ -220,7 +220,6 @@ calculateCutoff <- function(root, coreSet, coreGene) {
         }
     }
     scoreDist <- unlist(scoreDist) / 2
-    print(scoreDist)
     genomeScores <- unlist(genomeScores) / ((length(genomeSet) - 1) * 2)
     
     avaMean <- mean(genomeScores)
